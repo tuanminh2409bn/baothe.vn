@@ -1,0 +1,8 @@
+selenium
+webdriver-manager
+beautifulsoup4
+pandas
+requests
+json5
+firebase-admin
+python-dotenv

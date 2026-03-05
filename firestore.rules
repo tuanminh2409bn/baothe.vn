@@ -1,0 +1,25 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. Quy tắc cho bộ sưu tập thẻ (Cards)
+    // Cho phép bất kỳ ai cũng có thể đọc danh sách và chi tiết thẻ
+    match /cards/{cardId} {
+      allow read: if true;
+      // Chỉ cho phép người dùng đã đăng nhập (hoặc Admin) mới được ghi/sửa dữ liệu thẻ
+      allow write: if request.auth != null;
+    }
+
+    // 2. Quy tắc cho thông tin người dùng (Users)
+    // Người dùng chỉ có thể đọc/ghi dữ liệu của chính mình
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Mặc định: Không cho phép truy cập các tài liệu khác nếu không được định nghĩa rõ ràng
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
