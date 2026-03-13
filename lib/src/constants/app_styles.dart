@@ -2,27 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
-  // Nền tảng chính
-  static const Color background = Color(0xFFF8F9FA);
+  // Nền tảng chính - Elegant Brown & Cream
+  static const Color background = Color(0xFFFDFBF7); // Màu kem nhẹ
   static const Color surface = Color(0xFFFFFFFF);
   
-  // Màu thương hiệu/Chính
-  static const Color primary = Color(0xFF1E293B); // Navy đậm chuyên nghiệp
-  static const Color accent = Color(0xFFB4936A);  // Màu vàng đồng (Bronze)
-  static const Color accentOrange = Color(0xFFF97316); // Cam nổi bật
+  // Tông màu chủ đạo - Nâu Coffee & Gold/Bronze
+  static const Color primary = Color(0xFF4A3728);   // Nâu đậm Coffee
+  static const Color accent = Color(0xFFB4936A);    // Màu vàng đồng (Bronze/Gold)
+  static const Color accentGold = Color(0xFFD4AF37); // Vàng sáng Gold
+  static const Color accentOrange = Color(0xFFCA8A04); // Vàng đậm Gold
   
-  // Màu chữ
-  static const Color textPrimary = Color(0xFF0F172A);
-  static const Color textSecondary = Color(0xFF64748B);
-  static const Color textLight = Color(0xFF94A3B8);
+  // Màu chữ - Tông ấm
+  static const Color textPrimary = Color(0xFF2D241E); // Nâu đen coffee
+  static const Color textSecondary = Color(0xFF7D6E64); // Nâu xám ấm
+  static const Color textLight = Color(0xFFA6998F);
   
   // Trạng thái
-  static const Color success = Color(0xFF10B981);
-  static const Color error = Color(0xFFEF4444);
-  static const Color warning = Color(0xFFF59E0B);
+  static const Color success = Color(0xFF849271); // Xanh rêu (hợp tông nâu)
+  static const Color error = Color(0xFF9E4545);   // Đỏ nâu
+  static const Color warning = Color(0xFFB48346);
   
-  // Đường kẻ & Bóng
-  static const Color border = Color(0xFFE2E8F0);
+  // Đường kẻ & Bóng - Tông ấm
+  static const Color border = Color(0xFFE8E2D9);
 }
 
 class AppStyles {
@@ -30,16 +31,16 @@ class AppStyles {
 
   static List<BoxShadow> get softShadow => [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.05),
-      blurRadius: 15,
-      offset: const Offset(0, 5),
+      color: const Color(0xFF4A3728).withValues(alpha: 0.05),
+      blurRadius: 20,
+      offset: const Offset(0, 10),
     ),
   ];
 
-  static List<BoxShadow> get orangeGlow => [
+  static List<BoxShadow> get goldGlow => [
     BoxShadow(
-      color: AppColors.accentOrange.withValues(alpha: 0.2),
-      blurRadius: 20,
+      color: AppColors.accentGold.withValues(alpha: 0.2),
+      blurRadius: 25,
       spreadRadius: 2,
     ),
   ];

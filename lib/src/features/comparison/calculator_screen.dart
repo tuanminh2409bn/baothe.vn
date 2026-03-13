@@ -1,10 +1,53 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../constants/app_styles.dart';
 import '../../common_widgets/animated_hover.dart';
 
-class CalculatorScreen extends StatelessWidget {
+class CalculatorScreen extends ConsumerStatefulWidget {
   const CalculatorScreen({super.key});
+
+  @override
+  ConsumerState<CalculatorScreen> createState() => _CalculatorScreenState();
+}
+
+class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
+  // BIẾN CHO SLIDER
+  late PageController _pageController;
+  int _currentPage = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: 0);
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (_currentPage < 3) {
+        _currentPage++;
+      } else {
+        _currentPage = 0;
+      }
+      if (_pageController.hasClients) {
+        _pageController.animateToPage(
+          _currentPage,
+          duration: const Duration(milliseconds: 1000),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,21 +55,21 @@ class CalculatorScreen extends StatelessWidget {
     final isMobile = screenWidth < 900;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         child: Column(
           children: [
             // 1. Header Navigation
             _buildHeader(context),
 
-            // 2. Banner
-            _buildBanner(screenWidth),
+            // 2. Banner Slider (Đồng bộ từ HomeScreen)
+            _buildBannerSlider(screenWidth),
 
             // 3. Main Content
             Center(
               child: Container(
-                constraints: const BoxConstraints(maxWidth: 1200),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                constraints: const BoxConstraints(maxWidth: 1400),
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
                 child: Column(
                   children: [
                     // Title
@@ -34,7 +77,7 @@ class CalculatorScreen extends StatelessWidget {
                       'TÍNH TOÁN',
                       textAlign: TextAlign.center,
                       style: AppStyles.h1.copyWith(
-                        color: const Color(0xFFB4936A),
+                        color: AppColors.primary,
                         fontSize: isMobile ? 32 : 48,
                         fontWeight: FontWeight.bold,
                       ),
@@ -44,7 +87,7 @@ class CalculatorScreen extends StatelessWidget {
                       'Nhập chi tiết chi tiêu để tìm "chiến thần" hoàn tiền chính xác nhất.',
                       textAlign: TextAlign.center,
                       style: AppStyles.h2.copyWith(
-                        color: const Color(0xFFB4936A),
+                        color: AppColors.textSecondary,
                         fontSize: isMobile ? 18 : 22,
                         fontWeight: FontWeight.w500,
                       ),
@@ -89,29 +132,12 @@ class CalculatorScreen extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     return Container(
-      height: 80, // Kích thước chuẩn tinh tế
-      padding: const EdgeInsets.symmetric(horizontal: 40),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: AppColors.border, width: 0.5)),
-      ),
+      height: 80, padding: const EdgeInsets.symmetric(horizontal: 40),
+      decoration: const BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: AppColors.border, width: 0.5))),
       child: Row(
         children: [
-          // Logo
-          InkWell(
-            onTap: () => context.go('/'),
-            child: Image.asset(
-              'assets/logo/logo.png',
-              height: 45, // Chiều cao logo chuẩn
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) => Text(
-                'baothe.vn',
-                style: AppStyles.h1.copyWith(color: AppColors.accent, fontSize: 32),
-              ),
-            ),
-          ),
+          InkWell(onTap: () => context.go('/'), child: Image.asset('assets/logo/logo.png', height: 45, fit: BoxFit.contain)),
           const Spacer(),
-          // Menu Items
           _buildMenuItem('TRA CỨU', onTap: () => context.go('/')),
           _buildMenuItem('TÍNH TOÁN', isSelected: true),
         ],
@@ -122,43 +148,64 @@ class CalculatorScreen extends StatelessWidget {
   Widget _buildMenuItem(String title, {bool isSelected = false, VoidCallback? onTap}) {
     return AnimatedHover(
       scale: 1.02,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Text(
-            title,
-            style: AppStyles.h2.copyWith(
-              fontSize: 16,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-              color: isSelected ? Colors.black : AppColors.textSecondary,
+      child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(8), child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Text(title, style: AppStyles.h2.copyWith(fontSize: 16, fontWeight: isSelected ? FontWeight.bold : FontWeight.w600, color: isSelected ? AppColors.textPrimary : AppColors.textSecondary)))),
+    );
+  }
+
+  Widget _buildBannerSlider(double width) {
+    double bannerWidth = width > 1480 ? 1400 : width - 80;
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.only(top: 30),
+        width: bannerWidth,
+        height: 350,
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10))],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (index) => _currentPage = index,
+                  children: [
+                    _buildSliderItem('ƯU ĐÃI THẺ VIETCOMBANK', [const Color(0xFF4A3728), const Color(0xFF6F4E37)]),
+                    _buildSliderItem('ĐẶC QUYỀN THẺ VIB', [const Color(0xFF8B5E34), const Color(0xFFB4936A)]),
+                    _buildSliderItem('HOÀN TIỀN KHÔNG GIỚI HẠN', [const Color(0xFF2D241E), const Color(0xFF4A3728)]),
+                    _buildSliderItem('DU LỊCH CÙNG BAOTHE.VN', [const Color(0xFFB4936A), const Color(0xFFD4AF37)]),
+                  ],
+                ),
+              ),
             ),
-          ),
+            Positioned(
+              left: 20, top: 0, bottom: 0,
+              child: Center(child: _buildSliderButton(icon: Icons.arrow_back_ios_new, onTap: () => _pageController.previousPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut))),
+            ),
+            Positioned(
+              right: 20, top: 0, bottom: 0,
+              child: Center(child: _buildSliderButton(icon: Icons.arrow_forward_ios, onTap: () => _pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut))),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildBanner(double width) {
-    return Center(
-      child: Container(
-        margin: const EdgeInsets.only(top: 20),
-        width: 1000,
-        height: 200,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          gradient: const LinearGradient(
-            colors: [Color(0xFFFB923C), Color(0xFFFACC15)],
-          ),
-        ),
-        child: const Center(
-          child: Text(
-            'BANNER SHB FINANCE',
-            style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
+  Widget _buildSliderButton({required IconData icon, required VoidCallback onTap}) {
+    return Material(
+      color: Colors.black.withValues(alpha: 0.2),
+      borderRadius: BorderRadius.circular(30),
+      child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(30), child: Container(width: 45, height: 45, alignment: Alignment.center, child: Icon(icon, color: Colors.white, size: 18))),
+    );
+  }
+
+  Widget _buildSliderItem(String title, List<Color> colors) {
+    return Container(
+      decoration: BoxDecoration(gradient: LinearGradient(colors: colors, begin: Alignment.topLeft, end: Alignment.bottomRight)),
+      child: Center(child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: 2, shadows: [Shadow(color: Colors.black26, offset: Offset(0, 2), blurRadius: 10)]))),
     );
   }
 
@@ -207,15 +254,15 @@ class CalculatorScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: const BoxDecoration(
-                  color: Color(0xFFFDF6E3),
+                  color: Color(0xFFF7F3EE),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.calculate, color: Color(0xFFB4936A), size: 30),
+                child: const Icon(Icons.calculate, color: AppColors.primary, size: 30),
               ),
               const SizedBox(width: 15),
               Text(
                 'Chi tiêu tháng này (VNĐ)',
-                style: AppStyles.h1.copyWith(fontSize: 24, color: Colors.black87),
+                style: AppStyles.h1.copyWith(fontSize: 24, color: AppColors.textPrimary),
               ),
             ],
           ),
@@ -250,13 +297,17 @@ class CalculatorScreen extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.accentOrange,
+                  backgroundColor: AppColors.primary,
                   elevation: 0,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 child: Text(
                   'PHÂN TÍCH & TÌM THẺ',
-                  style: AppStyles.buttonText.copyWith(fontSize: 18, letterSpacing: 1),
+                  style: AppStyles.buttonText.copyWith(
+                    fontSize: 18, 
+                    letterSpacing: 1,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -277,7 +328,7 @@ class CalculatorScreen extends StatelessWidget {
             Flexible(
               child: Text(
                 label, 
-                style: AppStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.bold),
+                style: AppStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -299,7 +350,7 @@ class CalculatorScreen extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.accentOrange, width: 1.5),
+                borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
               ),
             ),
             style: AppStyles.bodyMedium.copyWith(fontSize: 14),
@@ -326,7 +377,7 @@ class CalculatorScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {},
-              child: const Text('Xem tất cả thẻ', style: TextStyle(color: AppColors.accentOrange)),
+              child: const Text('Xem tất cả thẻ', style: TextStyle(color: AppColors.accent)),
             )
           ],
         ),
@@ -394,7 +445,7 @@ class CalculatorScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text('HOÀN TIỀN\nTHÁNG', textAlign: TextAlign.right, style: AppStyles.labelSmall.copyWith(fontSize: 10)),
-                    Text(cashback, style: AppStyles.h1.copyWith(color: AppColors.accentOrange, fontSize: 18)),
+                    Text(cashback, style: AppStyles.h1.copyWith(color: AppColors.accent, fontSize: 18)),
                   ],
                 ),
               ],

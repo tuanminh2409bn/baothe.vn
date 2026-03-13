@@ -5,8 +5,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'src/constants/app_styles.dart';
 import 'src/features/cards/home_screen.dart';
-
+import 'src/features/cards/card_detail_screen.dart';
 import 'src/features/comparison/calculator_screen.dart';
+import 'src/features/comparison/comparison_screen.dart';
+import 'src/features/auth/login_screen.dart';
 
 void main() async {
   // Đảm bảo các dịch vụ của Flutter được khởi tạo trước khi gọi Firebase
@@ -34,6 +36,21 @@ final _router = GoRouter(
     GoRoute(
       path: '/calculator',
       builder: (context, state) => const CalculatorScreen(),
+    ),
+    GoRoute(
+      path: '/card/:id',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        return CardDetailScreen(cardId: id);
+      },
+    ),
+    GoRoute(
+      path: '/compare',
+      builder: (context, state) => const ComparisonScreen(),
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginScreen(),
     ),
   ],
 );

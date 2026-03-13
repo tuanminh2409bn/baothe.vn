@@ -87,7 +87,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final comparisonCards = ref.watch(comparisonProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       floatingActionButton: comparisonCards.isNotEmpty
           ? FloatingActionButton.extended(
               onPressed: () => context.go('/compare'),
@@ -112,29 +112,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: Column(
                   children: [
-                    const SizedBox(height: 100),
+                    const SizedBox(height: 45), // Dịch xuống thành 45px theo yêu cầu
                     
-                    // TIÊU ĐỀ GRADIENT GOLD
+                    // TIÊU ĐỀ GRADIENT GOLD - ELEGANT BROWN STYLE
                     Padding(
-                      padding: const EdgeInsets.only(top: 20),
+                      padding: const EdgeInsets.only(top: 0), // Bỏ bớt padding top dư thừa
                       child: ShaderMask(
                         shaderCallback: (bounds) => const LinearGradient(
-                          colors: [Color(0xFF854D0E), Color(0xFFCA8A04), Color(0xFFFACC15), Color(0xFFCA8A04)],
+                          colors: [
+                            Color(0xFF4A3728), 
+                            Color(0xFF8B5E34), 
+                            Color(0xFF4A3728),
+                          ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ).createShader(bounds),
-                        child: Text(
-                          'CÔNG CỤ TRA CỨU THẺ TÍN DỤNG\nTHÔNG MINH DÀNH CHO CHỦ TỊCH',
-                          textAlign: TextAlign.center,
-                          style: AppStyles.h1.copyWith(
-                            color: Colors.white,
-                            fontSize: screenWidth < 600 ? 28 : 46,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 2.0,
-                            height: 1.1,
-                            shadows: [
-                              Shadow(color: const Color(0xFFB4936A).withValues(alpha: 0.3), offset: const Offset(0, 4), blurRadius: 10),
-                            ],
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10), // Tạo khoảng trống để không bị cắt chữ
+                          child: Text(
+                            'CÔNG CỤ TRA CỨU THẺ TÍN DỤNG\nTHÔNG MINH DÀNH CHO CHỦ TỊCH',
+                            textAlign: TextAlign.center,
+                            style: AppStyles.h1.copyWith(
+                              color: Colors.white,
+                              fontSize: screenWidth < 600 ? 28 : 46,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2.0,
+                              height: 1.3, // Tăng nhẹ để tránh cắt chữ trên đầu
+                              shadows: [
+                                Shadow(
+                                  color: const Color(0xFF4A3728).withValues(alpha: 0.2), 
+                                  offset: const Offset(0, 4), 
+                                  blurRadius: 10
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -252,7 +263,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
-              decoration: const BoxDecoration(color: Colors.white),
+              decoration: const BoxDecoration(color: Color(0xFFF7F3EE)),
               child: _buildFullBanksSection(ref, selectedBank),
             ),
             
@@ -299,10 +310,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   controller: _pageController,
                   onPageChanged: (index) => _currentPage = index,
                   children: [
-                    _buildSliderItem('ƯU ĐÃI THẺ VIETCOMBANK', [const Color(0xFF059669), const Color(0xFF10B981)]),
-                    _buildSliderItem('ĐẶC QUYỀN THẺ VIB', [const Color(0xFFF97316), const Color(0xFFFB923C)]),
-                    _buildSliderItem('HOÀN TIỀN KHÔNG GIỚI HẠN', [const Color(0xFF1E293B), const Color(0xFF334155)]),
-                    _buildSliderItem('DU LỊCH CÙNG BAOTHE.VN', [const Color(0xFF2563EB), const Color(0xFF3B82F6)]),
+                    _buildSliderItem('ƯU ĐÃI THẺ VIETCOMBANK', [const Color(0xFF4A3728), const Color(0xFF6F4E37)]),
+                    _buildSliderItem('ĐẶC QUYỀN THẺ VIB', [const Color(0xFF8B5E34), const Color(0xFFB4936A)]),
+                    _buildSliderItem('HOÀN TIỀN KHÔNG GIỚI HẠN', [const Color(0xFF2D241E), const Color(0xFF4A3728)]),
+                    _buildSliderItem('DU LỊCH CÙNG BAOTHE.VN', [const Color(0xFFB4936A), const Color(0xFFD4AF37)]),
                   ],
                 ),
               ),
@@ -331,15 +342,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildSliderItem(String title, List<Color> colors) {
     return Container(
-      decoration: BoxDecoration(gradient: LinearGradient(colors: colors, begin: Alignment.topLeft, end: Alignment.bottomRight)),
-      child: Center(child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: 2))),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: colors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Center(
+        child: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+            shadows: [
+              Shadow(color: Colors.black26, offset: Offset(0, 2), blurRadius: 10),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildSecondaryBanner() {
     return Container(
       width: double.infinity, height: 200,
-      decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFFB4936A), Color(0xFFD4AF37)]), borderRadius: BorderRadius.circular(24)),
+      decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFF4A3728), Color(0xFF8B5E34)]), borderRadius: BorderRadius.circular(24)),
       child: const Center(child: Text('KHÁM PHÁ 5 CHÂU - KHÔNG LO ÂU PHÍ', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold))),
     );
   }
@@ -351,7 +381,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.security, size: 50, color: Color(0xFFFACC15)),
+          const Icon(Icons.security, size: 50, color: Color(0xFFD4AF37)),
           const SizedBox(width: 30),
           Column(
             mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,7 +451,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildMenuItem(String title, {bool isSelected = false, VoidCallback? onTap}) {
     return AnimatedHover(
       scale: 1.02,
-      child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(8), child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Text(title, style: AppStyles.h2.copyWith(fontSize: 16, fontWeight: isSelected ? FontWeight.bold : FontWeight.w600, color: isSelected ? Colors.black : AppColors.textSecondary)))),
+      child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(8), child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Text(title, style: AppStyles.h2.copyWith(fontSize: 16, fontWeight: isSelected ? FontWeight.bold : FontWeight.w600, color: isSelected ? AppColors.textPrimary : AppColors.textSecondary)))),
     );
   }
 
@@ -535,8 +565,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 45, child: Container(width: double.infinity, padding: const EdgeInsets.all(20), decoration: const BoxDecoration(color: Color(0xFFF1F5F9), borderRadius: BorderRadius.vertical(top: Radius.circular(20))), child: Center(child: Hero(tag: card.id, child: card.imagePath.startsWith('http') ? Image.network(card.imagePath, fit: BoxFit.contain, loadingBuilder: (context, child, loadingProgress) => loadingProgress == null ? child : const Center(child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accentOrange)), errorBuilder: (context, error, stackTrace) => const Icon(Icons.credit_card, color: AppColors.textLight, size: 60)) : Image.asset(card.imagePath, fit: BoxFit.contain, errorBuilder: (context, error, stackTrace) => const Icon(Icons.credit_card, color: AppColors.textLight, size: 60)))))),
-              Expanded(flex: 55, child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(card.name, style: AppStyles.h2.copyWith(fontSize: 18, fontWeight: FontWeight.bold, height: 1.2), maxLines: 2, overflow: TextOverflow.ellipsis), const SizedBox(height: 12), Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), decoration: BoxDecoration(color: AppColors.accentOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)), child: Text(card.cashbackHighlight.toUpperCase(), style: AppStyles.labelSmall.copyWith(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.accentOrange, letterSpacing: 0.5))), const SizedBox(height: 15), ...card.details.take(2).map((detail) => Padding(padding: const EdgeInsets.only(bottom: 8), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [const Icon(Icons.check_circle, size: 16, color: Color(0xFF10B981)), const SizedBox(width: 10), Expanded(child: Text(detail, style: AppStyles.bodyMedium.copyWith(fontSize: 14, color: Colors.black87, height: 1.3), maxLines: 1, overflow: TextOverflow.ellipsis))]))), const Spacer(), Row(children: [Expanded(child: ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white, elevation: 0, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: const Text('Mở thẻ ngay', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)))), const SizedBox(width: 12), Material(color: const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(12), child: InkWell(onTap: () { ref.read(comparisonProvider.notifier).addCard(card); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Đã thêm ${card.name} vào danh sách so sánh'))); }, borderRadius: BorderRadius.circular(12), child: Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(border: Border.all(color: AppColors.border.withValues(alpha: 0.5)), borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.compare_arrows, color: AppColors.primary, size: 24))))])]))),
+              Expanded(flex: 45, child: Container(width: double.infinity, padding: const EdgeInsets.all(20), decoration: const BoxDecoration(color: Color(0xFFF7F3EE), borderRadius: BorderRadius.vertical(top: Radius.circular(20))), child: Center(child: Hero(tag: card.id, child: card.imagePath.startsWith('http') ? Image.network(card.imagePath, fit: BoxFit.contain, loadingBuilder: (context, child, loadingProgress) => loadingProgress == null ? child : const Center(child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accentOrange)), errorBuilder: (context, error, stackTrace) => const Icon(Icons.credit_card, color: AppColors.textLight, size: 60)) : Image.asset(card.imagePath, fit: BoxFit.contain, errorBuilder: (context, error, stackTrace) => const Icon(Icons.credit_card, color: AppColors.textLight, size: 60)))))),
+              Expanded(flex: 55, child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(card.name, style: AppStyles.h2.copyWith(fontSize: 18, fontWeight: FontWeight.bold, height: 1.2), maxLines: 2, overflow: TextOverflow.ellipsis), const SizedBox(height: 12), Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), decoration: BoxDecoration(color: AppColors.accentOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)), child: Text(card.cashbackHighlight.toUpperCase(), style: AppStyles.labelSmall.copyWith(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.accentOrange, letterSpacing: 0.5))), const SizedBox(height: 15), ...card.details.take(2).map((detail) => Padding(padding: const EdgeInsets.only(bottom: 8), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [const Icon(Icons.check_circle, size: 16, color: Color(0xFFB4936A)), const SizedBox(width: 10), Expanded(child: Text(detail, style: AppStyles.bodyMedium.copyWith(fontSize: 14, color: Colors.black87, height: 1.3), maxLines: 1, overflow: TextOverflow.ellipsis))]))), const Spacer(), Row(children: [Expanded(child: ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white, elevation: 0, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: const Text('Mở thẻ ngay', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)))), const SizedBox(width: 12), Material(color: const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(12), child: InkWell(onTap: () { ref.read(comparisonProvider.notifier).addCard(card); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Đã thêm ${card.name} vào danh sách so sánh'))); }, borderRadius: BorderRadius.circular(12), child: Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(border: Border.all(color: AppColors.border.withValues(alpha: 0.5)), borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.compare_arrows, color: AppColors.primary, size: 24))))])]))),
             ],
           ),
         ),
@@ -550,6 +580,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildCategoryItem(IconData icon, String label) {
-    return AnimatedHover(scale: 1.05, child: Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: AppColors.border.withValues(alpha: 0.5)), borderRadius: BorderRadius.circular(16)), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [FaIcon(icon, size: 32, color: AppColors.accentOrange), const SizedBox(height: 12), Text(label, style: AppStyles.labelSmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary, letterSpacing: 0.5))])));
+    return AnimatedHover(scale: 1.05, child: Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: AppColors.border.withValues(alpha: 0.5)), borderRadius: BorderRadius.circular(16)), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [FaIcon(icon, size: 32, color: AppColors.accent), const SizedBox(height: 12), Text(label, style: AppStyles.labelSmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary, letterSpacing: 0.5))])));
   }
 }

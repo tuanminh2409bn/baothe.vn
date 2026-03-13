@@ -18,30 +18,40 @@ class BaseScraper:
         self.driver = self._setup_driver()
 
     def _setup_firebase(self):
-        key_path = "scripts/scraping/serviceAccountKey.json"
+        # Tự động tìm file serviceAccountKey.json trong cùng thư mục với file này
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        key_path = os.path.join(current_dir, "serviceAccountKey.json")
+        
         if not firebase_admin._apps:
             if os.path.exists(key_path):
+                print(f"  [Firebase] Đang khởi tạo với key: {key_path}")
                 cred = credentials.Certificate(key_path)
                 firebase_admin.initialize_app(cred, {
                     'storageBucket': 'baothevn-790c6.firebasestorage.app'
                 })
+            else:
+                print(f"  [CẢNH BÁO] Không tìm thấy file key tại: {key_path}")
 
     def _setup_driver(self):
         chrome_options = Options()
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--window-size=1920,1080")
+        # chrome_options.add_argument("--headless") # Tắt chế độ chạy ẩn để chạy như người thật
         chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-        chrome_options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-        return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        chrome_options.add_experimental_option('useAutomationExtension', False)
+        chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
+        
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        return driver
 
     def download_image_via_browser(self, url, card_id):
-        """Kỹ thuật tối thượng: Dùng chính trình duyệt Chrome để tải ảnh dưới dạng Base64"""
         if not url: return None
         print(f"    + Đang tải ảnh qua Browser: {card_id}")
         
         try:
-            # Lệnh JS để ép trình duyệt tải ảnh và trả về chuỗi Base64
             js_script = """
             var url = arguments[0];
             var callback = arguments[1];
@@ -57,23 +67,21 @@ class BaseScraper:
             base64_data = self.driver.execute_async_script(js_script, url)
             
             if base64_data == "error" or not base64_data:
-                print(f"    ! Browser không tải được ảnh: {url}")
                 return None
 
-            # Xử lý chuỗi Base64
             header, encoded = base64_data.split(",", 1)
             data = base64.b64decode(encoded)
             
-            # Xác định định dạng
             ext = ".webp" if "webp" in header else ".png"
             filename = f"{card_id}{ext}"
-            local_path = f"temp_{filename}"
+            
+            # Lưu tạm vào thư mục temp của hệ thống thay vì thư mục hiện tại
+            import tempfile
+            local_path = os.path.join(tempfile.gettempdir(), filename)
 
-            # Lưu tạm ra file
             with open(local_path, "wb") as f:
                 f.write(data)
 
-            # Đẩy lên Firebase Storage
             bucket = storage.bucket()
             blob = bucket.blob(f"card_images/{filename}")
             blob.upload_from_filename(local_path, content_type=header.split(":")[1].split(";")[0])
@@ -85,14 +93,18 @@ class BaseScraper:
             return blob.public_url
 
         except Exception as e:
-            print(f"    ! Lỗi kỹ thuật Browser Download: {e}")
+            print(f"    ! Lỗi Firebase/Storage: {e}")
             return None
 
     def save_to_firestore(self, data):
-        db = firestore.client()
-        for card in data:
-            db.collection("cards").document(card['id']).set(card, merge=True)
-            print(f"  + Thành công: {card['name']}")
+        try:
+            db = firestore.client()
+            for card in data:
+                db.collection("cards").document(card['id']).set(card, merge=True)
+                print(f"  + Firestore: Đã lưu {card['name']}")
+        except Exception as e:
+            print(f"  ! Lỗi Firestore: {e}")
 
     def quit(self):
-        self.driver.quit()
+        if hasattr(self, 'driver'):
+            self.driver.quit()

@@ -55,11 +55,15 @@ class AppSearchBar extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
                 decoration: BoxDecoration(
-                  color: AppColors.accentOrange,
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF4A3728), Color(0xFF8B5E34)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.accentOrange.withValues(alpha: 0.3),
+                      color: const Color(0xFF4A3728).withValues(alpha: 0.3),
                       blurRadius: 15,
                       offset: const Offset(0, 5),
                     ),

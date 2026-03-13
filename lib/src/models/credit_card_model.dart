@@ -16,6 +16,12 @@ class CreditCard {
   final Map<String, dynamic>? requirements;
   final String? promoHighlight;
 
+  // Dữ liệu chi tiết từ trang ngân hàng
+  final List<Map<String, String>>? benefitsDetail;
+  final List<Map<String, String>>? conditionsDetail;
+  final List<Map<String, String>>? productInfoDetail;
+  final List<Map<String, String>>? feeDetail;
+
   CreditCard({
     required this.id,
     required this.name,
@@ -31,6 +37,10 @@ class CreditCard {
     this.benefits,
     this.requirements,
     this.promoHighlight,
+    this.benefitsDetail,
+    this.conditionsDetail,
+    this.productInfoDetail,
+    this.feeDetail,
   });
 
   Map<String, dynamic> toMap() {
@@ -49,6 +59,10 @@ class CreditCard {
       'benefits': benefits,
       'requirements': requirements,
       'promoHighlight': promoHighlight,
+      'benefitsDetail': benefitsDetail,
+      'conditionsDetail': conditionsDetail,
+      'productInfoDetail': productInfoDetail,
+      'feeDetail': feeDetail,
     };
   }
 
@@ -68,51 +82,18 @@ class CreditCard {
       benefits: map['benefits'] != null ? List<String>.from(map['benefits']) : null,
       requirements: map['requirements'],
       promoHighlight: map['promoHighlight'],
+      benefitsDetail: map['benefitsDetail'] != null 
+          ? List<Map<String, String>>.from((map['benefitsDetail'] as List).map((e) => Map<String, String>.from(e)))
+          : null,
+      conditionsDetail: map['conditionsDetail'] != null 
+          ? List<Map<String, String>>.from((map['conditionsDetail'] as List).map((e) => Map<String, String>.from(e)))
+          : null,
+      productInfoDetail: map['productInfoDetail'] != null 
+          ? List<Map<String, String>>.from((map['productInfoDetail'] as List).map((e) => Map<String, String>.from(e)))
+          : null,
+      feeDetail: map['feeDetail'] != null 
+          ? List<Map<String, String>>.from((map['feeDetail'] as List).map((e) => Map<String, String>.from(e)))
+          : null,
     );
   }
 }
-
-// Dữ liệu mẫu mở rộng
-final List<CreditCard> mockCards = [
-  CreditCard(
-    id: 'vcb-vibe',
-    name: 'Vietcombank Vibe Platinum',
-    bankName: 'Vietcombank',
-    imagePath: 'assets/cards/vcb_vibe.png',
-    cashbackHighlight: 'Tích điểm VIBE REWARDS x10 điểm thưởng',
-    details: [
-      'BẢO HIỂM CHUYẾN ĐI\nĐến 11,65 tỷ VND',
-    ],
-    annualFee: 800000,
-    interestRate: 15.0,
-    cardType: 'Visa',
-    cardTier: 'Platinum',
-    benefits: ['Hoàn tiền 10% tại siêu thị', 'Miễn phí phòng chờ sân bay'],
-  ),
-  CreditCard(
-    id: 'vcb-cashplus',
-    name: 'Vietcombank Cashplus Platinum American Express®',
-    bankName: 'Vietcombank',
-    imagePath: 'assets/cards/vcb_cashplus.png',
-    cashbackHighlight: 'HOÀN TIỀN KHÔNG GIỚI HẠN\nĐến 1,5%',
-    details: [
-      'BẢO HIỂM CHUYẾN ĐI\nĐến 23,3 tỷ VND',
-    ],
-    annualFee: 1000000,
-    cardType: 'American Express',
-    cardTier: 'Platinum',
-  ),
-  CreditCard(
-    id: 'vcb-mastercard',
-    name: 'Vietcombank Mastercard® World',
-    bankName: 'Vietcombank',
-    imagePath: 'assets/cards/vcb_master.png',
-    cashbackHighlight: 'HOÀN TIỀN CHI TIÊU NƯỚC NGOÀI\nĐẾN 5%',
-    details: [
-      'MIỄN LÃI\nĐến 55 ngày',
-    ],
-    annualFee: 1500000,
-    cardType: 'Mastercard',
-    cardTier: 'World',
-  ),
-];
