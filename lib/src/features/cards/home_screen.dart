@@ -561,12 +561,186 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onTap: () => context.go('/card/${card.id}'),
         borderRadius: BorderRadius.circular(20),
         child: Container(
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.border.withValues(alpha: 0.5)), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0, 8))]),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              )
+            ],
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 45, child: Container(width: double.infinity, padding: const EdgeInsets.all(20), decoration: const BoxDecoration(color: Color(0xFFF7F3EE), borderRadius: BorderRadius.vertical(top: Radius.circular(20))), child: Center(child: Hero(tag: card.id, child: card.imagePath.startsWith('http') ? Image.network(card.imagePath, fit: BoxFit.contain, loadingBuilder: (context, child, loadingProgress) => loadingProgress == null ? child : const Center(child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accentOrange)), errorBuilder: (context, error, stackTrace) => const Icon(Icons.credit_card, color: AppColors.textLight, size: 60)) : Image.asset(card.imagePath, fit: BoxFit.contain, errorBuilder: (context, error, stackTrace) => const Icon(Icons.credit_card, color: AppColors.textLight, size: 60)))))),
-              Expanded(flex: 55, child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(card.name, style: AppStyles.h2.copyWith(fontSize: 18, fontWeight: FontWeight.bold, height: 1.2), maxLines: 2, overflow: TextOverflow.ellipsis), const SizedBox(height: 12), Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), decoration: BoxDecoration(color: AppColors.accentOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)), child: Text(card.cashbackHighlight.toUpperCase(), style: AppStyles.labelSmall.copyWith(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.accentOrange, letterSpacing: 0.5))), const SizedBox(height: 15), ...card.details.take(2).map((detail) => Padding(padding: const EdgeInsets.only(bottom: 8), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [const Icon(Icons.check_circle, size: 16, color: Color(0xFFB4936A)), const SizedBox(width: 10), Expanded(child: Text(detail, style: AppStyles.bodyMedium.copyWith(fontSize: 14, color: Colors.black87, height: 1.3), maxLines: 1, overflow: TextOverflow.ellipsis))]))), const Spacer(), Row(children: [Expanded(child: ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white, elevation: 0, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), child: const Text('Mở thẻ ngay', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)))), const SizedBox(width: 12), Material(color: const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(12), child: InkWell(onTap: () { ref.read(comparisonProvider.notifier).addCard(card); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Đã thêm ${card.name} vào danh sách so sánh'))); }, borderRadius: BorderRadius.circular(12), child: Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(border: Border.all(color: AppColors.border.withValues(alpha: 0.5)), borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.compare_arrows, color: AppColors.primary, size: 24))))])]))),
+              // Image Section
+              Expanded(
+                flex: 40,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF7F3EE),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                  child: Center(
+                    child: Hero(
+                      tag: card.id,
+                      child: card.imagePath.startsWith('http')
+                          ? Image.network(
+                              card.imagePath,
+                              fit: BoxFit.contain,
+                              loadingBuilder: (context, child, loadingProgress) =>
+                                  loadingProgress == null
+                                      ? child
+                                      : const Center(
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: AppColors.accentOrange)),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.credit_card,
+                                      color: AppColors.textLight, size: 60),
+                            )
+                          : Image.asset(
+                              card.imagePath,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.credit_card,
+                                      color: AppColors.textLight, size: 60),
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+              // Content Section
+              Expanded(
+                flex: 60,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Scrollable content area
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                card.name,
+                                style: AppStyles.h2.copyWith(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                  height: 1.2,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.accentOrange.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  card.cashbackHighlight.toUpperCase(),
+                                  style: AppStyles.labelSmall.copyWith(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.accentOrange,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              // Display ALL details without maxLines restriction
+                              ...card.details.map((detail) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 6),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Icon(Icons.check_circle,
+                                            size: 14, color: Color(0xFFB4936A)),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            detail,
+                                            style: AppStyles.bodyMedium.copyWith(
+                                              fontSize: 13,
+                                              color: Colors.black87,
+                                              height: 1.3,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // Action Buttons (Fixed at bottom)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text(
+                                'Mở thẻ ngay',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 13),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Material(
+                            color: const Color(0xFFF8FAFC),
+                            borderRadius: BorderRadius.circular(10),
+                            child: InkWell(
+                              onTap: () {
+                                ref.read(comparisonProvider.notifier).addCard(card);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Đã thêm ${card.name} vào danh sách so sánh')),
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color:
+                                          AppColors.border.withValues(alpha: 0.5)),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(Icons.compare_arrows,
+                                    color: AppColors.primary, size: 20),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
