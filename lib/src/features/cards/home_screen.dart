@@ -729,13 +729,87 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildCategoriesGrid() {
-    final categories = [{'icon': FontAwesomeIcons.solidHeart, 'label': 'ĐÃ LƯU'}, {'icon': FontAwesomeIcons.infinity, 'label': 'TẤT CẢ'}, {'icon': FontAwesomeIcons.microphone, 'label': 'GIẢI TRÍ'}, {'icon': FontAwesomeIcons.dumbbell, 'label': 'FITNESS'}, {'icon': FontAwesomeIcons.spa, 'label': 'SPA/LÀM ĐẸP'}, {'icon': FontAwesomeIcons.bagShopping, 'label': 'MUA SẮM'}, {'icon': FontAwesomeIcons.plane, 'label': 'DU LỊCH'}, {'icon': FontAwesomeIcons.car, 'label': 'GRAB'}, {'icon': FontAwesomeIcons.bolt, 'label': 'XANH SM'}, {'icon': FontAwesomeIcons.gem, 'label': 'TIKI'}, {'icon': FontAwesomeIcons.tiktok, 'label': 'TIKTOK SHOP'}, {'icon': FontAwesomeIcons.basketShopping, 'label': 'SHOPEE'}, {'icon': FontAwesomeIcons.gift, 'label': 'LAZADA'}, {'icon': FontAwesomeIcons.burger, 'label': 'ĂN UỐNG'}, {'icon': FontAwesomeIcons.pizzaSlice, 'label': 'SHOPEEFOOD'}, {'icon': FontAwesomeIcons.carrot, 'label': 'SIÊU THỊ'}, {'icon': FontAwesomeIcons.graduationCap, 'label': 'GIÁO DỤC'}, {'icon': FontAwesomeIcons.briefcaseMedical, 'label': 'Y TẾ'}, {'icon': FontAwesomeIcons.shieldHalved, 'label': 'BẢO HIỂM'}, {'icon': FontAwesomeIcons.bugs, 'label': 'BE'}, {'icon': FontAwesomeIcons.bed, 'label': 'PHÒNG CHỜ'}];
-    return LayoutBuilder(builder: (context, constraints) { int crossAxisCount = 5; if (constraints.maxWidth < 600) crossAxisCount = 2; else if (constraints.maxWidth < 900) crossAxisCount = 3; return GridView.builder(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: crossAxisCount, childAspectRatio: 1.2, crossAxisSpacing: 15, mainAxisSpacing: 15), itemCount: categories.length, itemBuilder: (context, index) => _buildCategoryItem(categories[index]['icon'] as IconData, categories[index]['label'] as String)); });
+    final categories = [
+      {'icon': FontAwesomeIcons.solidHeart, 'label': 'ĐÃ LƯU'}, 
+      {'icon': FontAwesomeIcons.infinity, 'label': 'TẤT CẢ'}, 
+      {'icon': FontAwesomeIcons.microphone, 'label': 'GIẢI TRÍ'}, 
+      {'icon': FontAwesomeIcons.dumbbell, 'label': 'FITNESS'}, 
+      {'icon': FontAwesomeIcons.spa, 'label': 'SPA/LÀM ĐẸP'}, 
+      {'icon': FontAwesomeIcons.bagShopping, 'label': 'MUA SẮM'}, 
+      {'icon': FontAwesomeIcons.plane, 'label': 'DU LỊCH'}, 
+      {'icon': FontAwesomeIcons.car, 'label': 'GRAB'}, 
+      {'icon': FontAwesomeIcons.bolt, 'label': 'XANH SM'}, 
+      {'icon': FontAwesomeIcons.gem, 'label': 'TIKI'}, 
+      {'icon': FontAwesomeIcons.tiktok, 'label': 'TIKTOK SHOP'}, 
+      {'icon': FontAwesomeIcons.basketShopping, 'label': 'SHOPEE'}, 
+      {'icon': FontAwesomeIcons.gift, 'label': 'LAZADA'}, 
+      {'icon': FontAwesomeIcons.burger, 'label': 'ĂN UỐNG'}, 
+      {'icon': FontAwesomeIcons.pizzaSlice, 'label': 'SHOPEEFOOD'}, 
+      {'icon': FontAwesomeIcons.carrot, 'label': 'SIÊU THỊ'}, 
+      {'icon': FontAwesomeIcons.graduationCap, 'label': 'GIÁO DỤC'}, 
+      {'icon': FontAwesomeIcons.briefcaseMedical, 'label': 'Y TẾ'}, 
+      {'icon': FontAwesomeIcons.shieldHalved, 'label': 'BẢO HIỂM'}, 
+      {'icon': FontAwesomeIcons.bugs, 'label': 'BE'}, 
+      {'icon': FontAwesomeIcons.bed, 'label': 'PHÒNG CHỜ'}
+    ];
+
+    return Column(
+      children: [
+        // Category Section Header
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(width: 40, height: 1, color: const Color(0xFFD4AF37)),
+            const SizedBox(width: 15),
+            Text(
+              'DANH MỤC ĐẶC QUYỀN',
+              style: AppStyles.h2.copyWith(
+                fontSize: 18,
+                letterSpacing: 4,
+                color: const Color(0xFF4A3728),
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(width: 15),
+            Container(width: 40, height: 1, color: const Color(0xFFD4AF37)),
+          ],
+        ),
+        const SizedBox(height: 40),
+        
+        LayoutBuilder(
+          builder: (context, constraints) {
+            int crossAxisCount = 7; // Tăng lên 7 để trông thanh thoát hơn trên web
+            if (constraints.maxWidth < 600) crossAxisCount = 2; 
+            else if (constraints.maxWidth < 1000) crossAxisCount = 4;
+            
+            return GridView.builder(
+              shrinkWrap: true, 
+              physics: const NeverScrollableScrollPhysics(), 
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount, 
+                childAspectRatio: 0.95, // Gần vuông
+                crossAxisSpacing: 20, 
+                mainAxisSpacing: 20
+              ), 
+              itemCount: categories.length, 
+              itemBuilder: (context, index) => _buildCategoryItem(
+                categories[index]['icon'] as IconData, 
+                categories[index]['label'] as String
+              )
+            );
+          }
+        ),
+      ],
+    );
   }
 
   Widget _buildCategoryItem(IconData icon, String label) {
+    final isSelected = ref.watch(selectedCategoryProvider) == label;
+    
     return AnimatedHover(
-      scale: 1.05, 
+      scale: 1.08, 
+      useOrangeGlow: true,
       child: InkWell(
         onTap: () {
           if (label == 'TẤT CẢ') {
@@ -754,19 +828,55 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ref.read(selectedCategoryProvider.notifier).state = label;
           }
         },
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
+        borderRadius: BorderRadius.circular(20),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
           decoration: BoxDecoration(
-            color: Colors.white, 
-            border: Border.all(color: AppColors.border.withValues(alpha: 0.5)), 
-            borderRadius: BorderRadius.circular(16)
+            color: isSelected ? const Color(0xFF4A3728) : Colors.white, 
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected ? const Color(0xFFD4AF37) : const Color(0xFF4A3728).withValues(alpha: 0.1), 
+              width: 1.5
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isSelected ? 0.1 : 0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              )
+            ],
           ), 
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center, 
             children: [
-              FaIcon(icon, size: 32, color: AppColors.accent), 
-              const SizedBox(height: 12), 
-              Text(label, style: AppStyles.labelSmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary, letterSpacing: 0.5))
+              // Icon Container
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFF7F3EE),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
+                    width: 1,
+                  )
+                ),
+                child: FaIcon(
+                  icon, 
+                  size: 24, 
+                  color: isSelected ? const Color(0xFFD4AF37) : const Color(0xFF8B5E34)
+                ),
+              ),
+              const SizedBox(height: 15), 
+              Text(
+                label, 
+                textAlign: TextAlign.center,
+                style: AppStyles.labelSmall.copyWith(
+                  fontWeight: isSelected ? FontWeight.w900 : FontWeight.bold, 
+                  color: isSelected ? Colors.white : const Color(0xFF4A3728), 
+                  fontSize: 11,
+                  letterSpacing: 1.2,
+                )
+              )
             ]
           )
         ),
