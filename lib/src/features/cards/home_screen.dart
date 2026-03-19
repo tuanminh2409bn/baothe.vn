@@ -241,37 +241,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: Container(
         margin: const EdgeInsets.only(top: 30),
         width: bannerWidth,
-        height: 350,
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10))],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: PageView(
-                  controller: _pageController,
-                  onPageChanged: (index) => _currentPage = index,
-                  children: [
-                    _buildSliderItem('ƯU ĐÃI THẺ VIETCOMBANK', [const Color(0xFF4A3728), const Color(0xFF6F4E37)]),
-                    _buildSliderItem('ĐẶC QUYỀN THẺ VIB', [const Color(0xFF8B5E34), const Color(0xFFB4936A)]),
-                    _buildSliderItem('HOÀN TIỀN KHÔNG GIỚI HẠN', [const Color(0xFF2D241E), const Color(0xFF4A3728)]),
-                    _buildSliderItem('DU LỊCH CÙNG BAOTHE.VN', [const Color(0xFFB4936A), const Color(0xFFD4AF37)]),
-                  ],
+        // Sử dụng AspectRatio thay vì height cố định để đảm bảo ảnh không bị cắt
+        child: AspectRatio(
+          aspectRatio: 1400 / 500,
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10))],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: PageView(
+                    controller: _pageController,
+                    onPageChanged: (index) => _currentPage = index,
+                    children: [
+                      _buildSliderItem('assets/web/slider1.png'),
+                      _buildSliderItem('assets/web/slider2.png'),
+                      _buildSliderItem('assets/web/slider3.png'),
+                      _buildSliderItem('assets/web/slider4.png'),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              left: 20, top: 0, bottom: 0,
-              child: Center(child: _buildSliderButton(icon: Icons.arrow_back_ios_new, onTap: () => _pageController.previousPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut))),
-            ),
-            Positioned(
-              right: 20, top: 0, bottom: 0,
-              child: Center(child: _buildSliderButton(icon: Icons.arrow_forward_ios, onTap: () => _pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut))),
-            ),
-          ],
+              Positioned(
+                left: 20, top: 0, bottom: 0,
+                child: Center(child: _buildSliderButton(icon: Icons.arrow_back_ios_new, onTap: () => _pageController.previousPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut))),
+              ),
+              Positioned(
+                right: 20, top: 0, bottom: 0,
+                child: Center(child: _buildSliderButton(icon: Icons.arrow_forward_ios, onTap: () => _pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut))),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -285,58 +288,49 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildSliderItem(String title, List<Color> colors) {
+  Widget _buildSliderItem(String assetPath) {
+    return Image.asset(
+      assetPath,
+      fit: BoxFit.contain, // Đảm bảo hiện hết toàn bộ ảnh
+      width: double.infinity,
+    );
+  }
+
+  Widget _buildSecondaryBanner() {
     return Container(
+      width: double.infinity, 
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: colors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        borderRadius: BorderRadius.circular(24),
       ),
-      child: Center(
-        child: Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 2,
-            shadows: [
-              Shadow(color: Colors.black26, offset: Offset(0, 2), blurRadius: 10),
-            ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: AspectRatio(
+          aspectRatio: 1400 / 300, 
+          child: Image.asset(
+            'assets/web/banner_mid.png',
+            fit: BoxFit.contain, // Đổi sang contain để không bị cắt
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSecondaryBanner() {
-    return Container(
-      width: double.infinity, height: 200,
-      decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFF4A3728), Color(0xFF8B5E34)]), borderRadius: BorderRadius.circular(24)),
-      child: const Center(child: Text('KHÁM PHÁ 5 CHÂU - KHÔNG LO ÂU PHÍ', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold))),
-    );
-  }
-
   Widget _buildBottomBanner() {
     return Container(
-      width: double.infinity, height: 200,
-      decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(24), boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.2), blurRadius: 20, offset: const Offset(0, 10))]),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.security, size: 50, color: Color(0xFFD4AF37)),
-          const SizedBox(width: 30),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('BẢO MẬT TUYỆT ĐỐI', style: AppStyles.h2.copyWith(fontSize: 24, color: Colors.white, letterSpacing: 1.5)),
-              const SizedBox(height: 8),
-              Text('An tâm quản lý thẻ cùng hệ thống baothe.vn', style: AppStyles.bodyMedium.copyWith(color: Colors.white70)),
-            ],
-          )
-        ],
+      width: double.infinity, 
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10))],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: AspectRatio(
+          aspectRatio: 1400 / 250, 
+          child: Image.asset(
+            'assets/web/banner_bottom.png',
+            fit: BoxFit.contain, // Đổi sang contain để không bị cắt
+          ),
+        ),
       ),
     );
   }
