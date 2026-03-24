@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/firestore_service.dart';
 import '../comparison/comparison_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../favorites/favorites_provider.dart';
 
 class CardDetailScreen extends ConsumerStatefulWidget {
   final String cardId;
@@ -36,6 +37,27 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.primary),
           onPressed: () => context.go('/'),
         ),
+        actions: [
+          cardAsync.when(
+            data: (card) {
+              if (card == null) return const SizedBox.shrink();
+              final favorites = ref.watch(favoritesProvider);
+              final isFavorite = favorites.contains(card.id);
+              return IconButton(
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavorite ? Colors.red : AppColors.primary,
+                ),
+                onPressed: () {
+                  ref.read(favoritesProvider.notifier).toggleFavorite(card.id);
+                },
+              );
+            },
+            loading: () => const SizedBox.shrink(),
+            error: (_, __) => const SizedBox.shrink(),
+          ),
+          const SizedBox(width: 10),
+        ],
       ),
       body: cardAsync.when(
         data: (card) {
@@ -260,7 +282,7 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               elevation: 0,
             ),
-            child: Text('Mở thẻ ngay tại VCB', style: AppStyles.buttonText),
+            child: Text('Mở thẻ ngay tại ${card.bankName}', style: AppStyles.buttonText),
           ),
         ),
         const SizedBox(height: 16),

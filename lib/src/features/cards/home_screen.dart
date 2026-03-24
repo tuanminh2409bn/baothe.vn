@@ -12,12 +12,15 @@ import '../../models/credit_card_model.dart';
 import '../../services/firestore_service.dart';
 import '../../services/auth_service.dart';
 import '../comparison/comparison_provider.dart';
+import '../favorites/favorites_provider.dart';
 
 // Quản lý trạng thái tìm kiếm
 final selectedBankProvider = StateProvider<String?>((ref) => null);
 final selectedCategoryProvider = StateProvider<String?>((ref) => null);
 final searchQueryProvider = StateProvider<String>((ref) => '');
 final displayLimitProvider = StateProvider<int>((ref) => 6);
+final selectedTierProvider = StateProvider<String?>((ref) => null);
+final selectedTypeProvider = StateProvider<String?>((ref) => null);
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -82,6 +85,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final selectedBank = ref.watch(selectedBankProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
+    final selectedTier = ref.watch(selectedTierProvider);
+    final selectedType = ref.watch(selectedTypeProvider);
     final searchQuery = ref.watch(searchQueryProvider);
     final displayLimit = ref.watch(displayLimitProvider);
     
@@ -144,14 +149,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Center(
                       child: Container(
                         constraints: const BoxConstraints(maxWidth: 1000),
-                        child: AppSearchBar(
-                          controller: _searchController,
-                          onSearch: (value) {
-                            ref.read(selectedCategoryProvider.notifier).state = null; // Xóa danh mục khi gõ tìm kiếm
-                            ref.read(selectedBankProvider.notifier).state = null; // Xóa ngân hàng khi gõ tìm kiếm mới
-                            ref.read(searchQueryProvider.notifier).state = value;
-                          },
-                          onSearchPressed: () {},
+                        child: Column(
+                          children: [
+                            AppSearchBar(
+                              controller: _searchController,
+                              onSearch: (value) {
+                                ref.read(selectedCategoryProvider.notifier).state = null; // Xóa danh mục khi gõ tìm kiếm
+                                ref.read(selectedBankProvider.notifier).state = null; // Xóa ngân hàng khi gõ tìm kiếm mới
+                                ref.read(searchQueryProvider.notifier).state = value;
+                              },
+                              onSearchPressed: () {},
+                            ),
+                            const SizedBox(height: 20),
+                            _buildAdvancedFilterChips(ref),
+                          ],
                         ),
                       ),
                     ),
@@ -161,16 +172,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     
                     const SizedBox(height: 80),
 
-                    // KHU VỰC KẾT QUẢ A: TÌM KIẾM HOẶC CHỌN NGÂN HÀNG
-                    if (searchQuery.isNotEmpty || selectedBank != null)
+                    // KHU VỰC KẾT QUẢ A: TÌM KIẾM HOẶC CHỌN NGÂN HÀNG/HẠNG THẺ/LOẠI THẺ
+                    if (searchQuery.isNotEmpty || selectedBank != null || selectedTier != null || selectedType != null)
                       _buildResultsSection(
                         cardsAsync, 
-                        selectedBank != null ? 'Thẻ ngân hàng $selectedBank' : 'Kết quả tìm kiếm cho "$searchQuery"', 
+                        _getResultsTitle(selectedBank, selectedTier, selectedType, searchQuery), 
                         selectedBank, 
                         searchQuery, 
+                        selectedTier,
+                        selectedType,
                         displayLimit,
                         onClear: () {
                           ref.read(selectedBankProvider.notifier).state = null;
+                          ref.read(selectedTierProvider.notifier).state = null;
+                          ref.read(selectedTypeProvider.notifier).state = null;
                           ref.read(searchQueryProvider.notifier).state = '';
                           _searchController.clear();
                         }
@@ -217,6 +232,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         'Ưu đãi cho dịch vụ: $selectedCategory', 
                         null, 
                         selectedCategory, 
+                        null, // tierFilter
+                        null, // typeFilter
                         displayLimit,
                         onClear: () => ref.read(selectedCategoryProvider.notifier).state = null
                       ),
@@ -535,6 +552,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildCreditCardItem(CreditCard card) {
+    final favorites = ref.watch(favoritesProvider);
+    final isFavorite = favorites.contains(card.id);
+
     return AnimatedHover(
       scale: 1.03,
       child: InkWell(
@@ -566,32 +586,49 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     color: Color(0xFFF7F3EE),
                     borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                   ),
-                  child: Center(
-                    child: Hero(
-                      tag: card.id,
-                      child: card.imagePath.startsWith('http')
-                          ? Image.network(
-                              card.imagePath,
-                              fit: BoxFit.contain,
-                              loadingBuilder: (context, child, loadingProgress) =>
-                                  loadingProgress == null
-                                      ? child
-                                      : const Center(
-                                          child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              color: AppColors.accentOrange)),
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.credit_card,
-                                      color: AppColors.textLight, size: 60),
-                            )
-                          : Image.asset(
-                              card.imagePath,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.credit_card,
-                                      color: AppColors.textLight, size: 60),
-                            ),
-                    ),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: Hero(
+                          tag: card.id,
+                          child: card.imagePath.startsWith('http')
+                              ? Image.network(
+                                  card.imagePath,
+                                  fit: BoxFit.contain,
+                                  loadingBuilder: (context, child, loadingProgress) =>
+                                      loadingProgress == null
+                                          ? child
+                                          : const Center(
+                                              child: CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                  color: AppColors.accentOrange)),
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      const Icon(Icons.credit_card,
+                                          color: AppColors.textLight, size: 60),
+                                )
+                              : Image.asset(
+                                  card.imagePath,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      const Icon(Icons.credit_card,
+                                          color: AppColors.textLight, size: 60),
+                                ),
+                        ),
+                      ),
+                      Positioned(
+                        top: -10,
+                        right: -10,
+                        child: IconButton(
+                          icon: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite ? Colors.red : AppColors.textLight,
+                          ),
+                          onPressed: () {
+                            ref.read(favoritesProvider.notifier).toggleFavorite(card.id);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -818,9 +855,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ref.read(searchQueryProvider.notifier).state = '';
             _searchController.clear();
           } else if (label == 'ĐÃ LƯU') {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Tính năng yêu thích đang được phát triển')),
-            );
+            ref.read(selectedBankProvider.notifier).state = null;
+            ref.read(searchQueryProvider.notifier).state = '';
+            _searchController.clear();
+            ref.read(selectedCategoryProvider.notifier).state = label;
           } else {
             ref.read(selectedBankProvider.notifier).state = null;
             ref.read(searchQueryProvider.notifier).state = '';
@@ -884,44 +922,152 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildResultsSection(AsyncValue<List<CreditCard>> cardsAsync, String title, String? bankFilter, String? queryFilter, int limit, {required VoidCallback onClear}) {
+  String _getResultsTitle(String? bank, String? tier, String? type, String search) {
+    List<String> parts = [];
+    if (bank != null) parts.add('Ngân hàng: $bank');
+    if (tier != null) parts.add('Hạng: $tier');
+    if (type != null) parts.add('Loại: $type');
+    if (search.isNotEmpty) parts.add('Tìm kiếm: "$search"');
+    
+    if (parts.isEmpty) return 'Tất cả thẻ';
+    return 'Kết quả cho: ${parts.join(' | ')}';
+  }
+
+  Widget _buildAdvancedFilterChips(WidgetRef ref) {
+    final selectedTier = ref.watch(selectedTierProvider);
+    final selectedType = ref.watch(selectedTypeProvider);
+    
+    final tiers = ['Platinum', 'Signature', 'Infinite', 'Gold', 'Classic'];
+    final types = ['Visa', 'Mastercard', 'JCB', 'Napas'];
+
+    return Column(
+      children: [
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Hạng thẻ: ', style: AppStyles.labelSmall.copyWith(fontWeight: FontWeight.bold)),
+              const SizedBox(width: 8),
+              ...tiers.map((tier) => _buildFilterChip(
+                tier, 
+                selectedTier == tier, 
+                () {
+                  final notifier = ref.read(selectedTierProvider.notifier);
+                  notifier.state = (notifier.state == tier) ? null : tier;
+                  if (notifier.state != null) {
+                    ref.read(selectedCategoryProvider.notifier).state = null;
+                  }
+                }
+              )),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Loại thẻ: ', style: AppStyles.labelSmall.copyWith(fontWeight: FontWeight.bold)),
+              const SizedBox(width: 8),
+              ...types.map((type) => _buildFilterChip(
+                type, 
+                selectedType == type, 
+                () {
+                  final notifier = ref.read(selectedTypeProvider.notifier);
+                  notifier.state = (notifier.state == type) ? null : type;
+                  if (notifier.state != null) {
+                    ref.read(selectedCategoryProvider.notifier).state = null;
+                  }
+                }
+              )),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterChip(String label, bool isSelected, VoidCallback onTap) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: FilterChip(
+        label: Text(label),
+        selected: isSelected,
+        onSelected: (_) => onTap(),
+        selectedColor: AppColors.primary.withValues(alpha: 0.2),
+        checkmarkColor: AppColors.primary,
+        labelStyle: TextStyle(
+          color: isSelected ? AppColors.primary : AppColors.textPrimary,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          fontSize: 12,
+        ),
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: isSelected ? AppColors.primary : AppColors.border),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResultsSection(AsyncValue<List<CreditCard>> cardsAsync, String title, String? bankFilter, String? queryFilter, String? tierFilter, String? typeFilter, int limit, {required VoidCallback onClear}) {
+    final favorites = ref.watch(favoritesProvider);
+    
     return cardsAsync.when(
       data: (cards) {
         final List<CreditCard> filteredCards = cards.where((card) {
-          // Lọc theo Ngân hàng hoặc Loại thẻ (Visa/Mastercard...)
+          // Xử lý danh mục "ĐÃ LƯU"
+          if (queryFilter == 'ĐÃ LƯU') {
+            return favorites.contains(card.id);
+          }
+
           final String q = (queryFilter ?? '').toLowerCase();
           final String b = (bankFilter ?? '').toLowerCase();
+          final String t = (tierFilter ?? '').toLowerCase();
+          final String tp = (typeFilter ?? '').toLowerCase();
           
-          bool matchesBank = false;
+          bool matchesBank = true;
           if (b.isNotEmpty) {
-            // Danh sách các từ khóa loại thẻ
             final cardTypes = {'visa', 'mastercard', 'jcb', 'vietqr', 'napas', 'unionpay', 'samsung pay', 'apple pay', 'google pay', 'qr bank'};
             if (cardTypes.contains(b)) {
               matchesBank = card.name.toLowerCase().contains(b) || (card.cardType?.toLowerCase().contains(b) ?? false);
             } else {
               matchesBank = card.bankName.toLowerCase().contains(b);
             }
-          } else {
-            matchesBank = true;
+          }
+
+          bool matchesTier = true;
+          if (t.isNotEmpty) {
+            matchesTier = card.cardTier?.toLowerCase().contains(t) ?? false || 
+                          card.name.toLowerCase().contains(t);
+          }
+
+          bool matchesType = true;
+          if (tp.isNotEmpty) {
+            matchesType = card.cardType?.toLowerCase().contains(tp) ?? false || 
+                          card.name.toLowerCase().contains(tp);
           }
           
-          if (q.isEmpty) return matchesBank;
+          bool matchesSearch = true;
+          if (q.isNotEmpty) {
+            matchesSearch = card.name.toLowerCase().contains(q) || 
+                card.bankName.toLowerCase().contains(q) ||
+                card.cashbackHighlight.toLowerCase().contains(q);
+            
+            if (!matchesSearch) {
+              matchesSearch = card.details.any((d) => d.toLowerCase().contains(q));
+            }
 
-          bool matchesSearch = card.name.toLowerCase().contains(q) || 
-              card.bankName.toLowerCase().contains(q) ||
-              card.cashbackHighlight.toLowerCase().contains(q);
-          
-          if (!matchesSearch) {
-            matchesSearch = card.details.any((d) => d.toLowerCase().contains(q));
+            if (!matchesSearch && card.benefitsDetail != null) {
+              matchesSearch = card.benefitsDetail!.any((benefit) => 
+                  (benefit['title']?.toLowerCase().contains(q) ?? false) || 
+                  (benefit['content']?.toLowerCase().contains(q) ?? false));
+            }
           }
 
-          if (!matchesSearch && card.benefitsDetail != null) {
-            matchesSearch = card.benefitsDetail!.any((benefit) => 
-                (benefit['title']?.toLowerCase().contains(q) ?? false) || 
-                (benefit['content']?.toLowerCase().contains(q) ?? false));
-          }
-
-          return matchesBank && matchesSearch;
+          return matchesBank && matchesTier && matchesType && matchesSearch;
         }).toList();
 
         if (filteredCards.isEmpty) {
