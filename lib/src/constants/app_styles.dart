@@ -57,6 +57,18 @@ class AppStyles {
         color: AppColors.textPrimary,
       );
 
+  static TextStyle get h3 => GoogleFonts.roboto(
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        color: AppColors.textPrimary,
+      );
+
+  static TextStyle get h4 => GoogleFonts.roboto(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textPrimary,
+      );
+
   static TextStyle get bodyMedium => GoogleFonts.roboto(
         fontSize: 16,
         color: AppColors.textPrimary,

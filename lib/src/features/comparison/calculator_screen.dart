@@ -8,7 +8,6 @@ import '../../constants/app_styles.dart';
 import '../../common_widgets/animated_hover.dart';
 import '../../models/credit_card_model.dart';
 import '../../services/firestore_service.dart';
-import 'comparison_provider.dart';
 
 // Bộ định dạng phân tách phần nghìn khi nhập liệu
 class ThousandsSeparatorInputFormatter extends TextInputFormatter {
