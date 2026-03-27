@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'firebase_options.dart';
 import 'src/constants/app_styles.dart';
 import 'src/features/cards/home_screen.dart';
@@ -9,19 +10,18 @@ import 'src/features/cards/card_detail_screen.dart';
 import 'src/features/comparison/calculator_screen.dart';
 import 'src/features/comparison/comparison_screen.dart';
 import 'src/features/auth/login_screen.dart';
+import 'src/mobile/app_mobile.dart';
 
 void main() async {
-  // Đảm bảo các dịch vụ của Flutter được khởi tạo trước khi gọi Firebase
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Khởi tạo Firebase với cấu hình tự động từ flutterfire CLI
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   
   runApp(
-    const ProviderScope(
-      child: MyApp(),
+    ProviderScope(
+      child: kIsWeb ? const MyApp() : const AppMobile(),
     ),
   );
 }
