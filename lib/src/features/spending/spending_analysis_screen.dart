@@ -107,7 +107,7 @@ class SpendingAnalysisScreen extends ConsumerWidget {
           ),
           const SizedBox(width: 12),
           Expanded(child: Text(category, style: AppStyles.bodyMedium)),
-          Text(percent + '%', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
+          Text('$percent%', style: const TextStyle(color: AppColors.textLight, fontSize: 12)),
           const SizedBox(width: 16),
           Text(currencyFormat.format(amount), style: const TextStyle(fontWeight: FontWeight.bold)),
         ],

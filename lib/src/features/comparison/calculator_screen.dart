@@ -93,7 +93,11 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      if (_currentPage < 3) _currentPage++; else _currentPage = 0;
+      if (_currentPage < 3) {
+        _currentPage++;
+      } else {
+        _currentPage = 0;
+      }
       if (_pageController.hasClients) {
         _pageController.animateToPage(_currentPage, duration: const Duration(milliseconds: 1000), curve: Curves.easeInOut);
       }
@@ -104,7 +108,9 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
   void dispose() {
     _timer?.cancel();
     _pageController.dispose();
-    for (var controller in _controllers.values) controller.dispose();
+    for (var controller in _controllers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -136,7 +142,9 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
         bool isMatch = false;
         String fullInfo = (card.name + card.cashbackHighlight + card.details.join(' ')).toLowerCase();
         if (card.benefitsDetail != null) {
-          for (var b in card.benefitsDetail!) fullInfo += (b['title'] ?? '') + (b['content'] ?? '');
+          for (var b in card.benefitsDetail!) {
+            fullInfo += (b['title'] ?? '') + (b['content'] ?? '');
+          }
         }
 
         for (var kw in keywords) {
@@ -316,7 +324,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
           final card = entry.value['card'] as CreditCard;
           final cashback = entry.value['totalCashback'] as double;
           final matched = entry.value['matchedCategories'] as List<String>;
-          return Padding(padding: const EdgeInsets.only(bottom: 15), child: _buildRealResultCard('#${entry.key + 1}', card, matched.join(', '), currencyFormatter.format(cashback.toInt()) + 'đ'));
+          return Padding(padding: const EdgeInsets.only(bottom: 15), child: _buildRealResultCard('#${entry.key + 1}', card, matched.join(', '), '${currencyFormatter.format(cashback.toInt())}đ'));
         }),
       ],
     );

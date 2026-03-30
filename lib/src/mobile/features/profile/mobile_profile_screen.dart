@@ -74,7 +74,7 @@ class MobileProfileScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 24),
-          SafeArea(top: false, child: const SizedBox.shrink()),
+          const SafeArea(top: false, child: SizedBox.shrink()),
         ],
       ),
     );

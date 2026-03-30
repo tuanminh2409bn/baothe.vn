@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart' hide Transaction;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/credit_card_model.dart';
 import '../models/user_card_model.dart';
@@ -6,6 +7,31 @@ import '../models/transaction_model.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+
+  // --- USERS ---
+  
+  // Lưu thông tin user
+  Future<void> saveUser(User user, {String? name}) async {
+    final userDoc = _db.collection('users').doc(user.uid);
+    final snapshot = await userDoc.get();
+    
+    if (!snapshot.exists) {
+      await userDoc.set({
+        'uid': user.uid,
+        'email': user.email,
+        'displayName': name ?? user.displayName,
+        'photoURL': user.photoURL,
+        'createdAt': FieldValue.serverTimestamp(),
+        'lastLoginAt': FieldValue.serverTimestamp(),
+      });
+    } else {
+      await userDoc.update({
+        'lastLoginAt': FieldValue.serverTimestamp(),
+        if (name != null || user.displayName != null) 'displayName': name ?? user.displayName,
+        if (user.photoURL != null) 'photoURL': user.photoURL,
+      });
+    }
+  }
 
   // --- PUBLIC CARDS (Scraped) ---
   

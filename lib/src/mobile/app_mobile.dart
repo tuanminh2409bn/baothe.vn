@@ -5,42 +5,103 @@ import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_styles.dart';
 import 'features/home/mobile_home_screen.dart';
 import 'features/auth/mobile_login_screen.dart';
+import 'features/auth/mobile_register_screen.dart';
 import 'features/wallet/mobile_wallet_screen.dart';
 import 'features/wallet/mobile_add_card_screen.dart';
 import 'features/reports/mobile_reports_screen.dart';
 import 'features/calendar/mobile_calendar_screen.dart';
 import 'features/profile/mobile_profile_screen.dart';
+import 'features/transactions/mobile_add_transaction_screen.dart';
+import 'features/wallet/mobile_card_detail_screen.dart';
+import '../models/user_card_model.dart';
+
+import 'mobile_main_layout.dart';
+
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _shellNavigatorHomeKey = GlobalKey<NavigatorState>(debugLabel: 'shellHome');
+final _shellNavigatorWalletKey = GlobalKey<NavigatorState>(debugLabel: 'shellWallet');
+final _shellNavigatorCalendarKey = GlobalKey<NavigatorState>(debugLabel: 'shellCalendar');
+final _shellNavigatorProfileKey = GlobalKey<NavigatorState>(debugLabel: 'shellProfile');
 
 final _mobileRouter = GoRouter(
+  navigatorKey: _rootNavigatorKey,
   initialLocation: '/login',
   routes: [
     GoRoute(
       path: '/login',
+      parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const MobileLoginScreen(),
     ),
     GoRoute(
-      path: '/',
-      builder: (context, state) => const MobileHomeScreen(),
-    ),
-    GoRoute(
-      path: '/wallet',
-      builder: (context, state) => const MobileWalletScreen(),
+      path: '/register',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const MobileRegisterScreen(),
     ),
     GoRoute(
       path: '/add-card',
+      parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const MobileAddCardScreen(),
     ),
     GoRoute(
+      path: '/add-transaction',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const MobileAddTransactionScreen(),
+    ),
+    GoRoute(
+      path: '/card-detail',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final userCard = state.extra as UserCard;
+        return MobileCardDetailScreen(userCard: userCard);
+      },
+    ),
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        return MobileMainLayout(navigationShell: navigationShell);
+      },
+      branches: [
+        StatefulShellBranch(
+          navigatorKey: _shellNavigatorHomeKey,
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (context, state) => const MobileHomeScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _shellNavigatorWalletKey,
+          routes: [
+            GoRoute(
+              path: '/wallet',
+              builder: (context, state) => const MobileWalletScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _shellNavigatorCalendarKey,
+          routes: [
+            GoRoute(
+              path: '/calendar',
+              builder: (context, state) => const MobileCalendarScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _shellNavigatorProfileKey,
+          routes: [
+            GoRoute(
+              path: '/profile',
+              builder: (context, state) => const MobileProfileScreen(),
+            ),
+          ],
+        ),
+      ],
+    ),
+    GoRoute(
       path: '/reports',
+      parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const MobileReportsScreen(),
-    ),
-    GoRoute(
-      path: '/calendar',
-      builder: (context, state) => const MobileCalendarScreen(),
-    ),
-    GoRoute(
-      path: '/profile',
-      builder: (context, state) => const MobileProfileScreen(),
     ),
   ],
 );

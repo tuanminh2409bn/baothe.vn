@@ -48,10 +48,6 @@ class MobileWalletScreen extends ConsumerWidget {
           color: AppColors.textPrimary,
         ),
       ),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
       actions: [
         IconButton(
           icon: const Icon(Icons.more_horiz_rounded),
@@ -183,16 +179,18 @@ class MobileWalletScreen extends ConsumerWidget {
   Widget _buildCardListItem(BuildContext context, UserCard card, NumberFormat format, int index) {
     final usagePercent = card.limit > 0 ? (card.balance / card.limit).clamp(0.0, 1.0) : 0.0;
     
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
-      ),
-      child: Column(
-        children: [
+    return GestureDetector(
+      onTap: () => context.push('/card-detail', extra: card),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: const Color(0xFFF3F4F6)),
+        ),
+        child: Column(
+          children: [
           Row(
             children: [
               Container(
@@ -258,7 +256,7 @@ class MobileWalletScreen extends ConsumerWidget {
           ),
         ],
       ),
-    ).animate().fadeIn(delay: (index * 100).ms).slideX(begin: 0.05);
+    )).animate().fadeIn(delay: (index * 100).ms).slideX(begin: 0.05);
   }
 
   Widget _buildEmptyState() {

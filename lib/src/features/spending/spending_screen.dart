@@ -138,7 +138,7 @@ class SpendingScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Dùng thẻ: ${tx.cardName}', style: const TextStyle(fontSize: 11)),
-            Text(dateFormat.format(tx.timestamp), style: TextStyle(fontSize: 10, color: AppColors.textLight)),
+            Text(dateFormat.format(tx.timestamp), style: const TextStyle(fontSize: 10, color: AppColors.textLight)),
           ],
         ),
         trailing: Text(

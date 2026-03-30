@@ -377,7 +377,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
           ),
-        )).toList(),
+        )),
       ],
     );
   }
@@ -545,7 +545,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         int crossAxisCount = 3;
-        if (constraints.maxWidth < 700) crossAxisCount = 1; else if (constraints.maxWidth < 1100) crossAxisCount = 2;
+        if (constraints.maxWidth < 700) {
+          crossAxisCount = 1;
+        } else if (constraints.maxWidth < 1100) {
+          crossAxisCount = 2;
+        }
         return GridView.builder(shrinkWrap: true, padding: const EdgeInsets.symmetric(vertical: 20), physics: const NeverScrollableScrollPhysics(), gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: crossAxisCount, childAspectRatio: 0.82, crossAxisSpacing: 30, mainAxisSpacing: 30), itemCount: cards.length, itemBuilder: (context, index) => _buildCreditCardItem(cards[index]));
       },
     );
@@ -817,8 +821,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         LayoutBuilder(
           builder: (context, constraints) {
             int crossAxisCount = 7; // Tăng lên 7 để trông thanh thoát hơn trên web
-            if (constraints.maxWidth < 600) crossAxisCount = 2; 
-            else if (constraints.maxWidth < 1000) crossAxisCount = 4;
+            if (constraints.maxWidth < 600) {
+              crossAxisCount = 2;
+            } else if (constraints.maxWidth < 1000) {
+              crossAxisCount = 4;
+            }
             
             return GridView.builder(
               shrinkWrap: true, 
@@ -1071,8 +1078,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         }).toList();
 
         if (filteredCards.isEmpty) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 40),
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 40),
             child: Center(child: Text('Không tìm thấy thẻ phù hợp.', style: TextStyle(color: AppColors.textSecondary, fontSize: 16))),
           );
         }

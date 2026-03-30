@@ -8,6 +8,7 @@ import '../../../constants/app_styles.dart';
 import '../../../services/firestore_service.dart';
 import '../../../services/auth_service.dart';
 import '../../../models/transaction_model.dart';
+import '../../../models/user_card_model.dart';
 
 class MobileReportsScreen extends ConsumerWidget {
   const MobileReportsScreen({super.key});
@@ -18,6 +19,10 @@ class MobileReportsScreen extends ConsumerWidget {
     final transactionsAsync = user != null 
         ? ref.watch(transactionsStreamProvider(user.uid))
         : const AsyncValue<List<Transaction>>.data([]);
+    
+    final userCardsAsync = user != null 
+        ? ref.watch(userCardsStreamProvider(user.uid))
+        : const AsyncValue<List<UserCard>>.data([]);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
@@ -35,15 +40,18 @@ class MobileReportsScreen extends ConsumerWidget {
         ),
       ),
       body: transactionsAsync.when(
-        data: (txs) => _buildBody(context, txs),
+        data: (txs) {
+          final cards = userCardsAsync.valueOrNull ?? [];
+          return _buildBody(context, txs, cards);
+        },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, st) => Center(child: Text('Lỗi: $e')),
       ),
     );
   }
 
-  Widget _buildBody(BuildContext context, List<Transaction> txs) {
-    final bool isMock = txs.isEmpty;
+  Widget _buildBody(BuildContext context, List<Transaction> txs, List<UserCard> cards) {
+    final bool isMock = txs.isEmpty && cards.isEmpty;
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
     
     // Dữ liệu mẫu đẳng cấp
@@ -57,6 +65,31 @@ class MobileReportsScreen extends ConsumerWidget {
             'Khác': 1850000.0,
           }
         : _processCategoryData(txs);
+
+    if (txs.isEmpty && !isMock) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(40),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.analytics_outlined, size: 60, color: Colors.grey.shade300),
+              const SizedBox(height: 16),
+              Text(
+                'Chưa có dữ liệu chi tiêu',
+                style: GoogleFonts.inter(fontSize: 18, color: AppColors.textSecondary, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Thêm giao dịch mới tại trang Chủ để xem báo cáo',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(color: AppColors.textLight),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),

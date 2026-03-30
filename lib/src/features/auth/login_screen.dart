@@ -119,7 +119,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () => context.go('/'),
-                  child: Text('Về trang chủ', style: TextStyle(color: AppColors.textLight)),
+                  child: const Text('Về trang chủ', style: TextStyle(color: AppColors.textLight)),
                 ),
               ],
             ),

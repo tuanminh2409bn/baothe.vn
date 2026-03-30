@@ -10,6 +10,7 @@ import '../../../constants/app_styles.dart';
 import '../../../services/firestore_service.dart';
 import '../../../services/auth_service.dart';
 import '../../../models/user_card_model.dart';
+import '../../../models/transaction_model.dart';
 
 class MobileHomeScreen extends ConsumerStatefulWidget {
   const MobileHomeScreen({super.key});
@@ -27,6 +28,10 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
     final userCardsAsync = user != null 
         ? ref.watch(userCardsStreamProvider(user.uid))
         : const AsyncValue<List<UserCard>>.data([]);
+    
+    final transactionsAsync = user != null
+        ? ref.watch(transactionsStreamProvider(user.uid))
+        : const AsyncValue<List<Transaction>>.data([]);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
@@ -41,16 +46,13 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
             const SizedBox(height: 20),
             _buildCreditCardSlider(userCardsAsync),
             const SizedBox(height: 30),
-            _buildQuickActions(),
+            _buildQuickActions(userCardsAsync),
             const SizedBox(height: 30),
-            _buildRecentTransactions(),
+            _buildRecentTransactions(transactionsAsync, userCardsAsync),
             const SizedBox(height: 100),
           ],
         ),
       ),
-      floatingActionButton: _buildAddFab(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
@@ -341,7 +343,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
     ).animate().scale(delay: (index * 100).ms);
   }
 
-  Widget _buildQuickActions() {
+  Widget _buildQuickActions(AsyncValue<List<UserCard>> cardsAsync) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
@@ -353,7 +355,20 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
             color: const Color(0xFFEFF6FF), 
             iconColor: Colors.blue,
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tính năng thêm giao dịch đang phát triển')));
+              cardsAsync.maybeWhen(
+                data: (cards) {
+                  if (cards.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Vui lòng thêm thẻ (ví thật) trước khi thêm chi tiêu.'))
+                    );
+                  } else {
+                    context.push('/add-transaction');
+                  }
+                },
+                orElse: () => ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Vui lòng thử lại sau.'))
+                ),
+              );
             },
           ),
           _QuickActionButton(
@@ -400,7 +415,10 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
     );
   }
 
-  Widget _buildRecentTransactions() {
+  Widget _buildRecentTransactions(
+    AsyncValue<List<Transaction>> txAsync, 
+    AsyncValue<List<UserCard>> cardsAsync
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -414,54 +432,70 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
             ],
           ),
           const SizedBox(height: 10),
-          const _TransactionItem(
-            icon: Icons.shopping_bag_outlined,
-            title: 'Giao dịch mẫu',
-            subtitle: 'Chưa có giao dịch thực tế',
-            amount: '0đ',
-            time: '---',
+          
+          txAsync.when(
+            data: (txs) {
+              final cardsData = cardsAsync.valueOrNull ?? [];
+              // Mock logic: nếu cả thẻ và giao dịch đều rỗng thì dùng Mock 
+              if (txs.isEmpty && cardsData.isEmpty) {
+                return const _TransactionItem(
+                  icon: Icons.shopping_bag_outlined,
+                  title: 'Giao dịch mẫu 1',
+                  subtitle: 'Shopee - Mua sắm',
+                  amount: '-150.000đ',
+                  time: 'Hôm nay',
+                  isPositive: false,
+                );
+              }
+              
+              if (txs.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Text('Chưa có giao dịch thực tế nào.', style: GoogleFonts.inter(color: AppColors.textLight)),
+                  ),
+                );
+              }
+
+              final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
+              
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: txs.length > 5 ? 5 : txs.length, // Lấy tối đa 5
+                itemBuilder: (context, index) {
+                  final tx = txs[index];
+                  // Determine icon based on category
+                  IconData catIcon;
+                  switch (tx.category) {
+                    case 'Mua sắm': catIcon = Icons.shopping_bag_outlined; break;
+                    case 'Ăn uống': catIcon = Icons.restaurant_rounded; break;
+                    case 'Di chuyển': catIcon = Icons.directions_car_filled_outlined; break;
+                    case 'Giải trí': catIcon = Icons.confirmation_number_outlined; break;
+                    case 'Hoá đơn': catIcon = Icons.receipt_long_outlined; break;
+                    default: catIcon = Icons.grid_view_rounded; break;
+                  }
+
+                  final dateFormat = DateFormat('dd/MM HH:mm');
+                  return _TransactionItem(
+                    icon: catIcon,
+                    title: tx.category,
+                    subtitle: tx.note.isNotEmpty ? tx.note : tx.cardName,
+                    amount: '-${currencyFormat.format(tx.amount)}',
+                    time: dateFormat.format(tx.timestamp),
+                    isPositive: false,
+                  );
+                },
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (_, __) => const Text('Lỗi tải giao dịch'),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildAddFab() {
-    return FloatingActionButton(
-      onPressed: () => context.push('/add-card'),
-      backgroundColor: AppColors.primary,
-      shape: const CircleBorder(),
-      child: const Icon(Icons.add, color: Colors.white, size: 30),
-    ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-     .shimmer(delay: 2000.ms, duration: 1500.ms, color: Colors.white24);
-  }
-
-  Widget _buildBottomNav() {
-    return BottomAppBar(
-      height: 70,
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 8,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          IconButton(icon: const Icon(Icons.home_filled, color: AppColors.primary), onPressed: () {}),
-          IconButton(
-            icon: const Icon(Icons.account_balance_wallet_outlined), 
-            onPressed: () => context.push('/wallet'),
-          ),
-          const SizedBox(width: 40),
-          IconButton(
-            icon: const Icon(Icons.calendar_today_outlined), 
-            onPressed: () => context.push('/calendar'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.person_outline_rounded), 
-            onPressed: () => context.push('/profile'),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _QuickActionButton extends StatelessWidget {
@@ -545,7 +579,7 @@ class _TransactionItem extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(amount, style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: AppColors.textPrimary)),
+              Text(amount, style: GoogleFonts.inter(fontWeight: FontWeight.w900, color: isPositive ? const Color(0xFF10B981) : AppColors.textPrimary)),
               Text(time, style: GoogleFonts.inter(color: AppColors.textLight, fontSize: 11)),
             ],
           ),

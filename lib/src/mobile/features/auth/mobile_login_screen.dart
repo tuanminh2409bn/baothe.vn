@@ -1,21 +1,92 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../constants/app_styles.dart';
+import '../../../services/auth_service.dart';
 
-class MobileLoginScreen extends StatefulWidget {
+class MobileLoginScreen extends ConsumerStatefulWidget {
   const MobileLoginScreen({super.key});
 
   @override
-  State<MobileLoginScreen> createState() => _MobileLoginScreenState();
+  ConsumerState<MobileLoginScreen> createState() => _MobileLoginScreenState();
 }
 
-class _MobileLoginScreenState extends State<MobileLoginScreen> {
+class _MobileLoginScreenState extends ConsumerState<MobileLoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+  }
+
+  Future<void> _handleLogin() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      _showError('Vui lòng nhập Email và Mật khẩu');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      final authService = ref.read(authServiceProvider);
+      await authService.signIn(email, password);
+      if (mounted) {
+        context.go('/');
+      }
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() => _isLoading = true);
+    try {
+      final authService = ref.read(authServiceProvider);
+      final cred = await authService.signInWithGoogle();
+      if (cred != null && mounted) {
+        context.go('/');
+      }
+    } catch (e) {
+      if (e.toString().toLowerCase().contains('canceled')) return;
+      _showError('Đăng nhập Google thất bại: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _handleAppleSignIn() async {
+    setState(() => _isLoading = true);
+    try {
+      final authService = ref.read(authServiceProvider);
+      final cred = await authService.signInWithApple();
+      if (cred != null && mounted) {
+        context.go('/');
+      }
+    } catch (e) {
+      if (e.toString().toLowerCase().contains('canceled')) return;
+      _showError('Đăng nhập Apple thất bại: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +158,7 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                   // Login Button
                   _buildPrimaryButton(
                     label: 'ĐĂNG NHẬP',
-                    onPressed: () => context.go('/'),
+                    onPressed: _isLoading ? null : _handleLogin,
                   ).animate().fadeIn(delay: 700.ms).scale(),
                   
                   const SizedBox(height: 32),
@@ -110,7 +181,7 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                   _SocialLoginButton(
                     customIcon: Image.asset('assets/logo/google_logo.png', height: 24),
                     label: 'Tiếp tục với Google',
-                    onPressed: () => context.go('/'),
+                    onPressed: _isLoading ? () {} : _handleGoogleSignIn,
                   ).animate().fadeIn(delay: 900.ms).slideY(begin: 0.1),
                   
                   if (isIOS) ...[
@@ -118,23 +189,45 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
                     _SocialLoginButton(
                       icon: FontAwesomeIcons.apple,
                       label: 'Tiếp tục với Apple',
-                      onPressed: () => context.go('/'),
+                      onPressed: _isLoading ? () {} : _handleAppleSignIn,
                     ).animate().fadeIn(delay: 1000.ms).slideY(begin: 0.1),
                   ],
                   
                   const SizedBox(height: 40),
                   
                   // Footer
-                  Text(
-                    'Bằng cách tiếp tục, bạn đồng ý với Điều khoản sử dụng',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(fontSize: 11, color: AppColors.textLight),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Chưa có tài khoản?',
+                        style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 14),
+                      ),
+                      TextButton(
+                        onPressed: () => context.push('/register'),
+                        child: Text(
+                          'Đăng ký ngay',
+                          style: GoogleFonts.inter(
+                            color: AppColors.primary,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ).animate().fadeIn(delay: 1100.ms),
                   const SizedBox(height: 20),
                 ],
               ),
             ),
           ),
+          if (_isLoading)
+            Container(
+              color: Colors.black.withValues(alpha: 0.3),
+              child: const Center(
+                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary)),
+              ),
+            ),
         ],
       ),
     );
@@ -174,7 +267,7 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
     );
   }
 
-  Widget _buildPrimaryButton({required String label, required VoidCallback onPressed}) {
+  Widget _buildPrimaryButton({required String label, required VoidCallback? onPressed}) {
     return SizedBox(
       width: double.infinity,
       height: 56,
@@ -182,6 +275,7 @@ class _MobileLoginScreenState extends State<MobileLoginScreen> {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
+          disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 2,
           shadowColor: AppColors.primary.withValues(alpha: 0.3),

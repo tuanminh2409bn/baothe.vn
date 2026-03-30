@@ -20,8 +20,8 @@ void main() async {
   );
   
   runApp(
-    ProviderScope(
-      child: kIsWeb ? const MyApp() : const AppMobile(),
+    const ProviderScope(
+      child: kIsWeb ? MyApp() : AppMobile(),
     ),
   );
 }
