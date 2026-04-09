@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/credit_card_model.dart';
 import '../models/user_card_model.dart';
 import '../models/transaction_model.dart';
+import 'auth_service.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -11,16 +12,31 @@ class FirestoreService {
   // --- USERS ---
   
   // Lưu thông tin user
-  Future<void> saveUser(User user, {String? name}) async {
+  Future<void> saveUser(User user, {String? name, String? email, String? photoUrl}) async {
     final userDoc = _db.collection('users').doc(user.uid);
     final snapshot = await userDoc.get();
+    
+    // Tìm email từ các provider nếu user.email bị null
+    String? finalEmail = email ?? user.email;
+    String? finalPhotoUrl = photoUrl ?? user.photoURL;
+
+    if (user.providerData.isNotEmpty) {
+      for (var providerInfo in user.providerData) {
+        if (finalEmail == null && providerInfo.email != null) {
+          finalEmail = providerInfo.email;
+        }
+        if (finalPhotoUrl == null && providerInfo.photoURL != null) {
+          finalPhotoUrl = providerInfo.photoURL;
+        }
+      }
+    }
     
     if (!snapshot.exists) {
       await userDoc.set({
         'uid': user.uid,
-        'email': user.email,
+        'email': finalEmail,
         'displayName': name ?? user.displayName,
-        'photoURL': user.photoURL,
+        'photoURL': finalPhotoUrl,
         'createdAt': FieldValue.serverTimestamp(),
         'lastLoginAt': FieldValue.serverTimestamp(),
       });
@@ -28,7 +44,8 @@ class FirestoreService {
       await userDoc.update({
         'lastLoginAt': FieldValue.serverTimestamp(),
         if (name != null || user.displayName != null) 'displayName': name ?? user.displayName,
-        if (user.photoURL != null) 'photoURL': user.photoURL,
+        if (finalEmail != null) 'email': finalEmail,
+        if (finalPhotoUrl != null) 'photoURL': finalPhotoUrl,
       });
     }
   }
@@ -116,11 +133,19 @@ final cardDetailProvider = FutureProvider.family<CreditCard?, String>((ref, id) 
 });
 
 // Provider cung cấp danh sách thẻ của user (Stream)
-final userCardsStreamProvider = StreamProvider.family<List<UserCard>, String>((ref, userId) {
+final userCardsStreamProvider = StreamProvider.autoDispose.family<List<UserCard>, String>((ref, userId) {
+  final user = ref.watch(authStateProvider).value;
+  if (user == null || user.uid != userId) {
+    return const Stream.empty();
+  }
   return ref.watch(firestoreServiceProvider).getUserCards(userId);
 });
 
 // Provider cung cấp danh sách giao dịch của user (Stream)
-final transactionsStreamProvider = StreamProvider.family<List<Transaction>, String>((ref, userId) {
+final transactionsStreamProvider = StreamProvider.autoDispose.family<List<Transaction>, String>((ref, userId) {
+  final user = ref.watch(authStateProvider).value;
+  if (user == null || user.uid != userId) {
+    return const Stream.empty();
+  }
   return ref.watch(firestoreServiceProvider).getTransactions(userId);
 });

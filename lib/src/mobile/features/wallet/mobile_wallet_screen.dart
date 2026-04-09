@@ -31,6 +31,7 @@ class MobileWalletScreen extends ConsumerWidget {
         error: (e, st) => Center(child: Text('Lỗi: $e')),
       ),
       floatingActionButton: _buildAddCardFab(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -286,20 +287,24 @@ class MobileWalletScreen extends ConsumerWidget {
   }
 
   Widget _buildAddCardFab(BuildContext context) {
-    return FloatingActionButton.extended(
-      onPressed: () => context.push('/add-card'),
-      backgroundColor: AppColors.primary,
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      label: Text(
-        'THÊM THẺ MỚI',
-        style: GoogleFonts.inter(
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1,
-          color: Colors.white,
+    return Padding(
+      // Đẩy nút lên cao hơn thanh menu bên dưới
+      padding: const EdgeInsets.only(bottom: 70),
+      child: FloatingActionButton.extended(
+        onPressed: () => context.push('/add-card'),
+        backgroundColor: AppColors.primary,
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        label: Text(
+          'THÊM THẺ MỚI',
+          style: GoogleFonts.inter(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+            color: Colors.white,
+          ),
         ),
+        icon: const Icon(Icons.add_rounded, color: Colors.white),
       ),
-      icon: const Icon(Icons.add_rounded, color: Colors.white),
     ).animate().slideY(begin: 0.1).fadeIn();
   }
 }

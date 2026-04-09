@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../constants/app_styles.dart';
@@ -7,6 +8,34 @@ import '../../../models/credit_card_model.dart';
 import '../../../models/user_card_model.dart';
 import '../../../services/auth_service.dart';
 import 'package:uuid/uuid.dart';
+
+/// TextInputFormatter tự động thêm dấu chấm phần nghìn
+class ThousandSeparatorFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Chỉ giữ lại số
+    final digitsOnly = newValue.text.replaceAll('.', '');
+    if (digitsOnly.isEmpty) return newValue.copyWith(text: '');
+
+    // Định dạng dấu chấm phần nghìn
+    final buffer = StringBuffer();
+    int count = 0;
+    for (int i = digitsOnly.length - 1; i >= 0; i--) {
+      if (count > 0 && count % 3 == 0) buffer.write('.');
+      buffer.write(digitsOnly[i]);
+      count++;
+    }
+    final formatted = buffer.toString().split('').reversed.join('');
+
+    return newValue.copyWith(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+}
 
 class MobileAddCardScreen extends ConsumerStatefulWidget {
   const MobileAddCardScreen({super.key});
@@ -23,6 +52,14 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
   int _statementDay = 20;
   int _dueDay = 5;
   String _searchQuery = "";
+
+  @override
+  void dispose() {
+    _limitController.dispose();
+    _balanceController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,23 +87,28 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
             _buildSectionTitle('1. Chọn loại thẻ'),
             const SizedBox(height: 12),
             _buildCardSelector(cardsAsync),
+
+            // --- Hiển thị ưu đãi sau khi chọn thẻ ---
+            if (_selectedTemplate != null) ...[
+              const SizedBox(height: 16),
+              _buildCardBenefitsPreview(_selectedTemplate!),
+            ],
+
             const SizedBox(height: 32),
             _buildSectionTitle('2. Thông tin hạn mức'),
             const SizedBox(height: 12),
-            _buildTextField(
+            _buildCurrencyField(
               controller: _limitController,
               label: 'Hạn mức thẻ',
               hint: 'Ví dụ: 50.000.000',
               icon: Icons.account_balance_wallet_outlined,
-              keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 16),
-            _buildTextField(
+            _buildCurrencyField(
               controller: _balanceController,
               label: 'Dư nợ hiện tại (nếu có)',
               hint: '0',
               icon: Icons.money_off_csred_outlined,
-              keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 32),
             _buildSectionTitle('3. Chu kỳ thanh toán'),
@@ -74,7 +116,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
             Row(
               children: [
                 Expanded(
-                  child: _buildNumberPicker(
+                  child: _buildDayPickerTile(
                     label: 'Ngày sao kê',
                     value: _statementDay,
                     onChanged: (v) => setState(() => _statementDay = v),
@@ -82,7 +124,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: _buildNumberPicker(
+                  child: _buildDayPickerTile(
                     label: 'Ngày đến hạn',
                     value: _dueDay,
                     onChanged: (v) => setState(() => _dueDay = v),
@@ -123,15 +165,16 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
         child: Row(
           children: [
             if (_selectedTemplate != null)
-              Image.network(_selectedTemplate!.imagePath, width: 24, height: 24, errorBuilder: (_, __, ___) => const Icon(Icons.credit_card))
+              Image.network(_selectedTemplate!.imagePath, width: 24, height: 24,
+                  errorBuilder: (_, __, ___) => const Icon(Icons.credit_card))
             else
               const Icon(Icons.search_rounded, color: AppColors.textLight),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                _selectedTemplate != null 
-                  ? '${_selectedTemplate!.bankName} - ${_selectedTemplate!.name}' 
-                  : 'Bấm để tìm và chọn loại thẻ',
+                _selectedTemplate != null
+                    ? '${_selectedTemplate!.bankName} - ${_selectedTemplate!.name}'
+                    : 'Bấm để tìm và chọn loại thẻ',
                 style: TextStyle(
                   color: _selectedTemplate != null ? AppColors.textPrimary : AppColors.textLight,
                   fontSize: 14,
@@ -141,6 +184,93 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
             const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textLight),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Widget xem trước ưu đãi thẻ sau khi chọn
+  Widget _buildCardBenefitsPreview(CreditCard card) {
+    final highlights = <Map<String, dynamic>>[];
+    if (card.cashbackHighlight.isNotEmpty) {
+      highlights.add({'icon': Icons.local_offer_rounded, 'color': Colors.orange, 'text': card.cashbackHighlight});
+    }
+    if (card.promoHighlight != null && card.promoHighlight!.isNotEmpty) {
+      highlights.add({'icon': Icons.star_rounded, 'color': Colors.purple, 'text': card.promoHighlight!});
+    }
+
+    if (highlights.isEmpty && (card.benefits == null || card.benefits!.isEmpty)) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.12)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.info_outline_rounded, size: 16, color: AppColors.primary),
+              const SizedBox(width: 6),
+              Text(
+                'Ưu đãi nổi bật của thẻ',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          for (final h in highlights) ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(h['icon'] as IconData, size: 14, color: (h['color'] as Color)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    h['text'] as String,
+                    style: GoogleFonts.inter(fontSize: 13, height: 1.4, color: AppColors.textPrimary),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+          ],
+          if (card.benefits != null && card.benefits!.isNotEmpty) ...[
+            const Divider(height: 12, color: Color(0xFFE8E2D9)),
+            ...card.benefits!.take(3).map(
+              (b) => Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.check_circle_rounded, size: 14, color: AppColors.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(b, style: GoogleFonts.inter(fontSize: 12, height: 1.4, color: AppColors.textSecondary)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            if (card.benefits!.length > 3)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  '+ ${card.benefits!.length - 3} quyền lợi khác...',
+                  style: GoogleFonts.inter(fontSize: 11, color: AppColors.textLight, fontStyle: FontStyle.italic),
+                ),
+              ),
+          ],
+        ],
       ),
     );
   }
@@ -178,8 +308,8 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                   Expanded(
                     child: cardsAsync.when(
                       data: (cards) {
-                        final filtered = cards.where((c) => 
-                          c.bankName.toLowerCase().contains(_searchQuery) || 
+                        final filtered = cards.where((c) =>
+                          c.bankName.toLowerCase().contains(_searchQuery) ||
                           c.name.toLowerCase().contains(_searchQuery)
                         ).toList();
                         return ListView.builder(
@@ -187,7 +317,8 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                           itemBuilder: (context, index) {
                             final card = filtered[index];
                             return ListTile(
-                              leading: Image.network(card.imagePath, width: 32, errorBuilder: (_, __, ___) => const Icon(Icons.credit_card)),
+                              leading: Image.network(card.imagePath, width: 32,
+                                  errorBuilder: (_, __, ___) => const Icon(Icons.credit_card)),
                               title: Text(card.name, style: const TextStyle(fontWeight: FontWeight.bold)),
                               subtitle: Text(card.bankName),
                               onTap: () {
@@ -211,12 +342,12 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
     );
   }
 
-  Widget _buildTextField({
+  /// Ô nhập tiền tệ có định dạng dấu chấm phân nghìn tự động
+  Widget _buildCurrencyField({
     required TextEditingController controller,
     required String label,
     required String hint,
     required IconData icon,
-    TextInputType? keyboardType,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -227,11 +358,17 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
       ),
       child: TextField(
         controller: controller,
-        keyboardType: keyboardType,
+        keyboardType: TextInputType.number,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          ThousandSeparatorFormatter(),
+        ],
         decoration: InputDecoration(
           icon: Icon(icon, color: AppColors.textLight, size: 20),
           labelText: label,
           hintText: hint,
+          suffixText: 'đ',
+          suffixStyle: GoogleFonts.inter(color: AppColors.textSecondary, fontWeight: FontWeight.bold),
           border: InputBorder.none,
           labelStyle: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13),
           hintStyle: GoogleFonts.inter(color: Colors.grey.shade300, fontSize: 14),
@@ -240,31 +377,128 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
     );
   }
 
-  Widget _buildNumberPicker({required String label, required int value, required ValueChanged<int> onChanged}) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textLight)),
-          const SizedBox(height: 8),
-          DropdownButtonHideUnderline(
-            child: DropdownButton<int>(
-              value: value,
-              isDense: true,
-              items: List.generate(31, (i) => i + 1).map((i) {
-                return DropdownMenuItem(value: i, child: Text('Ngày $i'));
-              }).toList(),
-              onChanged: (v) => v != null ? onChanged(v) : null,
+  /// Nút chọn ngày hiển thị dạng bảng lưới (grid)
+  Widget _buildDayPickerTile({
+    required String label,
+    required int value,
+    required ValueChanged<int> onChanged,
+  }) {
+    return GestureDetector(
+      onTap: () => _showDayGridPicker(label: label, currentValue: value, onChanged: onChanged),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFF3F4F6)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textLight)),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Ngày $value',
+                  style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                ),
+                const Icon(Icons.calendar_today_rounded, size: 16, color: AppColors.textLight),
+              ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+
+  /// Bảng chọn ngày dạng lưới số (1 - 31)
+  void _showDayGridPicker({
+    required String label,
+    required int currentValue,
+    required ValueChanged<int> onChanged,
+  }) {
+    int tempSelected = currentValue;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+      builder: (ctx) {
+        return StatefulBuilder(builder: (ctx, setSheet) {
+          return Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(2))),
+                const SizedBox(height: 20),
+                Text(
+                  label.toUpperCase(),
+                  style: GoogleFonts.inter(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1, color: AppColors.textSecondary),
+                ),
+                const SizedBox(height: 20),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 7,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: 31,
+                  itemBuilder: (_, index) {
+                    final day = index + 1;
+                    final isSelected = day == tempSelected;
+                    return GestureDetector(
+                      onTap: () {
+                        setSheet(() => tempSelected = day);
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 150),
+                        decoration: BoxDecoration(
+                          color: isSelected ? AppColors.primary : const Color(0xFFF9FAFB),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '$day',
+                          style: GoogleFonts.inter(
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            color: isSelected ? Colors.white : AppColors.textPrimary,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      onChanged(tempSelected);
+                      Navigator.pop(ctx);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      elevation: 0,
+                    ),
+                    child: Text('Xác nhận ngày $tempSelected',
+                        style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: Colors.white)),
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          );
+        });
+      },
     );
   }
 

@@ -7,12 +7,25 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1008690396766:android:8165552ea9fd6b84f07ecf",
+        "mobilesdk_app_id": "1:1008690396766:android:a3a7a55a55bcfcfaf07ecf",
         "android_client_info": {
-          "package_name": "com.example.baothe_vn"
+          "package_name": "com.baothevn.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1008690396766-a8mf913q5g5jlng7tgnb0gtd76alpqjd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.baothevn.app",
+            "certificate_hash": "bc6bf7d910ddb0ed993dfd30ddcc707dc868b3f5"
+          }
+        },
+        {
+          "client_id": "1008690396766-umo7q46fj2sdk0pora6q54rbu1n53qc9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC5aCqPhoKh9nC5xErj_aRQyKVD_bukCP0"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1008690396766-umo7q46fj2sdk0pora6q54rbu1n53qc9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1008690396766-urponatpj0di04fdb6e9rfbj4a5h7g58.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.baothevn.app"
+              }
+            }
+          ]
         }
       }
     }

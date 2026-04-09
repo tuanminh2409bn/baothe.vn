@@ -13,6 +13,9 @@ import 'features/calendar/mobile_calendar_screen.dart';
 import 'features/profile/mobile_profile_screen.dart';
 import 'features/transactions/mobile_add_transaction_screen.dart';
 import 'features/wallet/mobile_card_detail_screen.dart';
+import 'features/compare/mobile_compare_screen.dart';
+import 'features/calculator/mobile_calculator_screen.dart';
+import 'features/favorites/mobile_favorites_screen.dart';
 import '../models/user_card_model.dart';
 
 import 'mobile_main_layout.dart';
@@ -103,6 +106,21 @@ final _mobileRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const MobileReportsScreen(),
     ),
+    GoRoute(
+      path: '/compare',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const MobileCompareScreen(),
+    ),
+    GoRoute(
+      path: '/calculator',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const MobileCalculatorScreen(),
+    ),
+    GoRoute(
+      path: '/favorites',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const MobileFavoritesScreen(),
+    ),
   ],
 );
 
@@ -115,6 +133,16 @@ class AppMobile extends ConsumerWidget {
       title: 'baothe.vn Mobile',
       debugShowCheckedModeBanner: false,
       routerConfig: _mobileRouter,
+      builder: (context, child) {
+        return GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            // Tắt bàn phím ảo khi chạm ra ngoài (cho iOS)
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
       theme: ThemeData(
         brightness: Brightness.light,
         scaffoldBackgroundColor: const Color(0xFFF9FAFB),

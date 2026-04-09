@@ -1,0 +1,33 @@
+# --- 1. Flutter/Dart Build & Tooling (Cực kỳ nặng, cần chặn đầu tiên) ---
+.dart_tool/
+build/
+.packages
+.pub-cache/
+.pub/
+
+# --- 2. OS Specific (AI không cần đọc các file native này để viết code Flutter) ---
+#android/
+#ios/
+windows/
+linux/
+macos/
+web/
+
+# --- 3. Generated Files (Nếu bạn dùng Build Runner như Freezed, JsonSerializable) ---
+# AI có thể tự suy luận logic mà không cần đọc hàng nghìn dòng code tự động tạo ra
+*.freezed.dart
+*.g.dart
+
+# --- 4. Assets & Media (Chặn để tiết kiệm Quota vì AI không cần "đọc" ảnh/video) ---
+assets/
+fonts/
+images/
+videos/
+
+# --- 5. Version Control & IDE ---
+.git/
+.svn/
+.idea/
+.vscode/
+*.swp
+*.log

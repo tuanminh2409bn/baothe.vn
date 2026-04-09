@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -43,25 +44,26 @@ class AuthService {
   // Đăng nhập bằng Google
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      await GoogleSignIn.instance.initialize();
-      final GoogleSignInAccount expectedGoogleUser = await GoogleSignIn.instance.authenticate();
+      final GoogleSignInAccount? expectedGoogleUser = await GoogleSignIn().signIn();
+      if (expectedGoogleUser == null) return null;
 
-      final GoogleSignInAuthentication googleAuth = expectedGoogleUser.authentication;
-      final GoogleSignInClientAuthorization? authClient = await expectedGoogleUser.authorizationClient.authorizationForScopes([]);
+      final GoogleSignInAuthentication googleAuth = await expectedGoogleUser.authentication;
 
       final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: authClient?.accessToken,
+        accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
       final userCredential = await _auth.signInWithCredential(credential);
       if (userCredential.user != null) {
         String? fullName = expectedGoogleUser.displayName;
-        await _firestoreService.saveUser(userCredential.user!, name: fullName);
+        String? email = expectedGoogleUser.email;
+        String? photoUrl = expectedGoogleUser.photoUrl;
+        await _firestoreService.saveUser(userCredential.user!, name: fullName, email: email, photoUrl: photoUrl);
       }
       return userCredential;
-    } on GoogleSignInException catch (e) {
-      if (e.code == GoogleSignInExceptionCode.canceled) {
+    } on PlatformException catch (e) {
+      if (e.code == 'sign_in_canceled') {
         return null; // Người dùng huỷ đăng nhập
       }
       rethrow;
@@ -92,7 +94,8 @@ class AuthService {
         if (appleCredential.givenName != null || appleCredential.familyName != null) {
           fullName = '${appleCredential.familyName ?? ''} ${appleCredential.givenName ?? ''}'.trim();
         }
-        await _firestoreService.saveUser(userCredential.user!, name: fullName);
+        String? email = appleCredential.email;
+        await _firestoreService.saveUser(userCredential.user!, name: fullName, email: email);
       }
       return userCredential;
     } catch (e) {
