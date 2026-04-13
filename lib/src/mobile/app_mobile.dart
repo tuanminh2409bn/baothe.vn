@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_styles.dart';
 import 'features/home/mobile_home_screen.dart';
 import 'features/auth/mobile_login_screen.dart';
+import 'features/auth/mobile_email_login_screen.dart';
 import 'features/auth/mobile_register_screen.dart';
 import 'features/wallet/mobile_wallet_screen.dart';
 import 'features/wallet/mobile_add_card_screen.dart';
@@ -34,6 +35,11 @@ final _mobileRouter = GoRouter(
       path: '/login',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const MobileLoginScreen(),
+    ),
+    GoRoute(
+      path: '/login-email',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const MobileEmailLoginScreen(),
     ),
     GoRoute(
       path: '/register',
@@ -130,7 +136,7 @@ class AppMobile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
-      title: 'baothe.vn Mobile',
+      title: 'MyFiny',
       debugShowCheckedModeBanner: false,
       routerConfig: _mobileRouter,
       builder: (context, child) {

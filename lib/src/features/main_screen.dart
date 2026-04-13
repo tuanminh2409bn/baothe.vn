@@ -90,7 +90,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 40),
-                Image.asset('assets/logo/logo.png', height: 50),
+                Image.asset('assets/logo/logo_web.png', height: 50),
                 const SizedBox(height: 40),
                 
                 _buildSidebarItem(0, Icons.account_balance_wallet, 'Ví thẻ của tôi'),

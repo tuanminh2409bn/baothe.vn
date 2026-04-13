@@ -152,7 +152,7 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
                   // Logo
                   Center(
                     child: Image.asset(
-                      'assets/logo/baothevn.png',
+                      'assets/logo/logo_app.png',
                       height: 80,
                     ).animate().fadeIn(duration: 800.ms).scale(delay: 200.ms),
                   ),

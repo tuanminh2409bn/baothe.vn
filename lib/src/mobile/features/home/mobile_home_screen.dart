@@ -679,7 +679,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
       },
       {
         'icon': Icons.more_horiz_rounded,
-        'label': 'Khác',
+        'label': 'Chi tiêu',
         'color': Colors.grey.shade200,
         'iconColor': Colors.grey.shade700,
         'keywords': [],
@@ -917,7 +917,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                             ' ',
                           )).toLowerCase();
                           final combined = '$cashback $benefitsStr $detailsStr';
-                          if (keywords.isEmpty && category['label'] == 'Khác')
+                          if (keywords.isEmpty && category['label'] == 'Chi tiêu')
                             return true;
                           return keywords.any((kw) => combined.contains(kw));
                         }).toList();
@@ -1078,7 +1078,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
           ),
           _QuickActionButton(
             icon: Icons.grid_view_rounded,
-            label: 'Khác',
+            label: 'Chi tiêu',
             color: const Color(0xFFF0FDF4),
             iconColor: Colors.green,
             onTap: () {

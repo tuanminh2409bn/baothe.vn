@@ -389,7 +389,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       decoration: const BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: AppColors.border, width: 0.5))),
       child: Row(
         children: [
-          InkWell(onTap: () => context.go('/'), child: Image.asset('assets/logo/logo.png', height: 45, fit: BoxFit.contain)),
+          InkWell(onTap: () => context.go('/'), child: Image.asset('assets/logo/logo_web.png', height: 45, fit: BoxFit.contain)),
           const Spacer(),
           _buildMenuItem('TRA CỨU', isSelected: true),
           _buildMenuItem('TÍNH TOÁN', onTap: () => context.go('/calculator')),

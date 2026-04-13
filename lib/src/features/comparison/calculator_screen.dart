@@ -78,7 +78,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
     {'icon': Icons.shield, 'label': 'BẢO HIỂM', 'keywords': ['bảo hiểm', 'insurance']},
     {'icon': Icons.motorcycle, 'label': 'BE', 'keywords': ['be']},
     {'icon': Icons.bed, 'label': 'PHÒNG CHỜ', 'keywords': ['phòng chờ', 'lounge']},
-    {'icon': Icons.more_horiz, 'label': 'KHÁC', 'keywords': []},
+    {'icon': Icons.more_horiz, 'label': 'CHI TIÊU', 'keywords': []},
   ];
 
   @override
@@ -218,7 +218,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
     return Container(
       height: 80, padding: const EdgeInsets.symmetric(horizontal: 40),
       decoration: const BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: AppColors.border, width: 0.5))),
-      child: Row(children: [InkWell(onTap: () => context.go('/'), child: Image.asset('assets/logo/logo.png', height: 45, fit: BoxFit.contain)), const Spacer(), _buildMenuItem('TRA CỨU', onTap: () => context.go('/')), _buildMenuItem('TÍNH TOÁN', isSelected: true)]),
+      child: Row(children: [InkWell(onTap: () => context.go('/'), child: Image.asset('assets/logo/logo_web.png', height: 45, fit: BoxFit.contain)), const Spacer(), _buildMenuItem('TRA CỨU', onTap: () => context.go('/')), _buildMenuItem('TÍNH TOÁN', isSelected: true)]),
     );
   }
 

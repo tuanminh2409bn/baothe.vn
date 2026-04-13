@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'baothe.vn',
+      title: 'MyFiny',
       debugShowCheckedModeBanner: false,
       routerConfig: _router,
       theme: ThemeData(

@@ -66,7 +66,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/logo/logo.png', height: 60),
+                Image.asset('assets/logo/logo_web.png', height: 60),
                 const SizedBox(height: 32),
                 Text(
                   _isLogin ? 'Chào mừng trở lại' : 'Tạo tài khoản mới',
@@ -76,7 +76,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Text(
                   _isLogin 
                     ? 'Đăng nhập để quản lý thẻ và ưu đãi của bạn' 
-                    : 'Tham gia cộng đồng baothe.vn ngay hôm nay',
+                    : 'Tham gia cộng đồng MyFiny ngay hôm nay',
                   style: AppStyles.labelSmall,
                   textAlign: TextAlign.center,
                 ),
