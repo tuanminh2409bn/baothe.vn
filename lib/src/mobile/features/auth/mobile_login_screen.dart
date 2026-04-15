@@ -290,7 +290,6 @@ class _AnimatedCardBackgroundState extends State<_AnimatedCardBackground> with S
       builder: (context, child) {
         return LayoutBuilder(
           builder: (context, constraints) {
-            final height = constraints.maxHeight;
             // The total height of our list is roughly 1500, we scroll from 0 to 1500.
             // Using Fractional offset or a direct translation.
             final scrollOffset = _controller.value * 2000.0;
@@ -338,45 +337,60 @@ class _AnimatedCardBackgroundState extends State<_AnimatedCardBackground> with S
   }
 }
 
-class _CardColumn extends StatelessWidget {
+class _CardColumn extends StatefulWidget {
   final int seed;
   final int cardCount;
   final double width;
 
-  const _CardColumn({required this.seed, required this.cardCount, required this.width});
+  const _CardColumn({
+    required this.seed,
+    required this.cardCount,
+    required this.width,
+  });
+
+  @override
+  State<_CardColumn> createState() => _CardColumnState();
+}
+
+class _CardColumnState extends State<_CardColumn> {
+  late List<String> _selectedImages;
+  
+  final List<String> _cardImages = [
+    'acb_the_acb_express.png',
+    'acb_the_acb_jcb_gold.png',
+    'acb_the_acb_visa_platinum.png',
+    'acb_the_acb_visa_signature.png',
+    'bidv_the_bidv_jcb_ultimate.png',
+    'bidv_the_bidv_jcb_well_being.png',
+    'bidv_the_bidv_mastercard_world_travel.png',
+    'bidv_the_bidv_visa_cashback_360.png',
+    'bidv_the_bidv_visa_cashback_online.png',
+    'bidv_the_bidv_visa_easy.png',
+    'bidv_the_bidv_visa_flexi.png',
+    'bidv_the_bidv_visa_flexi_sao_vang.png',
+    'bidv_the_bidv_visa_infinite.png',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    final rng = _SimpleRNG(widget.seed);
+    _selectedImages = List.generate(widget.cardCount, (_) {
+      return _cardImages[rng.nextInt(_cardImages.length)];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final rng = _SimpleRNG(seed);
-    
-    final List<String> cardImages = [
-      'acb_the_acb_express.png',
-      'acb_the_acb_jcb_gold.png',
-      'acb_the_acb_visa_platinum.png',
-      'acb_the_acb_visa_signature.png',
-      'bidv_the_bidv_jcb_ultimate.png',
-      'bidv_the_bidv_jcb_well_being.png',
-      'bidv_the_bidv_mastercard_world_travel.png',
-      'bidv_the_bidv_visa_cashback_360.png',
-      'bidv_the_bidv_visa_cashback_online.png',
-      'bidv_the_bidv_visa_easy.png',
-      'bidv_the_bidv_visa_flexi.png',
-      'bidv_the_bidv_visa_flexi_sao_vang.png',
-      'bidv_the_bidv_visa_infinite.png',
-    ];
-    
-    // We create a very long column of cards so it doesn't run out during the animation
     return Column(
-      children: List.generate(cardCount, (index) {
-        final imageName = cardImages[rng.nextInt(cardImages.length)];
+      children: _selectedImages.map((imageName) {
         final imageUrl = 'https://storage.googleapis.com/baothevn-790c6.firebasestorage.app/card_images/$imageName';
-        
         // Typical credit card ratio is around 1.58.
         // For a vertical display, height is width * 1.58.
-        final cardHeight = width * 1.58;
+        final cardHeight = widget.width * 1.58;
         
         return Container(
-          width: width,
+          width: widget.width,
           height: cardHeight,
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
@@ -410,7 +424,7 @@ class _CardColumn extends StatelessWidget {
             ),
           ),
         );
-      }),
+      }).toList(),
     );
   }
 }

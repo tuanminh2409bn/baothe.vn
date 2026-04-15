@@ -20,7 +20,7 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
   final _amountController = TextEditingController();
   final _noteController = TextEditingController();
   
-  UserCard? _selectedCard;
+  String? _selectedCardId; // Thay thế _selectedCard kiểu UserCard? thành _selectedCardId kiểu String?
   String _selectedCategory = 'Mua sắm';
   bool _isLoading = false;
 
@@ -137,6 +137,13 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
   Widget _buildCardSelector(AsyncValue<List<UserCard>> cardsAsync) {
     return cardsAsync.when(
       data: (cards) {
+        // Kiểm tra xem ID đã chọn còn trong danh sách không
+        if (_selectedCardId != null && !cards.any((c) => c.id == _selectedCardId)) {
+          Future.microtask(() {
+            if (mounted) setState(() => _selectedCardId = null);
+          });
+        }
+
         if (cards.isEmpty) {
           return Container(
             padding: const EdgeInsets.all(16),
@@ -168,17 +175,17 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
             border: Border.all(color: const Color(0xFFF3F4F6)),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<UserCard>(
-              value: _selectedCard,
+            child: DropdownButton<String>(
+              value: _selectedCardId,
               hint: const Text('Chọn thẻ thanh toán'),
               isExpanded: true,
               items: cards.map((card) {
-                return DropdownMenuItem(
-                  value: card,
+                return DropdownMenuItem<String>(
+                  value: card.id,
                   child: Text('${card.bankName} - ${card.cardName}'),
                 );
               }).toList(),
-              onChanged: (card) => setState(() => _selectedCard = card),
+              onChanged: (id) => setState(() => _selectedCardId = id),
             ),
           ),
         );
@@ -238,13 +245,18 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
   }
 
   Future<void> _saveTransaction() async {
-    if (_selectedCard == null || _amountController.text.isEmpty) {
+    final user = ref.read(authServiceProvider).currentUser;
+    if (user == null) return;
+
+    final cards = ref.read(userCardsStreamProvider(user.uid)).valueOrNull ?? [];
+    final selectedCard = cards.any((c) => c.id == _selectedCardId) 
+        ? cards.firstWhere((c) => c.id == _selectedCardId)
+        : null;
+
+    if (selectedCard == null || _amountController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Vui lòng nhập đủ số tiền và chọn thẻ')));
       return;
     }
-
-    final user = ref.read(authServiceProvider).currentUser;
-    if (user == null) return;
 
     final amountStr = _amountController.text.replaceAll(RegExp(r'[^0-9]'), '');
     final amount = double.tryParse(amountStr) ?? 0;
@@ -260,8 +272,8 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
       final tx = Transaction(
         id: const Uuid().v4(),
         userId: user.uid,
-        userCardId: _selectedCard!.id,
-        cardName: _selectedCard!.cardName,
+        userCardId: selectedCard.id,
+        cardName: selectedCard.cardName,
         amount: amount,
         category: _selectedCategory,
         note: _noteController.text,

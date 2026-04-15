@@ -149,3 +149,33 @@ final transactionsStreamProvider = StreamProvider.autoDispose.family<List<Transa
   }
   return ref.watch(firestoreServiceProvider).getTransactions(userId);
 });
+
+// Provider cung cấp danh sách thẻ mẫu (Mock) cho Home Screen khi user chưa có thẻ
+final mockCardsProvider = Provider<List<CreditCard>>((ref) {
+  final publicCards = ref.watch(cardsStreamProvider).valueOrNull ?? [];
+  if (publicCards.isEmpty) return [];
+
+  final uniqueBankCards = <CreditCard>[];
+  final seenBanks = <String>{};
+  
+  // Sort or shuffle but in a stable way if possible, or just shuffle
+  final shuffledCards = publicCards.toList()..shuffle();
+
+  for (var c in shuffledCards) {
+    if (!seenBanks.contains(c.bankName) && c.imagePath.startsWith('http')) {
+      uniqueBankCards.add(c);
+      seenBanks.add(c.bankName);
+      if (uniqueBankCards.length >= 3) break;
+    }
+  }
+
+  if (uniqueBankCards.length < 3) {
+    for (var c in shuffledCards) {
+      if (!uniqueBankCards.contains(c)) {
+        uniqueBankCards.add(c);
+        if (uniqueBankCards.length >= 3) break;
+      }
+    }
+  }
+  return uniqueBankCards;
+});

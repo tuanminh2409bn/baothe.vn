@@ -17,6 +17,7 @@ import 'features/wallet/mobile_card_detail_screen.dart';
 import 'features/compare/mobile_compare_screen.dart';
 import 'features/calculator/mobile_calculator_screen.dart';
 import 'features/favorites/mobile_favorites_screen.dart';
+import 'features/ai_assistant/ai_chat_screen.dart';
 import '../models/user_card_model.dart';
 
 import 'mobile_main_layout.dart';
@@ -126,6 +127,11 @@ final _mobileRouter = GoRouter(
       path: '/favorites',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const MobileFavoritesScreen(),
+    ),
+    GoRoute(
+      path: '/ai-chat',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const AIChatScreen(),
     ),
   ],
 );

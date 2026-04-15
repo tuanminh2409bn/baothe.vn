@@ -140,24 +140,42 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
   }
 
   Widget _buildMainContent(CreditCard card) {
+    // Tự động tạo chips từ dữ liệu cashback thực tế
+    final cashbackChips = [
+      if ((card.supermarketCashbackRate ?? 0) > 0) 'Hoàn ${card.supermarketCashbackRate}% Siêu thị',
+      if ((card.onlineCashbackRate ?? 0) > 0) 'Hoàn ${card.onlineCashbackRate}% Online',
+      if ((card.diningCashbackRate ?? 0) > 0) 'Hoàn ${card.diningCashbackRate}% Ẩm thực',
+      if ((card.travelCashbackRate ?? 0) > 0) 'Hoàn ${card.travelCashbackRate}% Du lịch',
+      if ((card.shoppingCashbackRate ?? 0) > 0) 'Hoàn ${card.shoppingCashbackRate}% Mua sắm',
+      if ((card.transportCashbackRate ?? 0) > 0) 'Hoàn ${card.transportCashbackRate}% Di chuyển',
+      if ((card.educationCashbackRate ?? 0) > 0) 'Hoàn ${card.educationCashbackRate}% Giáo dục',
+      if ((card.medicalCashbackRate ?? 0) > 0) 'Hoàn ${card.medicalCashbackRate}% Y tế',
+      if ((card.insuranceCashbackRate ?? 0) > 0) 'Hoàn ${card.insuranceCashbackRate}% Bảo hiểm',
+      if ((card.utilitiesCashbackRate ?? 0) > 0) 'Hoàn ${card.utilitiesCashbackRate}% Hóa đơn',
+      if ((card.gymCashbackRate ?? 0) > 0) 'Hoàn ${card.gymCashbackRate}% Gym',
+      if ((card.otherCashbackRate ?? 0) > 0) 'Hoàn ${card.otherCashbackRate}% Chi tiêu khác',
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(card.name, style: AppStyles.h1.copyWith(fontSize: 32)),
+        Text(card.name, style: AppStyles.h1.copyWith(fontSize: 28)),
         const SizedBox(height: 8),
-        Text(card.bankName, style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
+        Text(card.bankName, style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
         const SizedBox(height: 24),
-        
+
+        Text('ƯU ĐÃI HOÀN TIỀN NỔI BẬT', style: AppStyles.labelSmall.copyWith(letterSpacing: 1, color: AppColors.textLight)),
+        const SizedBox(height: 12),
         // Highlights Chips
         Wrap(
-          spacing: 10,
-          runSpacing: 10,
+          spacing: 8,
+          runSpacing: 8,
           children: [
-            _buildHighlightChip(card.cashbackHighlight),
-            ...card.details.map((d) => _buildHighlightChip(d, isSecondary: true)),
+            if (card.cashbackHighlight.isNotEmpty)
+              _buildHighlightChip(card.cashbackHighlight),
+            ...cashbackChips.map((text) => _buildHighlightChip(text, isSecondary: true)),
           ],
         ),
-        
         const SizedBox(height: 48),
         
         // Tab Selector

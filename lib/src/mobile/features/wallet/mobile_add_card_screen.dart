@@ -542,6 +542,20 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
       statementDay: _statementDay,
       dueDay: _dueDay,
       createdAt: DateTime.now(),
+      // Copy cashback rates from template
+      supermarketCashbackRate: _selectedTemplate!.supermarketCashbackRate,
+      onlineCashbackRate: _selectedTemplate!.onlineCashbackRate,
+      travelCashbackRate: _selectedTemplate!.travelCashbackRate,
+      diningCashbackRate: _selectedTemplate!.diningCashbackRate,
+      medicalCashbackRate: _selectedTemplate!.medicalCashbackRate,
+      educationCashbackRate: _selectedTemplate!.educationCashbackRate,
+      transportCashbackRate: _selectedTemplate!.transportCashbackRate,
+      shoppingCashbackRate: _selectedTemplate!.shoppingCashbackRate,
+      insuranceCashbackRate: _selectedTemplate!.insuranceCashbackRate,
+      utilitiesCashbackRate: _selectedTemplate!.utilitiesCashbackRate,
+      entertainmentCashbackRate: _selectedTemplate!.entertainmentCashbackRate,
+      gymCashbackRate: _selectedTemplate!.gymCashbackRate,
+      otherCashbackRate: _selectedTemplate!.otherCashbackRate,
     );
 
     await ref.read(firestoreServiceProvider).addUserCard(newCard);

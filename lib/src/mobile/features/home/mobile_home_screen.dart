@@ -22,7 +22,6 @@ class MobileHomeScreen extends ConsumerStatefulWidget {
 
 class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
   final PageController _cardController = PageController(viewportFraction: 0.85);
-  List<CreditCard>? _mockCards;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +34,6 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
         ? ref.watch(transactionsStreamProvider(user.uid))
         : const AsyncValue<List<Transaction>>.data([]);
 
-    final publicCardsAsync = ref.watch(cardsStreamProvider);
-
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       appBar: _buildAppBar(),
@@ -48,7 +45,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
             const SizedBox(height: 20),
             _buildWalletHeader(userCardsAsync),
             const SizedBox(height: 20),
-            _buildCreditCardSlider(userCardsAsync, publicCardsAsync),
+            _buildCreditCardSlider(userCardsAsync),
             const SizedBox(height: 30),
             _buildQuickActions(userCardsAsync),
             const SizedBox(height: 30),
@@ -167,7 +164,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                         ),
                       ],
                     ],
-                  ).animate().fadeIn().slideX(begin: -0.1),
+                  ).animate().fadeIn(), // Đơn giản hóa animation ở đây
                   if (isMock)
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
@@ -179,9 +176,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                                   color: Colors.orange.shade700,
                                   fontWeight: FontWeight.w500,
                                 ),
-                              )
-                              .animate(onPlay: (c) => c.repeat(reverse: true))
-                              .fadeIn(duration: 1000.ms),
+                              ),
                     ),
                 ],
               );
@@ -200,11 +195,14 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
 
   Widget _buildCreditCardSlider(
     AsyncValue<List<UserCard>> cardsAsync,
-    AsyncValue<List<CreditCard>> publicCardsAsync,
   ) {
+    final mockCards = ref.watch(mockCardsProvider);
+    
     return cardsAsync.when(
       data: (cards) {
-        final itemCount = cards.isEmpty ? 3 : cards.length;
+        final isEmpty = cards.isEmpty;
+        final itemCount = isEmpty ? (mockCards.isEmpty ? 3 : mockCards.length) : cards.length;
+        
         return Column(
           children: [
             SizedBox(
@@ -213,36 +211,8 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                 controller: _cardController,
                 itemCount: itemCount,
                 itemBuilder: (context, index) {
-                  if (cards.isEmpty) {
-                    if (_mockCards == null || _mockCards!.isEmpty) {
-                      final publicCards = publicCardsAsync.valueOrNull ?? [];
-                      if (publicCards.isNotEmpty) {
-                        final uniqueBankCards = <CreditCard>[];
-                        final seenBanks = <String>{};
-                        final shuffledCards = publicCards.toList()..shuffle();
-                        for (var c in shuffledCards) {
-                          if (!seenBanks.contains(c.bankName) &&
-                              c.imagePath.startsWith('http')) {
-                            uniqueBankCards.add(c);
-                            seenBanks.add(c.bankName);
-                            if (uniqueBankCards.length >= 3) break;
-                          }
-                        }
-                        if (uniqueBankCards.length < 3) {
-                          for (var c in shuffledCards) {
-                            if (!uniqueBankCards.contains(c)) {
-                              uniqueBankCards.add(c);
-                              if (uniqueBankCards.length >= 3) break;
-                            }
-                          }
-                        }
-                        _mockCards = uniqueBankCards;
-                      }
-                    }
-                    final mockCard =
-                        _mockCards != null && _mockCards!.length > index
-                        ? _mockCards![index]
-                        : null;
+                  if (isEmpty) {
+                    final mockCard = mockCards.length > index ? mockCards[index] : null;
                     return _buildMockCreditCardItem(mockCard, index);
                   }
                   return _buildCreditCardItem(cards[index], index);
@@ -269,262 +239,253 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
   }
 
   Widget _buildMockCreditCardItem(CreditCard? card, int index) {
-    final name = card?.name ?? 'Thẻ ảo';
-    final bank = card?.bankName ?? 'Ngân hàng';
-    final type = card?.cardType?.toUpperCase() ?? 'CREDIT CARD';
-    final imagePath = card?.imagePath ?? '';
-
     return Container(
       margin: const EdgeInsets.only(right: 15),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        color: const Color(0xFF1E293B),
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: index % 2 == 0 
+            ? [const Color(0xFF1E293B), const Color(0xFF334155)]
+            : [const Color(0xFF4338CA), const Color(0xFF6366F1)],
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 15,
-            offset: const Offset(0, 10),
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          if (imagePath.isNotEmpty)
-            Positioned.fill(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: imagePath.startsWith('http')
-                    ? Image.network(
-                        imagePath,
-                        fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => Container(),
-                      )
-                    : Image.asset(
-                        imagePath,
-                        fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => Container(),
-                      ),
-              ),
-            )
-          else
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: index == 0
-                        ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
-                        : index == 1
-                        ? [AppColors.primary, const Color(0xFF2D241E)]
-                        : [const Color(0xFF4338CA), const Color(0xFF312E81)],
-                  ),
-                ),
-              ),
-            ),
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                color: Colors.black.withValues(alpha: 0.4),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Icon(
-                      Icons.contactless_outlined,
-                      color: Colors.white70,
-                    ),
-                    Text(
-                      type,
-                      style: GoogleFonts.inter(
-                        color: Colors.white.withValues(alpha: 0.54),
-                        fontSize: 10,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                Text(
-                  name,
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  bank,
-                  style: GoogleFonts.inter(color: Colors.white70, fontSize: 14),
-                ),
-                const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'HẠN MỨC CÒN LẠI',
-                          style: GoogleFonts.inter(
-                            color: Colors.white.withValues(alpha: 0.54),
-                            fontSize: 10,
-                          ),
-                        ),
-                        Text(
-                          'Chưa tạo ví',
-                          style: GoogleFonts.inter(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Icon(Icons.credit_card, color: Colors.white),
-                  ],
-                ),
+                Icon(Icons.contactless_outlined, color: Colors.white54),
+                Icon(Icons.credit_card, color: Colors.white54),
               ],
             ),
-          ),
-        ],
+            const Spacer(),
+            Text(
+              card?.name ?? 'Thẻ mẫu',
+              style: GoogleFonts.inter(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              card?.bankName ?? 'Ngân hàng',
+              style: GoogleFonts.inter(color: Colors.white70, fontSize: 12),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '•••• •••• •••• 0000',
+              style: GoogleFonts.inter(color: Colors.white, fontSize: 18, letterSpacing: 2),
+            ),
+          ],
+        ),
       ),
-    ).animate().scale(delay: (index * 100).ms);
+    );
   }
 
   Widget _buildCreditCardItem(UserCard card, int index) {
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
+    
+    // Tìm mức hoàn tiền cao nhất
+    final cashbackRates = {
+      'Siêu thị': card.supermarketCashbackRate ?? 0,
+      'Online': card.onlineCashbackRate ?? 0,
+      'Du lịch': card.travelCashbackRate ?? 0,
+      'Ẩm thực': card.diningCashbackRate ?? 0,
+      'Y tế': card.medicalCashbackRate ?? 0,
+      'Giáo dục': card.educationCashbackRate ?? 0,
+      'Di chuyển': card.transportCashbackRate ?? 0,
+      'Mua sắm': card.shoppingCashbackRate ?? 0,
+      'Bảo hiểm': card.insuranceCashbackRate ?? 0,
+      'Giải trí': card.entertainmentCashbackRate ?? 0,
+      'Gym': card.gymCashbackRate ?? 0,
+    };
+
+    String topCategory = '';
+    double topRate = 0;
+    cashbackRates.forEach((cat, rate) {
+      if (rate > topRate) {
+        topRate = rate;
+        topCategory = cat;
+      }
+    });
+    
     return Container(
       margin: const EdgeInsets.only(right: 15),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         color: const Color(0xFF1E293B),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 15,
-            offset: const Offset(0, 10),
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          if (card.imagePath.isNotEmpty)
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          children: [
+            // Ảnh thẻ...
             Positioned.fill(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: card.imagePath.startsWith('http')
-                    ? Image.network(card.imagePath, fit: BoxFit.cover)
-                    : Image.asset(card.imagePath, fit: BoxFit.cover),
-              ),
-            )
-          else
+              child: card.imagePath.isNotEmpty
+                  ? (card.imagePath.startsWith('http')
+                      ? Image.network(
+                          card.imagePath,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+                          errorBuilder: (_, __, ___) => _buildFallbackGradient(index),
+                        )
+                      : Image.asset(
+                          card.imagePath,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+                          errorBuilder: (_, __, ___) => _buildFallbackGradient(index),
+                        ))
+                  : _buildFallbackGradient(index),
+            ),
+            // Overlay...
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
                   gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: index % 2 == 0
-                        ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
-                        : [AppColors.primary, const Color(0xFF2D241E)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.1),
+                      Colors.black.withValues(alpha: 0.6),
+                    ],
                   ),
                 ),
               ),
             ),
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                color: Colors.black.withValues(alpha: 0.35),
+            // Cashback Tag
+            if (topRate > 0)
+              Positioned(
+                top: 16,
+                right: 16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.flash_on_rounded, size: 12, color: Colors.black),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Hoàn ${topRate.toStringAsFixed(0)}% $topCategory',
+                        style: GoogleFonts.inter(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ).animate().fadeIn(delay: 400.ms).slideX(begin: 0.5),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Icon(
-                      Icons.contactless_outlined,
-                      color: Colors.white70,
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
+            // Nội dung thông tin trên thẻ
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Icon(Icons.contactless_outlined, color: Colors.white70),
+                      Text(
                         'CREDIT CARD',
                         style: GoogleFonts.inter(
-                          color: Colors.white.withValues(alpha: 0.54),
+                          color: Colors.white.withValues(alpha: 0.7),
                           fontSize: 10,
                           letterSpacing: 2,
+                          fontWeight: FontWeight.bold,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
                       ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                Text(
-                  card.cardName,
-                  style: GoogleFonts.inter(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    ],
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  card.bankName,
-                  style: GoogleFonts.inter(color: Colors.white70, fontSize: 14),
-                ),
-                const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'DƯ NỢ HIỆN TẠI',
-                          style: GoogleFonts.inter(
-                            color: Colors.white.withValues(alpha: 0.54),
-                            fontSize: 10,
-                          ),
-                        ),
-                        Text(
-                          currencyFormat.format(card.balance),
-                          style: GoogleFonts.inter(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                  const Spacer(),
+                  Text(
+                    card.cardName,
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      shadows: [const Shadow(color: Colors.black45, blurRadius: 4, offset: Offset(0, 2))],
                     ),
-                    const Icon(Icons.credit_card, color: Colors.white),
-                  ],
-                ),
-              ],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    card.bankName,
+                    style: GoogleFonts.inter(
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'DƯ NỢ HIỆN TẠI',
+                            style: GoogleFonts.inter(
+                              color: Colors.white.withValues(alpha: 0.7),
+                              fontSize: 9,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            currencyFormat.format(card.balance),
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Icon(Icons.credit_card, color: Colors.white),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ).animate().scale(delay: (index * 100).ms);
+    ).animate().scale(delay: (index * 50).ms, duration: 400.ms, curve: Curves.easeOutBack);
+  }
+
+  Widget _buildFallbackGradient(int index) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: index % 2 == 0
+              ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
+              : [const Color(0xFF312E81), const Color(0xFF4338CA)],
+        ),
+      ),
+    );
   }
 
   Widget _buildCategories(BuildContext context) {

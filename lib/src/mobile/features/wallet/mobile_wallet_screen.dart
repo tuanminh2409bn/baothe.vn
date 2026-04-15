@@ -233,10 +233,14 @@ class MobileWalletScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Đã dùng ${format.format(card.balance)}',
-                style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500),
+              Expanded(
+                child: Text(
+                  'Đã dùng ${format.format(card.balance)}',
+                  style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
+              const SizedBox(width: 8),
               Text(
                 'Hạn mức ${format.format(card.limit)}',
                 style: GoogleFonts.inter(fontSize: 12, color: AppColors.textLight),

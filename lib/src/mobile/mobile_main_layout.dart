@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../constants/app_styles.dart';
+import 'features/ai_assistant/finy_ai_floating_button.dart';
 
 class MobileMainLayout extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -12,11 +13,21 @@ class MobileMainLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: navigationShell,
-      floatingActionButton: _buildAddFab(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _buildBottomNav(context),
+    return Stack(
+      children: [
+        Scaffold(
+          body: navigationShell,
+          floatingActionButton: _buildAddFab(context),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          bottomNavigationBar: _buildBottomNav(context),
+        ),
+        // Finy AI Assistant Floating Button
+        const Positioned(
+          right: 0,
+          bottom: 100, // Đặt cao hơn bottom nav bar
+          child: FinyAIFloatingButton(),
+        ),
+      ],
     );
   }
 
