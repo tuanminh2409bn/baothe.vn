@@ -219,9 +219,15 @@ class MobileWalletScreen extends ConsumerWidget {
                       card.cardName,
                       style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
-                    Text(
-                      card.bankName,
-                      style: GoogleFonts.inter(color: AppColors.textLight, fontSize: 12),
+                    Row(
+                      children: [
+                        Text(
+                          card.bankName,
+                          style: GoogleFonts.inter(color: AppColors.textLight, fontSize: 12),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildTopCashbackBadge(card),
+                      ],
                     ),
                   ],
                 ),
@@ -262,6 +268,59 @@ class MobileWalletScreen extends ConsumerWidget {
         ],
       ),
     )).animate().fadeIn(delay: (index * 100).ms).slideX(begin: 0.05);
+  }
+
+  Widget _buildTopCashbackBadge(UserCard card) {
+    final rates = {
+      'Siêu thị': card.supermarketCashbackRate ?? 0,
+      'Online': card.onlineCashbackRate ?? 0,
+      'Du lịch': card.travelCashbackRate ?? 0,
+      'Ẩm thực': card.diningCashbackRate ?? 0,
+      'Y tế': card.medicalCashbackRate ?? 0,
+      'Giáo dục': card.educationCashbackRate ?? 0,
+      'Di chuyển': card.transportCashbackRate ?? 0,
+      'Mua sắm': card.shoppingCashbackRate ?? 0,
+      'Bảo hiểm': card.insuranceCashbackRate ?? 0,
+      'Hóa đơn': card.utilitiesCashbackRate ?? 0,
+      'Giải trí': card.entertainmentCashbackRate ?? 0,
+      'Gym': card.gymCashbackRate ?? 0,
+      'Khác': card.otherCashbackRate ?? 0,
+    };
+
+    String topCategory = '';
+    double topRate = 0;
+    rates.forEach((cat, rate) {
+      if (rate > topRate) {
+        topRate = rate;
+        topCategory = cat;
+      }
+    });
+
+    if (topRate <= 0) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: Colors.amber.shade50,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: Colors.amber.shade200),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.flash_on_rounded, size: 10, color: Colors.amber.shade800),
+          const SizedBox(width: 2),
+          Text(
+            'Hoàn $topRate%',
+            style: GoogleFonts.inter(
+              fontSize: 9,
+              fontWeight: FontWeight.w900,
+              color: Colors.amber.shade900,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildEmptyState() {

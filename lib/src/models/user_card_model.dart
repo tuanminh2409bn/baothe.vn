@@ -27,7 +27,7 @@ class UserCard {
   final double? entertainmentCashbackRate;
   final double? gymCashbackRate;
   final double? otherCashbackRate;
-  final int? maxCashbackPerMonth;
+  final double? maxCashbackPerMonth;
 
   UserCard({
     required this.id,
@@ -146,7 +146,7 @@ class UserCard {
       entertainmentCashbackRate: (map['entertainmentCashbackRate'] as num?)?.toDouble(),
       gymCashbackRate: (map['gymCashbackRate'] as num?)?.toDouble(),
       otherCashbackRate: (map['otherCashbackRate'] as num?)?.toDouble(),
-      maxCashbackPerMonth: (map['maxCashbackPerMonth'] as num?)?.toInt(),
+      maxCashbackPerMonth: (map['maxCashbackPerMonth'] as num?)?.toDouble(),
     );
   }
 

@@ -14,8 +14,8 @@ class FinyAIFloatingButton extends StatelessWidget {
           context.push('/ai-chat');
         },
         child: Container(
-          width: 56,
-          height: 56,
+          width: 64,
+          height: 64,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: const LinearGradient(
@@ -39,7 +39,7 @@ class FinyAIFloatingButton extends StatelessWidget {
             child: Icon(
               Icons.auto_awesome, // Sparkle icon
               color: Colors.white,
-              size: 28,
+              size: 32,
             ),
           ),
         ).animate(onPlay: (controller) => controller.repeat(reverse: true))

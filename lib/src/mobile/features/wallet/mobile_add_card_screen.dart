@@ -191,11 +191,38 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
   /// Widget xem trước ưu đãi thẻ sau khi chọn
   Widget _buildCardBenefitsPreview(CreditCard card) {
     final highlights = <Map<String, dynamic>>[];
+    
+    // Thêm các tỷ lệ hoàn tiền cao nhất vào highlights
+    final cashbackRates = [
+      {'label': 'Siêu thị', 'rate': card.supermarketCashbackRate},
+      {'label': 'Online', 'rate': card.onlineCashbackRate},
+      {'label': 'Ẩm thực', 'rate': card.diningCashbackRate},
+      {'label': 'Du lịch', 'rate': card.travelCashbackRate},
+      {'label': 'Di chuyển', 'rate': card.transportCashbackRate},
+      {'label': 'Y tế', 'rate': card.medicalCashbackRate},
+      {'label': 'Giáo dục', 'rate': card.educationCashbackRate},
+      {'label': 'Mua sắm', 'rate': card.shoppingCashbackRate},
+      {'label': 'Hóa đơn', 'rate': card.utilitiesCashbackRate},
+      {'label': 'Giải trí', 'rate': card.entertainmentCashbackRate},
+      {'label': 'Gym', 'rate': card.gymCashbackRate},
+      {'label': 'Bảo hiểm', 'rate': card.insuranceCashbackRate},
+      {'label': 'Khác', 'rate': card.otherCashbackRate},
+    ].where((c) => (c['rate'] as double? ?? 0) > 0).toList();
+
+    // Sắp xếp giảm dần theo tỷ lệ hoàn tiền
+    cashbackRates.sort((a, b) => (b['rate'] as double).compareTo(a['rate'] as double));
+
+    // Lấy tối đa 2 hạng mục cao nhất để hiển thị nổi bật
+    for (var cat in cashbackRates.take(2)) {
+      highlights.add({
+        'icon': Icons.flash_on_rounded, 
+        'color': Colors.amber.shade700, 
+        'text': 'Hoàn tiền ${cat['label']}: ${cat['rate']}%'
+      });
+    }
+
     if (card.cashbackHighlight.isNotEmpty) {
       highlights.add({'icon': Icons.local_offer_rounded, 'color': Colors.orange, 'text': card.cashbackHighlight});
-    }
-    if (card.promoHighlight != null && card.promoHighlight!.isNotEmpty) {
-      highlights.add({'icon': Icons.star_rounded, 'color': Colors.purple, 'text': card.promoHighlight!});
     }
 
     if (highlights.isEmpty && (card.benefits == null || card.benefits!.isEmpty)) {
@@ -556,9 +583,9 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
       entertainmentCashbackRate: _selectedTemplate!.entertainmentCashbackRate,
       gymCashbackRate: _selectedTemplate!.gymCashbackRate,
       otherCashbackRate: _selectedTemplate!.otherCashbackRate,
-    );
+      maxCashbackPerMonth: _selectedTemplate!.maxCashbackPerMonth,
+      );
 
-    await ref.read(firestoreServiceProvider).addUserCard(newCard);
-    if (mounted) Navigator.pop(context);
+      await ref.read(firestoreServiceProvider).addUserCard(newCard);    if (mounted) Navigator.pop(context);
   }
 }

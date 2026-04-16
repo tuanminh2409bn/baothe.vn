@@ -30,6 +30,7 @@ class CreditCard {
   final double? entertainmentCashbackRate;
   final double? gymCashbackRate;
   final double? otherCashbackRate; // Known as 'Chi tiêu' in UI
+  final double? maxCashbackPerMonth;
 
   // Dữ liệu chi tiết từ trang ngân hàng
   final List<Map<String, String>>? benefitsDetail;
@@ -65,6 +66,7 @@ class CreditCard {
     this.entertainmentCashbackRate,
     this.gymCashbackRate,
     this.otherCashbackRate,
+    this.maxCashbackPerMonth,
     this.benefitsDetail,
     this.conditionsDetail,
     this.productInfoDetail,
@@ -100,6 +102,7 @@ class CreditCard {
       'entertainmentCashbackRate': entertainmentCashbackRate,
       'gymCashbackRate': gymCashbackRate,
       'otherCashbackRate': otherCashbackRate,
+      'maxCashbackPerMonth': maxCashbackPerMonth,
       'benefitsDetail': benefitsDetail,
       'conditionsDetail': conditionsDetail,
       'productInfoDetail': productInfoDetail,
@@ -136,6 +139,7 @@ class CreditCard {
       entertainmentCashbackRate: (map['entertainmentCashbackRate'] as num?)?.toDouble(),
       gymCashbackRate: (map['gymCashbackRate'] as num?)?.toDouble(),
       otherCashbackRate: (map['otherCashbackRate'] as num?)?.toDouble(),
+      maxCashbackPerMonth: (map['maxCashbackPerMonth'] as num?)?.toDouble(),
       benefitsDetail: map['benefitsDetail'] != null  
           ? List<Map<String, String>>.from((map['benefitsDetail'] as List).map((e) => Map<String, String>.from(e)))
           : null,

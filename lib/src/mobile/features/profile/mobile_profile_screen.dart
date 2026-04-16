@@ -53,12 +53,12 @@ class MobileProfileScreen extends ConsumerWidget {
           _buildMenuTile(Icons.security_rounded, 'Bảo mật tài khoản'),
           _buildMenuTile(Icons.notifications_none_rounded, 'Cài đặt thông báo'),
           _buildMenuTile(Icons.help_outline_rounded, 'Hỗ trợ & Trợ giúp'),
-          const Spacer(),
+          const SizedBox(height: 32),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: SizedBox(
               width: double.infinity,
-              height: 56,
+              height: 64,
               child: OutlinedButton.icon(
                 onPressed: () async {
                   await ref.read(authServiceProvider).signOut();

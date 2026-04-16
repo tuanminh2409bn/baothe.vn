@@ -32,6 +32,7 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
     {'id': 'utilitiesCashbackRate', 'label': 'Tiện ích/Hóa đơn'},
     {'id': 'entertainmentCashbackRate', 'label': 'Giải trí'},
     {'id': 'otherCashbackRate', 'label': 'Chi tiêu khác'},
+    {'id': 'maxCashbackPerMonth', 'label': 'Hoàn tiền tối đa'},
   ];
 
   @override
@@ -253,6 +254,14 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
           final rate2 = _getCashbackRate(_card2!, cat['id']!);
           final isBest1 = rate1 > rate2 && rate1 > 0;
           final isBest2 = rate2 > rate1 && rate2 > 0;
+          
+          final bool isAmount = cat['id'] == 'maxCashbackPerMonth';
+          final String value1 = isAmount 
+              ? (rate1 > 0 ? '${(rate1/1000000).toStringAsFixed(1)}M' : '0')
+              : '${rate1.toStringAsFixed(1)}%';
+          final String value2 = isAmount 
+              ? (rate2 > 0 ? '${(rate2/1000000).toStringAsFixed(1)}M' : '0')
+              : '${rate2.toStringAsFixed(1)}%';
 
           return Container(
             margin: const EdgeInsets.only(bottom: 2),
@@ -279,7 +288,7 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      '${rate1.toStringAsFixed(1)}%',
+                      value1,
                       style: GoogleFonts.inter(
                         color: isBest1 ? Colors.green.shade700 : AppColors.textPrimary,
                         fontWeight: isBest1 ? FontWeight.w900 : FontWeight.normal,
@@ -298,7 +307,7 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      '${rate2.toStringAsFixed(1)}%',
+                      value2,
                       style: GoogleFonts.inter(
                         color: isBest2 ? Colors.green.shade700 : AppColors.textPrimary,
                         fontWeight: isBest2 ? FontWeight.w900 : FontWeight.normal,
@@ -331,6 +340,7 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
       case 'entertainmentCashbackRate': return card.entertainmentCashbackRate ?? 0;
       case 'gymCashbackRate': return card.gymCashbackRate ?? 0;
       case 'otherCashbackRate': return card.otherCashbackRate ?? 0;
+      case 'maxCashbackPerMonth': return card.maxCashbackPerMonth ?? 0;
       default: return 0;
     }
   }

@@ -22,10 +22,10 @@ class MobileMainLayout extends StatelessWidget {
           bottomNavigationBar: _buildBottomNav(context),
         ),
         // Finy AI Assistant Floating Button
-        const Positioned(
+        Positioned(
           right: 0,
-          bottom: 100, // Đặt cao hơn bottom nav bar
-          child: FinyAIFloatingButton(),
+          bottom: Theme.of(context).platform == TargetPlatform.android ? 130 : 100, // Đặt cao hơn bottom nav bar
+          child: const FinyAIFloatingButton(),
         ),
       ],
     );
@@ -50,7 +50,8 @@ class MobileMainLayout extends StatelessWidget {
     // Với iOS (có bottomPadding ~ 34px), ta chỉ cần phần nền cao 42px. 
     // Tổng chiều cao iOS sẽ là: 42 + 34 = 76px (rất mỏng gọn).
     // Việc hạ chiều cao nền này sẽ TỰ ĐỘNG kéo dấu X (FAB) thấp xuống theo viền mép trên của BottomAppBar.
-    final double appBarHeight = bottomPadding > 0 ? 42 : 60;
+    final bool isAndroid = Theme.of(context).platform == TargetPlatform.android;
+    final double appBarHeight = isAndroid ? 70 : (bottomPadding > 0 ? 42 : 60);
 
     return BottomAppBar(
       height: appBarHeight,
@@ -69,12 +70,14 @@ class MobileMainLayout extends StatelessWidget {
             label: 'Trang chủ', 
             index: 0, 
             currentIndex: currentIndex,
+            isAndroid: isAndroid,
           ),
           _buildNavItem(
             icon: Icons.account_balance_wallet_outlined, 
             label: 'Ví thẻ', 
             index: 1, 
             currentIndex: currentIndex,
+            isAndroid: isAndroid,
           ),
           const SizedBox(width: 40), // Không gian cho Add FAB (Floating Action Button)
           _buildNavItem(
@@ -82,12 +85,14 @@ class MobileMainLayout extends StatelessWidget {
             label: 'Lịch hiển thị', 
             index: 2, 
             currentIndex: currentIndex,
+            isAndroid: isAndroid,
           ),
           _buildNavItem(
             icon: Icons.person_outline_rounded, 
             label: 'Cá nhân', 
             index: 3, 
             currentIndex: currentIndex,
+            isAndroid: isAndroid,
           ),
           ],
       ),
@@ -98,14 +103,19 @@ class MobileMainLayout extends StatelessWidget {
     required IconData icon, 
     required String label, 
     required int index, 
-    required int currentIndex
+    required int currentIndex,
+    required bool isAndroid,
   }) {
     final isSelected = index == currentIndex;
+    final double iconSize = isSelected 
+        ? (isAndroid ? 32.0 : 28.0) 
+        : (isAndroid ? 28.0 : 24.0);
+
     return IconButton(
       icon: Icon(
         icon,
         color: isSelected ? AppColors.primary : AppColors.textLight,
-        size: isSelected ? 28 : 24,
+        size: iconSize,
       ),
       onPressed: () {
         navigationShell.goBranch(
