@@ -153,7 +153,7 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
       if ((card.insuranceCashbackRate ?? 0) > 0) 'Hoàn ${card.insuranceCashbackRate}% Bảo hiểm',
       if ((card.utilitiesCashbackRate ?? 0) > 0) 'Hoàn ${card.utilitiesCashbackRate}% Hóa đơn',
       if ((card.gymCashbackRate ?? 0) > 0) 'Hoàn ${card.gymCashbackRate}% Gym',
-      if ((card.otherCashbackRate ?? 0) > 0) 'Hoàn ${card.otherCashbackRate}% Chi tiêu khác',
+      if ((card.otherCashbackRate ?? 0) > 0) 'Hoàn ${card.otherCashbackRate}% Hoàn tiền chi tiêu',
     ];
 
     return Column(

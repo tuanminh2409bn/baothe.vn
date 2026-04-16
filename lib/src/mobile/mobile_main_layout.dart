@@ -33,6 +33,7 @@ class MobileMainLayout extends StatelessWidget {
 
   Widget _buildAddFab(BuildContext context) {
     return FloatingActionButton(
+      heroTag: 'main_add_fab',
       onPressed: () => context.push('/add-card'),
       backgroundColor: AppColors.primary,
       shape: const CircleBorder(),

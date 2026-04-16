@@ -31,7 +31,7 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
     {'id': 'insuranceCashbackRate', 'label': 'Bảo hiểm'},
     {'id': 'utilitiesCashbackRate', 'label': 'Tiện ích/Hóa đơn'},
     {'id': 'entertainmentCashbackRate', 'label': 'Giải trí'},
-    {'id': 'otherCashbackRate', 'label': 'Chi tiêu khác'},
+    {'id': 'otherCashbackRate', 'label': 'Hoàn tiền chi tiêu'},
     {'id': 'maxCashbackPerMonth', 'label': 'Hoàn tiền tối đa'},
   ];
 

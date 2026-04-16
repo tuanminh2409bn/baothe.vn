@@ -26,7 +26,7 @@ class _MobileCalculatorScreenState extends ConsumerState<MobileCalculatorScreen>
     {'id': 'onlineCashbackRate', 'label': 'Online/Mua sắm'},
     {'id': 'travelCashbackRate', 'label': 'Du lịch'},
     {'id': 'transportCashbackRate', 'label': 'Di chuyển'},
-    {'id': 'otherCashbackRate', 'label': 'Chi tiêu khác'},
+    {'id': 'otherCashbackRate', 'label': 'Hoàn tiền chi tiêu'},
   ];
 
   @override

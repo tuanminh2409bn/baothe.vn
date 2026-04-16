@@ -108,6 +108,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       backgroundColor: AppColors.background,
       floatingActionButton: comparisonCards.isNotEmpty
           ? FloatingActionButton.extended(
+              heroTag: 'compare_cards_fab',
               onPressed: () => context.go('/compare'),
               backgroundColor: AppColors.primary,
               icon: const Icon(Icons.compare_arrows, color: Colors.white),

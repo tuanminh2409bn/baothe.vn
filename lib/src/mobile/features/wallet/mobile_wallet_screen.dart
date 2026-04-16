@@ -354,6 +354,7 @@ class MobileWalletScreen extends ConsumerWidget {
       // Đẩy nút lên cao hơn thanh menu bên dưới
       padding: const EdgeInsets.only(bottom: 70),
       child: FloatingActionButton.extended(
+        heroTag: 'wallet_add_card_fab',
         onPressed: () => context.push('/add-card'),
         backgroundColor: AppColors.primary,
         elevation: 4,

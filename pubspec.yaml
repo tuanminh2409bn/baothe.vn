@@ -5,7 +5,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.11.0
+  sdk: ^3.8.0
 
 dependencies:
   flutter:
@@ -32,11 +32,11 @@ dependencies:
   
   # New dependencies
   uuid:
-  fl_chart:
+  fl_chart: ^0.70.0 # Older version for compatibility
   flutter_local_notifications:
   timezone:
   flutter_animate:
-  smooth_page_indicator:
+  smooth_page_indicator: ^1.2.0 # Older version for compatibility
   table_calendar:
   google_sign_in: 6.3.0
   sign_in_with_apple:

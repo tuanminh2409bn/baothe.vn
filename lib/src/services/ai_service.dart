@@ -32,16 +32,17 @@ class AIService {
 
       _history.add({"role": "user", "parts": [{"text": text}]});
 
-      const systemInstruction = '''Bạn là Finy AI - Chuyên gia Tài chính Cao cấp.
-Nhiệm vụ: Phân tích nhu cầu và đề xuất các dòng thẻ tín dụng đa dạng tại Việt Nam.
+      const systemInstruction = '''Bạn là Finy AI - Chuyên gia Tài chính và Thẻ tín dụng thông minh nhất Việt Nam.
+Nhiệm vụ của bạn là giúp người dùng TIẾT KIỆM TIỀN bằng cách chọn đúng thẻ tín dụng để tiêu dùng.
 
-QUY TẮC:
-1. Luôn ưu tiên các ngân hàng có ưu đãi hoàn tiền cao nhất cho nhu cầu người dùng.
-2. PHẢI đề xuất đa dạng ngân hàng (không chỉ tập trung vào 1-2 ngân hàng).
-3. LUÔN GỌI hàm `findBestCards` nếu người dùng hỏi về bất kỳ loại chi tiêu/ưu đãi nào.
-4. Trả lời cực ngắn gọn (dưới 25 từ), sang trọng. 
-   VD: "Finy đã phân tích và tuyển chọn 5 dòng thẻ tối ưu từ các ngân hàng khác nhau cho nhu cầu của bạn:"
-5. Các thẻ gợi ý sẽ được hiển thị ngay bên dưới lời nhắn này.
+QUY TẮC TƯ VẤN:
+1. KHI NGƯỜI DÙNG CÓ NHU CẦU CHI TIÊU:
+   - Nhận diện danh mục (vd: mua trà sữa -> 'dining', mua sắm Tiki -> 'online').
+   - LUÔN GỌI `findBestCards(category)` để lấy dữ liệu thực tế.
+   - TRẢ LỜI THÔNG MINH: Giải thích rõ lý do tại sao thẻ đó tốt nhất (vd: "Thẻ này hoàn đến 10%, giúp bạn tiết kiệm 200k cho món đồ này").
+2. PHÂN TÍCH TOÀN DIỆN: So sánh các thẻ dựa trên tỷ lệ hoàn tiền và hạn mức hoàn tối đa (maxCashback).
+3. PHONG CÁCH: Chuyên nghiệp, nhạy bén, đáng tin cậy. Dùng ngôn ngữ tài chính cao cấp nhưng dễ hiểu.
+4. ĐA DẠNG: Đề xuất thẻ từ nhiều ngân hàng khác nhau để người dùng có nhiều lựa chọn tốt nhất.
 ''';
 
       final url = Uri.parse(
@@ -55,26 +56,32 @@ QUY TẮC:
           "contents": _history,
           "systemInstruction": {"parts": [{"text": systemInstruction}]},
           "tools": [{
-            "functionDeclarations": [{
+            "function_declarations": [{
               "name": "findBestCards",
-              "description": "Tìm kiếm thẻ tín dụng từ kho dữ liệu đa dạng.",
+              "description": "Tìm kiếm các thẻ tín dụng có tỷ lệ hoàn tiền cao nhất theo từng hạng mục chi tiêu tại Việt Nam.",
               "parameters": {
                 "type": "object",
                 "properties": {
                   "category": {
                     "type": "string", 
-                    "enum": ["supermarket", "online", "travel", "dining", "shopping", "medical", "education", "transport", "insurance", "utilities", "entertainment", "gym"],
-                    "description": "Danh mục chi tiêu"
+                    "enum": ["supermarket", "online", "travel", "dining", "shopping", "medical", "education", "transport", "insurance", "utilities", "entertainment", "gym", "other"],
+                    "description": "Hạng mục chi tiêu người dùng đang quan tâm (supermarket: Siêu thị, online: Mua sắm trực tuyến, travel: Du lịch/Máy bay, dining: Ăn uống, shopping: Mua sắm/TTMS, medical: Y tế, education: Giáo dục, transport: Giao thông/Xăng dầu, insurance: Bảo hiểm, utilities: Điện nước/Hóa đơn, entertainment: Giải trí/Xem phim, gym: Thể thao/Gym, other: Hoàn tiền chi tiêu chung)"
                   }
                 },
                 "required": ["category"]
               }
             }]
-          }]
+          }],
+          "toolConfig": {
+            "functionCallingConfig": {"mode": "AUTO"}
+          }
         }),
       ).timeout(const Duration(seconds: 15));
 
-      if (response.statusCode != 200) return "Finy AI đang bảo trì, vui lòng quay lại sau.";
+      if (response.statusCode != 200) {
+        print('AI Error: ${response.body}');
+        return "Finy AI đang bận một chút để cập nhật dữ liệu thẻ mới nhất, bạn vui lòng thử lại sau vài giây nhé! (Lỗi: ${response.statusCode})";
+      }
 
       final data = jsonDecode(response.body);
       final candidate = data['candidates'][0];
@@ -82,20 +89,23 @@ QUY TẮC:
       
       if (content['parts'][0].containsKey('functionCall')) {
         final functionCall = content['parts'][0]['functionCall'];
-        final String category = (functionCall['args']['category'] as String?)?.toLowerCase() ?? 'online';
+        final String category = (functionCall['args']['category'] as String?)?.toLowerCase() ?? 'other';
         
         final cards = await _executeFindBestCards(category);
         _lastRecommendedCards = cards;
 
+        // Lưu function call vào lịch sử
+        _history.add(content);
+        
         return _sendFunctionResponse(functionCall['name'], cards, category);
       }
 
-      final String botReply = content['parts'][0]['text'] ?? 'Tôi có thể hỗ trợ bạn tìm thẻ hoàn tiền phù hợp. Bạn đang quan tâm đến mục chi tiêu nào?';
+      final String botReply = content['parts'][0]['text'] ?? 'Tôi có thể giúp bạn tìm thẻ tín dụng có ưu đãi hoàn tiền tốt nhất. Bạn định chi tiêu vào việc gì?';
       _history.add({"role": "model", "parts": [{"text": botReply}]});
       return botReply;
 
     } catch (e) {
-      return "Kết nối mạng không ổn định, Finy chưa thể phản hồi ngay lúc này.";
+      return "Finy đang bận xử lý dữ liệu thẻ, bạn hãy nhắn lại cho Finy nhé!";
     }
   }
 
@@ -103,37 +113,40 @@ QUY TẮC:
     const cleanKey = ApiKeys.geminiApiKey;
     final url = Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$cleanKey');
 
-    final contentsWithFunction = List<Map<String, dynamic>>.from(_history);
-    contentsWithFunction.add({
-      "role": "model",
-      "parts": [{"functionCall": {"name": functionName, "args": {"category": category}}}]
-    });
-
-    contentsWithFunction.add({
+    final Map<String, dynamic> functionResponsePart = {
       "role": "function",
       "parts": [{
         "functionResponse": {
           "name": functionName,
           "response": {
-            "name": functionName,
             "content": {
-              "found": cards.length,
               "category": category,
-              "cards": cards.map((c) => {'name': c.name, 'bank': c.bankName}).toList()
+              "top_cards": cards.map((c) => {
+                'name': c.name, 
+                'bank': c.bankName, 
+                'cashback_rate': _getRate(c, category),
+                'max_cashback': c.maxCashbackPerMonth
+              }).toList()
             }
           }
         }
       }]
-    });
+    };
+
+    _history.add(functionResponsePart);
 
     final response = await http.post(
       url, 
       headers: {'Content-Type': 'application/json'}, 
-      body: jsonEncode({"contents": contentsWithFunction})
+      body: jsonEncode({
+        "contents": _history,
+      })
     );
 
+    if (response.statusCode != 200) return "Finy đã tìm thấy thẻ nhưng gặp lỗi khi phân tích. Dưới đây là các thẻ tốt nhất cho bạn.";
+
     final data = jsonDecode(response.body);
-    final String botReply = data['candidates'][0]['content']['parts'][0]['text'] ?? 'Đây là danh sách các thẻ đa dạng phù hợp với nhu cầu của bạn:';
+    final String botReply = data['candidates'][0]['content']['parts'][0]['text'] ?? 'Dựa trên dữ liệu hoàn tiền, đây là những lựa chọn tốt nhất cho bạn:';
     
     _history.add({"role": "model", "parts": [{"text": botReply}]});
     return botReply;
@@ -151,20 +164,44 @@ QUY TẮC:
     
     final allCards = List<CreditCard>.from(_cachedCards!);
     
-    // Sắp xếp thẻ tốt nhất cho category này lên đầu
-    allCards.sort((a, b) => _getRate(b, category).compareTo(_getRate(a, category)));
+    // 1. Lọc các thẻ có hoàn tiền cho danh mục này (> 0)
+    final eligibleCards = allCards.where((c) => _getRate(c, category) > 0).toList();
     
-    // Lấy đúng 5 thẻ (Vẫn ưu tiên thẻ tốt nhất nhưng trộn thêm ngân hàng khác nếu có cùng mức ưu đãi)
-    final bestMatch = allCards.where((c) => _getRate(c, category) > 0).toList();
-    
-    if (bestMatch.length >= 5) {
-      // Nếu có nhiều thẻ tốt, lấy 3 thẻ đầu và random 2 thẻ trong số các thẻ tốt còn lại để tạo sự tươi mới
-      final top3 = bestMatch.take(3).toList();
-      final remainingBest = bestMatch.skip(3).toList()..shuffle();
-      return [...top3, ...remainingBest.take(2)];
+    if (eligibleCards.isEmpty) {
+      // Nếu không có thẻ nào hoàn tiền riêng cho mục này, lấy top 5 thẻ hoàn tiền "Hoàn tiền chi tiêu" (other)
+      return allCards.take(5).toList();
     }
 
-    return allCards.take(5).toList();
+    // 2. Nhóm thẻ theo ngân hàng để đảm bảo tính đa dạng
+    final Map<String, List<CreditCard>> cardsByBank = {};
+    for (var card in eligibleCards) {
+      if (!cardsByBank.containsKey(card.bankName)) {
+        cardsByBank[card.bankName] = [];
+      }
+      cardsByBank[card.bankName]!.add(card);
+    }
+
+    // 3. Với mỗi ngân hàng, chọn ra thẻ TỐT NHẤT của họ cho danh mục này
+    final List<CreditCard> bestPerBank = [];
+    cardsByBank.forEach((bankName, bankCards) {
+      // Sắp xếp thẻ của ngân hàng này theo tỷ lệ hoàn tiền giảm dần
+      bankCards.sort((a, b) => _getRate(b, category).compareTo(_getRate(a, category)));
+      bestPerBank.add(bankCards.first);
+    });
+
+    // 4. Sắp xếp danh sách "best-per-bank" theo tỷ lệ hoàn tiền giảm dần
+    bestPerBank.sort((a, b) => _getRate(b, category).compareTo(_getRate(a, category)));
+
+    // 5. Logic ĐỔI MỚI (Renewal):
+    // - Lấy 3 ngân hàng có tỷ lệ hoàn tiền cao nhất (Top 1, 2, 3)
+    // - Với các ngân hàng còn lại (từ Top 4 trở đi), lấy ngẫu nhiên 2 ngân hàng để tạo sự mới mẻ
+    if (bestPerBank.length > 5) {
+      final top3 = bestPerBank.take(3).toList();
+      final others = bestPerBank.skip(3).toList()..shuffle();
+      return [...top3, ...others.take(2)];
+    }
+
+    return bestPerBank;
   }
 
   double _getRate(CreditCard card, String category) {
