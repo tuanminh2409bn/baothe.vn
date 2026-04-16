@@ -206,7 +206,7 @@ class MobileWalletScreen extends ConsumerWidget {
                   child: Image.network(
                     card.imagePath,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const Icon(Icons.credit_card, size: 20),
+                    errorBuilder: (_, _, _) => const Icon(Icons.credit_card, size: 20),
                   ),
                 ),
               ),
@@ -275,7 +275,7 @@ class MobileWalletScreen extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          Icon(FontAwesomeIcons.wallet, size: 48, color: Colors.grey.shade200),
+          FaIcon(FontAwesomeIcons.wallet, size: 48, color: Colors.grey.shade200),
           const SizedBox(height: 16),
           Text(
             'Chưa có thẻ nào',

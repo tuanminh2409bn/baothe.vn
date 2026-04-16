@@ -152,7 +152,7 @@ final transactionsStreamProvider = StreamProvider.autoDispose.family<List<Transa
 
 // Provider cung cấp danh sách thẻ mẫu (Mock) cho Home Screen khi user chưa có thẻ
 final mockCardsProvider = Provider<List<CreditCard>>((ref) {
-  final publicCards = ref.watch(cardsStreamProvider).valueOrNull ?? [];
+  final publicCards = ref.watch(cardsStreamProvider).value ?? [];
   if (publicCards.isEmpty) return [];
 
   final uniqueBankCards = <CreditCard>[];

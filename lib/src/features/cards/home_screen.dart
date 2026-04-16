@@ -15,12 +15,23 @@ import '../comparison/comparison_provider.dart';
 import '../favorites/favorites_provider.dart';
 
 // Quản lý trạng thái tìm kiếm
-final selectedBankProvider = StateProvider<String?>((ref) => null);
-final selectedCategoryProvider = StateProvider<String?>((ref) => null);
-final searchQueryProvider = StateProvider<String>((ref) => '');
-final displayLimitProvider = StateProvider<int>((ref) => 6);
-final selectedTierProvider = StateProvider<String?>((ref) => null);
-final selectedTypeProvider = StateProvider<String?>((ref) => null);
+class SelectedBankNotifier extends Notifier<String?> { @override String? build() => null; String? get value => state; set value(String? v) => state = v; }
+final selectedBankProvider = NotifierProvider<SelectedBankNotifier, String?>(SelectedBankNotifier.new);
+
+class SelectedCategoryNotifier extends Notifier<String?> { @override String? build() => null; String? get value => state; set value(String? v) => state = v; }
+final selectedCategoryProvider = NotifierProvider<SelectedCategoryNotifier, String?>(SelectedCategoryNotifier.new);
+
+class SearchQueryNotifier extends Notifier<String> { @override String build() => ''; String get value => state; set value(String v) => state = v; }
+final searchQueryProvider = NotifierProvider<SearchQueryNotifier, String>(SearchQueryNotifier.new);
+
+class DisplayLimitNotifier extends Notifier<int> { @override int build() => 6; int get value => state; set value(int v) => state = v; }
+final displayLimitProvider = NotifierProvider<DisplayLimitNotifier, int>(DisplayLimitNotifier.new);
+
+class SelectedTierNotifier extends Notifier<String?> { @override String? build() => null; String? get value => state; set value(String? v) => state = v; }
+final selectedTierProvider = NotifierProvider<SelectedTierNotifier, String?>(SelectedTierNotifier.new);
+
+class SelectedTypeNotifier extends Notifier<String?> { @override String? build() => null; String? get value => state; set value(String? v) => state = v; }
+final selectedTypeProvider = NotifierProvider<SelectedTypeNotifier, String?>(SelectedTypeNotifier.new);
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -154,9 +165,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             AppSearchBar(
                               controller: _searchController,
                               onSearch: (value) {
-                                ref.read(selectedCategoryProvider.notifier).state = null; // Xóa danh mục khi gõ tìm kiếm
-                                ref.read(selectedBankProvider.notifier).state = null; // Xóa ngân hàng khi gõ tìm kiếm mới
-                                ref.read(searchQueryProvider.notifier).state = value;
+                                ref.read(selectedCategoryProvider.notifier).value = null; // Xóa danh mục khi gõ tìm kiếm
+                                ref.read(selectedBankProvider.notifier).value = null; // Xóa ngân hàng khi gõ tìm kiếm mới
+                                ref.read(searchQueryProvider.notifier).value = value;
                               },
                               onSearchPressed: () {},
                             ),
@@ -183,10 +194,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         selectedType,
                         displayLimit,
                         onClear: () {
-                          ref.read(selectedBankProvider.notifier).state = null;
-                          ref.read(selectedTierProvider.notifier).state = null;
-                          ref.read(selectedTypeProvider.notifier).state = null;
-                          ref.read(searchQueryProvider.notifier).state = '';
+                          ref.read(selectedBankProvider.notifier).value = null;
+                          ref.read(selectedTierProvider.notifier).value = null;
+                          ref.read(selectedTypeProvider.notifier).value = null;
+                          ref.read(searchQueryProvider.notifier).value = '';
                           _searchController.clear();
                         }
                       ),
@@ -212,7 +223,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 decoration: const BoxDecoration(color: Color(0xFFF7F3EE)),
                 child: const Center(child: CircularProgressIndicator(color: AppColors.accentOrange)),
               ),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
             
             Center(
@@ -235,7 +246,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         null, // tierFilter
                         null, // typeFilter
                         displayLimit,
-                        onClear: () => ref.read(selectedCategoryProvider.notifier).state = null
+                        onClear: () => ref.read(selectedCategoryProvider.notifier).value = null
                       ),
 
                     _buildCategoriesGrid(),
@@ -364,9 +375,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             scale: 1.05,
             child: InkWell(
               onTap: () {
-                ref.read(selectedCategoryProvider.notifier).state = cat;
-                ref.read(selectedBankProvider.notifier).state = null;
-                ref.read(searchQueryProvider.notifier).state = '';
+                ref.read(selectedCategoryProvider.notifier).value = cat;
+                ref.read(selectedBankProvider.notifier).value = null;
+                ref.read(searchQueryProvider.notifier).value = '';
                 _searchController.clear();
               },
               borderRadius: BorderRadius.circular(20),
@@ -399,7 +410,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ? ElevatedButton(onPressed: () => context.go('/login'), style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))), child: const Text('Đăng nhập', style: TextStyle(color: Colors.white)))
                 : Row(children: [Text(user.email ?? 'User', style: AppStyles.labelSmall), const SizedBox(width: 10), IconButton(icon: const Icon(Icons.logout, size: 20), onPressed: () => ref.read(authServiceProvider).signOut())]),
             loading: () => const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
-            error: (_, __) => const Icon(Icons.error),
+            error: (_, _) => const Icon(Icons.error),
           ),
         ],
       ),
@@ -514,9 +525,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           scale: 1.1, 
           child: InkWell(
             onTap: isAvailable ? () {
-              ref.read(selectedCategoryProvider.notifier).state = null; // Xóa danh mục khi chọn ngân hàng
-              ref.read(searchQueryProvider.notifier).state = ''; // Xóa tìm kiếm chữ
-              ref.read(selectedBankProvider.notifier).state = item['name'];
+              ref.read(selectedCategoryProvider.notifier).value = null; // Xóa danh mục khi chọn ngân hàng
+              ref.read(searchQueryProvider.notifier).value = ''; // Xóa tìm kiếm chữ
+              ref.read(selectedBankProvider.notifier).value = item['name'];
             } : null, 
             borderRadius: BorderRadius.circular(8), 
             child: Container(
@@ -838,7 +849,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ), 
               itemCount: categories.length, 
               itemBuilder: (context, index) => _buildCategoryItem(
-                categories[index]['icon'] as IconData, 
+                categories[index]['icon'] as dynamic, 
                 categories[index]['label'] as String
               )
             );
@@ -848,7 +859,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildCategoryItem(IconData icon, String label) {
+  Widget _buildCategoryItem(dynamic icon, String label) {
     final isSelected = ref.watch(selectedCategoryProvider) == label;
     
     return AnimatedHover(
@@ -857,20 +868,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: InkWell(
         onTap: () {
           if (label == 'TẤT CẢ') {
-            ref.read(selectedBankProvider.notifier).state = null;
-            ref.read(selectedCategoryProvider.notifier).state = null;
-            ref.read(searchQueryProvider.notifier).state = '';
+            ref.read(selectedBankProvider.notifier).value = null;
+            ref.read(selectedCategoryProvider.notifier).value = null;
+            ref.read(searchQueryProvider.notifier).value = '';
             _searchController.clear();
           } else if (label == 'ĐÃ LƯU') {
-            ref.read(selectedBankProvider.notifier).state = null;
-            ref.read(searchQueryProvider.notifier).state = '';
+            ref.read(selectedBankProvider.notifier).value = null;
+            ref.read(searchQueryProvider.notifier).value = '';
             _searchController.clear();
-            ref.read(selectedCategoryProvider.notifier).state = label;
+            ref.read(selectedCategoryProvider.notifier).value = label;
           } else {
-            ref.read(selectedBankProvider.notifier).state = null;
-            ref.read(searchQueryProvider.notifier).state = '';
+            ref.read(selectedBankProvider.notifier).value = null;
+            ref.read(searchQueryProvider.notifier).value = '';
             _searchController.clear();
-            ref.read(selectedCategoryProvider.notifier).state = label;
+            ref.read(selectedCategoryProvider.notifier).value = label;
           }
         },
         borderRadius: BorderRadius.circular(20),
@@ -961,9 +972,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 selectedTier == tier, 
                 () {
                   final notifier = ref.read(selectedTierProvider.notifier);
-                  notifier.state = (notifier.state == tier) ? null : tier;
-                  if (notifier.state != null) {
-                    ref.read(selectedCategoryProvider.notifier).state = null;
+                  notifier.value = (notifier.value == tier) ? null : tier;
+                  if (notifier.value != null) {
+                    ref.read(selectedCategoryProvider.notifier).value = null;
                   }
                 }
               )),
@@ -983,9 +994,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 selectedType == type, 
                 () {
                   final notifier = ref.read(selectedTypeProvider.notifier);
-                  notifier.state = (notifier.state == type) ? null : type;
-                  if (notifier.state != null) {
-                    ref.read(selectedCategoryProvider.notifier).state = null;
+                  notifier.value = (notifier.value == type) ? null : type;
+                  if (notifier.value != null) {
+                    ref.read(selectedCategoryProvider.notifier).value = null;
                   }
                 }
               )),
@@ -1114,9 +1125,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: OutlinedButton(
                     onPressed: () {
                       if (hasMore) {
-                        ref.read(displayLimitProvider.notifier).state += 6;
+                        ref.read(displayLimitProvider.notifier).value += 6;
                       } else {
-                        ref.read(displayLimitProvider.notifier).state = 6;
+                        ref.read(displayLimitProvider.notifier).value = 6;
                       }
                     },
                     style: OutlinedButton.styleFrom(

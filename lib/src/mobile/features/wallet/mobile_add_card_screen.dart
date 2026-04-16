@@ -166,7 +166,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
           children: [
             if (_selectedTemplate != null)
               Image.network(_selectedTemplate!.imagePath, width: 24, height: 24,
-                  errorBuilder: (_, __, ___) => const Icon(Icons.credit_card))
+                  errorBuilder: (_, _, _) => const Icon(Icons.credit_card))
             else
               const Icon(Icons.search_rounded, color: AppColors.textLight),
             const SizedBox(width: 12),
@@ -318,7 +318,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                             final card = filtered[index];
                             return ListTile(
                               leading: Image.network(card.imagePath, width: 32,
-                                  errorBuilder: (_, __, ___) => const Icon(Icons.credit_card)),
+                                  errorBuilder: (_, _, _) => const Icon(Icons.credit_card)),
                               title: Text(card.name, style: const TextStyle(fontWeight: FontWeight.bold)),
                               subtitle: Text(card.bankName),
                               onTap: () {
@@ -330,7 +330,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                         );
                       },
                       loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (_, __) => const Text('Lỗi tải dữ liệu'),
+                      error: (_, _) => const Text('Lỗi tải dữ liệu'),
                     ),
                   ),
                 ],

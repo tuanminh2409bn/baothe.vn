@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FavoritesNotifier extends StateNotifier<Set<String>> {
-  FavoritesNotifier() : super({}) {
+class FavoritesNotifier extends Notifier<Set<String>> {
+  @override
+  Set<String> build() {
     _loadFavorites();
+    return {};
   }
 
   static const _key = 'favorite_cards';
@@ -33,6 +35,6 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
   }
 }
 
-final favoritesProvider = StateNotifierProvider<FavoritesNotifier, Set<String>>((ref) {
+final favoritesProvider = NotifierProvider<FavoritesNotifier, Set<String>>(() {
   return FavoritesNotifier();
 });

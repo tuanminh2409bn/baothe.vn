@@ -185,7 +185,7 @@ class WalletScreen extends ConsumerWidget {
                     child: Image.network(
                       card.imagePath,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const Icon(Icons.credit_card, color: AppColors.textLight),
+                      errorBuilder: (_, _, _) => const Icon(Icons.credit_card, color: AppColors.textLight),
                     ),
                   ),
                 ),

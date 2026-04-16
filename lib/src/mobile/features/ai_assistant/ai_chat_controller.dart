@@ -34,17 +34,17 @@ class AIChatState {
   }
 }
 
-final aiChatControllerProvider = StateNotifierProvider<AIChatController, AIChatState>((ref) {
-  final aiService = ref.watch(aiServiceProvider);
-  return AIChatController(aiService);
+final aiChatControllerProvider = NotifierProvider<AIChatController, AIChatState>(() {
+  return AIChatController();
 });
 
-class AIChatController extends StateNotifier<AIChatState> {
-  final AIService _aiService;
+class AIChatController extends Notifier<AIChatState> {
+  late final AIService _aiService;
 
-  AIChatController(this._aiService) : super(AIChatState()) {
-    // Initial welcome message
-    state = state.copyWith(messages: [
+  @override
+  AIChatState build() {
+    _aiService = ref.watch(aiServiceProvider);
+    return AIChatState(messages: [
       ChatMessage(
         text: 'Chào bạn! Mình là Finy AI, trợ lý tài chính thông minh của bạn. Bạn muốn tìm thẻ tín dụng để đi du lịch, đi siêu thị, hay mua sắm online hôm nay?',
         isUser: false,

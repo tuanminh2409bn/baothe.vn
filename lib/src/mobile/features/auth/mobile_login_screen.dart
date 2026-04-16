@@ -207,7 +207,7 @@ class _MobileLoginScreenState extends ConsumerState<MobileLoginScreen> {
 }
 
 class _LoginButton extends StatelessWidget {
-  final IconData? icon;
+  final dynamic icon;
   final Widget? customIcon;
   final String label;
   final Color backgroundColor;
@@ -244,8 +244,13 @@ class _LoginButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (customIcon != null) customIcon!,
-            if (icon != null) Icon(icon, size: 24, color: textColor),
+            ?customIcon,
+            if (icon != null) ...[
+              if (icon is IconData) 
+                Icon(icon as IconData, size: 24, color: textColor)
+              else
+                FaIcon(icon, size: 24, color: textColor),
+            ],
             const SizedBox(width: 12),
             Text(label, style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: textColor)),
           ],

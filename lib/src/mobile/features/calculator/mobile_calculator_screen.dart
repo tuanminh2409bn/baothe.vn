@@ -186,7 +186,7 @@ class _MobileCalculatorScreenState extends ConsumerState<MobileCalculatorScreen>
         );
       },
       loading: () => const CircularProgressIndicator(),
-      error: (_, __) => const Text('Lỗi tải thẻ'),
+      error: (_, _) => const Text('Lỗi tải thẻ'),
     );
   }
 
@@ -221,7 +221,7 @@ class _MobileCalculatorScreenState extends ConsumerState<MobileCalculatorScreen>
         color: AppColors.primary,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
-          BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 8)),
+          BoxShadow(color: AppColors.primary.withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 8)),
         ],
       ),
       child: Column(

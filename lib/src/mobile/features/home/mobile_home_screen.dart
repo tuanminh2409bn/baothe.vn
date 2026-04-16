@@ -186,7 +186,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
               width: 100,
               child: LinearProgressIndicator(),
             ),
-            error: (_, __) => const Text('Lỗi tải dữ liệu'),
+            error: (_, _) => const Text('Lỗi tải dữ liệu'),
           ),
         ],
       ),
@@ -234,7 +234,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, __) => const Text('Lỗi tải thẻ'),
+      error: (_, _) => const Text('Lỗi tải thẻ'),
     );
   }
 
@@ -344,13 +344,13 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                           card.imagePath,
                           fit: BoxFit.cover,
                           alignment: Alignment.center,
-                          errorBuilder: (_, __, ___) => _buildFallbackGradient(index),
+                          errorBuilder: (_, _, _) => _buildFallbackGradient(index),
                         )
                       : Image.asset(
                           card.imagePath,
                           fit: BoxFit.cover,
                           alignment: Alignment.center,
-                          errorBuilder: (_, __, ___) => _buildFallbackGradient(index),
+                          errorBuilder: (_, _, _) => _buildFallbackGradient(index),
                         ))
                   : _buildFallbackGradient(index),
             ),
@@ -878,8 +878,9 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                             ' ',
                           )).toLowerCase();
                           final combined = '$cashback $benefitsStr $detailsStr';
-                          if (keywords.isEmpty && category['label'] == 'Chi tiêu')
+                          if (keywords.isEmpty && category['label'] == 'Chi tiêu') {
                             return true;
+                          }
                           return keywords.any((kw) => combined.contains(kw));
                         }).toList();
 
@@ -895,7 +896,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                           controller: scrollController,
                           physics: const BouncingScrollPhysics(),
                           itemCount: matchedCards.length,
-                          separatorBuilder: (_, __) =>
+                          separatorBuilder: (_, _) =>
                               const SizedBox(height: 16),
                           itemBuilder: (context, index) {
                             final card = matchedCards[index];
@@ -941,13 +942,13 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                   ? Image.network(
                       card.imagePath,
                       fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) =>
+                      errorBuilder: (_, _, _) =>
                           const Icon(Icons.credit_card),
                     )
                   : Image.asset(
                       card.imagePath,
                       fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) =>
+                      errorBuilder: (_, _, _) =>
                           const Icon(Icons.credit_card),
                     ),
             ),
@@ -1122,7 +1123,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
 
           txAsync.when(
             data: (txs) {
-              final cardsData = cardsAsync.valueOrNull ?? [];
+              final cardsData = cardsAsync.value ?? [];
               // Mock logic: nếu cả thẻ và giao dịch đều rỗng thì dùng Mock
               if (txs.isEmpty && cardsData.isEmpty) {
                 return const _TransactionItem(
@@ -1194,7 +1195,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => const Text('Lỗi tải giao dịch'),
+            error: (_, _) => const Text('Lỗi tải giao dịch'),
           ),
         ],
       ),

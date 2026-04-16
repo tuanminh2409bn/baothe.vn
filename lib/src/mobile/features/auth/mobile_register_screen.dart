@@ -343,7 +343,7 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
 }
 
 class _SocialLoginButton extends StatelessWidget {
-  final IconData? icon;
+  final dynamic icon;
   final Widget? customIcon;
   final String label;
   final VoidCallback onPressed;
@@ -367,8 +367,13 @@ class _SocialLoginButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (customIcon != null) customIcon!,
-            if (icon != null) FaIcon(icon!, size: 20),
+            ?customIcon,
+            if (icon != null) ...[
+              if (icon is IconData)
+                Icon(icon as IconData, size: 20)
+              else
+                FaIcon(icon, size: 20),
+            ],
             const SizedBox(width: 12),
             Text(label, style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600)),
           ],

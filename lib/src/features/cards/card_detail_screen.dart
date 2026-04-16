@@ -31,7 +31,7 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
         title: cardAsync.when(
           data: (card) => Text(card?.bankName ?? 'Chi tiết thẻ', style: AppStyles.h2),
           loading: () => Text('Đang tải...', style: AppStyles.h2),
-          error: (_, __) => Text('Lỗi', style: AppStyles.h2),
+          error: (_, _) => Text('Lỗi', style: AppStyles.h2),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.primary),
@@ -54,7 +54,7 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
               );
             },
             loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
           ),
           const SizedBox(width: 10),
         ],

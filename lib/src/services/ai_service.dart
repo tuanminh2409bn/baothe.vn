@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -14,7 +13,7 @@ class AIService {
   final FirebaseFirestore _firestore;
   List<CreditCard>? _cachedCards;
   List<CreditCard> _lastRecommendedCards = [];
-  List<Map<String, dynamic>> _history = [];
+  final List<Map<String, dynamic>> _history = [];
 
   AIService(this._firestore);
 
@@ -26,13 +25,14 @@ class AIService {
   List<CreditCard> get lastRecommendedCards => _lastRecommendedCards;
 
   Future<String> sendMessage(String text) async {
-    final cleanKey = ApiKeys.geminiApiKey.trim();
+    _lastRecommendedCards.clear();
+    const cleanKey = ApiKeys.geminiApiKey;
     try {
       if (_cachedCards == null) await _loadCardsToCache();
 
       _history.add({"role": "user", "parts": [{"text": text}]});
 
-      final systemInstruction = '''Bạn là Finy AI - Chuyên gia Tài chính Cao cấp.
+      const systemInstruction = '''Bạn là Finy AI - Chuyên gia Tài chính Cao cấp.
 Nhiệm vụ: Phân tích nhu cầu và đề xuất các dòng thẻ tín dụng đa dạng tại Việt Nam.
 
 QUY TẮC:
@@ -100,7 +100,7 @@ QUY TẮC:
   }
 
   Future<String> _sendFunctionResponse(String functionName, List<CreditCard> cards, String category) async {
-    final cleanKey = ApiKeys.geminiApiKey.trim();
+    const cleanKey = ApiKeys.geminiApiKey;
     final url = Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$cleanKey');
 
     final contentsWithFunction = List<Map<String, dynamic>>.from(_history);
@@ -154,17 +154,17 @@ QUY TẮC:
     // Sắp xếp thẻ tốt nhất cho category này lên đầu
     allCards.sort((a, b) => _getRate(b, category).compareTo(_getRate(a, category)));
     
-    // Lấy đúng 3 thẻ (Vẫn ưu tiên thẻ tốt nhất nhưng trộn thêm ngân hàng khác nếu có cùng mức ưu đãi)
+    // Lấy đúng 5 thẻ (Vẫn ưu tiên thẻ tốt nhất nhưng trộn thêm ngân hàng khác nếu có cùng mức ưu đãi)
     final bestMatch = allCards.where((c) => _getRate(c, category) > 0).toList();
     
-    if (bestMatch.length >= 3) {
-      // Nếu có nhiều thẻ tốt, lấy 2 thẻ đầu và random 1 thẻ trong số các thẻ tốt còn lại để tạo sự tươi mới
-      final top2 = bestMatch.take(2).toList();
-      final remainingBest = bestMatch.skip(2).toList()..shuffle();
-      return [...top2, ...remainingBest.take(1)];
+    if (bestMatch.length >= 5) {
+      // Nếu có nhiều thẻ tốt, lấy 3 thẻ đầu và random 2 thẻ trong số các thẻ tốt còn lại để tạo sự tươi mới
+      final top3 = bestMatch.take(3).toList();
+      final remainingBest = bestMatch.skip(3).toList()..shuffle();
+      return [...top3, ...remainingBest.take(2)];
     }
 
-    return allCards.take(3).toList();
+    return allCards.take(5).toList();
   }
 
   double _getRate(CreditCard card, String category) {

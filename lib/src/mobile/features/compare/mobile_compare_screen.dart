@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../constants/app_styles.dart';
 import '../../../models/user_card_model.dart';
-import '../../../models/credit_card_model.dart';
 import '../../../services/firestore_service.dart';
 import '../../../services/auth_service.dart';
 
@@ -204,7 +203,7 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (_, __) => const Center(child: Text('Lỗi tải thẻ')),
+                error: (_, _) => const Center(child: Text('Lỗi tải thẻ')),
               ),
             ),
           ],

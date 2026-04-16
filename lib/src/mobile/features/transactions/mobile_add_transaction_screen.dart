@@ -191,7 +191,7 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
         );
       },
       loading: () => const CircularProgressIndicator(),
-      error: (_, __) => const Text('Lỗi tải thẻ'),
+      error: (_, _) => const Text('Lỗi tải thẻ'),
     );
   }
 
@@ -248,7 +248,7 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
     final user = ref.read(authServiceProvider).currentUser;
     if (user == null) return;
 
-    final cards = ref.read(userCardsStreamProvider(user.uid)).valueOrNull ?? [];
+    final cards = ref.read(userCardsStreamProvider(user.uid)).value ?? [];
     final selectedCard = cards.any((c) => c.id == _selectedCardId) 
         ? cards.firstWhere((c) => c.id == _selectedCardId)
         : null;

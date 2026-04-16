@@ -41,7 +41,7 @@ class MobileReportsScreen extends ConsumerWidget {
       ),
       body: transactionsAsync.when(
         data: (txs) {
-          final cards = userCardsAsync.valueOrNull ?? [];
+          final cards = userCardsAsync.value ?? [];
           return _buildBody(context, txs, cards);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -191,7 +191,7 @@ class MobileReportsScreen extends ConsumerWidget {
               color: AppColors.primary,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
-                BoxShadow(color: AppColors.primary.withOpacity(0.2), blurRadius: 15, offset: const Offset(0, 8)),
+                BoxShadow(color: AppColors.primary.withValues(alpha: 0.2), blurRadius: 15, offset: const Offset(0, 8)),
               ],
             ),
             child: Column(
@@ -240,7 +240,7 @@ class MobileReportsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 20)],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 20)],
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -294,8 +294,8 @@ class MobileReportsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: color.withOpacity(0.2), blurRadius: 8)],
-        border: Border.all(color: color.withOpacity(0.1)),
+        boxShadow: [BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 8)],
+        border: Border.all(color: color.withValues(alpha: 0.1)),
       ),
       child: Text(
         category,
