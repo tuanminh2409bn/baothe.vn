@@ -18,11 +18,13 @@ import 'features/profile/mobile_profile_screen.dart';
 import 'features/transactions/mobile_add_transaction_screen.dart';
 import '../models/transaction_model.dart';
 import 'features/wallet/mobile_card_detail_screen.dart';
+import 'features/wallet/mobile_public_card_detail_screen.dart';
 import 'features/compare/mobile_compare_screen.dart';
 import 'features/calculator/mobile_calculator_screen.dart';
 import 'features/favorites/mobile_favorites_screen.dart';
 import 'features/ai_assistant/ai_chat_screen.dart';
 import '../models/user_card_model.dart';
+import '../models/credit_card_model.dart';
 
 import 'mobile_main_layout.dart';
 
@@ -129,6 +131,14 @@ final mobileRouterProvider = Provider<GoRouter>((ref) {
           return MobileCardDetailScreen(userCard: userCard);
         },
       ),
+      GoRoute(
+        path: '/public-card-detail',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final creditCard = state.extra as CreditCard;
+          return MobilePublicCardDetailScreen(creditCard: creditCard);
+        },
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return MobileMainLayout(navigationShell: navigationShell);
@@ -148,7 +158,10 @@ final mobileRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/wallet',
-                builder: (context, state) => const MobileWalletScreen(),
+                builder: (context, state) {
+                  final initialIndex = state.extra as int? ?? 0;
+                  return MobileWalletScreen(initialIndex: initialIndex);
+                },
               ),
             ],
           ),

@@ -26,6 +26,7 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
   
   String? _selectedSourceId; 
   String _selectedCategory = 'Mua sắm';
+  DateTime _selectedDateTime = DateTime.now();
   bool _isLoading = false;
 
   final List<Map<String, dynamic>> _categories = [
@@ -75,6 +76,8 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
   @override
   Widget build(BuildContext context) {
     final user = ref.read(authServiceProvider).currentUser;
+    final dateFormat = DateFormat('dd/MM/yyyy');
+    final timeFormat = DateFormat('HH:mm');
     
     // Watch đúng provider tùy theo loại
     final sourcesAsync = widget.type == TransactionType.credit
@@ -119,6 +122,30 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
               label: 'Mô tả chi tiêu',
               hint: 'Ví dụ: Mua sắm cuối tuần',
               icon: Icons.notes_rounded,
+            ),
+            const SizedBox(height: 32),
+            _buildSectionTitle('5. Thời gian chi tiêu'),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildDateTimePickerTile(
+                    label: 'Ngày',
+                    value: dateFormat.format(_selectedDateTime),
+                    icon: Icons.calendar_today_rounded,
+                    onTap: _pickDate,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildDateTimePickerTile(
+                    label: 'Giờ',
+                    value: timeFormat.format(_selectedDateTime),
+                    icon: Icons.access_time_rounded,
+                    onTap: _pickTime,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 48),
             _buildSaveButton(),
@@ -205,6 +232,100 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
         ),
       ),
     );
+  }
+
+  Widget _buildDateTimePickerTile({
+    required String label,
+    required String value,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border(context)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textLight(context))),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  value,
+                  style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
+                ),
+                Icon(icon, size: 16, color: AppColors.textLight(context)),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDateTime,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: widget.type == TransactionType.credit ? AppColors.primary(context) : Colors.green.shade700,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDateTime = DateTime(
+          picked.year,
+          picked.month,
+          picked.day,
+          _selectedDateTime.hour,
+          _selectedDateTime.minute,
+        );
+      });
+    }
+  }
+
+  Future<void> _pickTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_selectedDateTime),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: widget.type == TransactionType.credit ? AppColors.primary(context) : Colors.green.shade700,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDateTime = DateTime(
+          _selectedDateTime.year,
+          _selectedDateTime.month,
+          _selectedDateTime.day,
+          picked.hour,
+          picked.minute,
+        );
+      });
+    }
   }
 
   Widget _buildSourceSelector(AsyncValue<List<dynamic>> sourcesAsync) {
@@ -389,7 +510,7 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
         amount: amount,
         category: _selectedCategory,
         note: _noteController.text,
-        timestamp: DateTime.now(),
+        timestamp: _selectedDateTime,
         type: widget.type,
       );
 

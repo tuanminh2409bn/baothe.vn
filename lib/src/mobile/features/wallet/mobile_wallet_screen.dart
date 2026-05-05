@@ -12,7 +12,9 @@ import '../../../models/user_card_model.dart';
 import '../../../models/user_wallet_model.dart';
 
 class MobileWalletScreen extends ConsumerWidget {
-  const MobileWalletScreen({super.key});
+  final int initialIndex;
+
+  const MobileWalletScreen({super.key, this.initialIndex = 0});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,6 +31,7 @@ class MobileWalletScreen extends ConsumerWidget {
 
     return DefaultTabController(
       length: 2,
+      initialIndex: initialIndex,
       child: Scaffold(
         backgroundColor: AppColors.background(context),
         appBar: _buildAppBar(context),

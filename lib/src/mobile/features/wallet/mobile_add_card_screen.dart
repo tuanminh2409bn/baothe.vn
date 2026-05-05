@@ -133,7 +133,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
               ],
             ),
             const SizedBox(height: 48),
-            _buildSaveButton(),
+            SafeArea(child: _buildSaveButton()),
           ],
         ),
       ),
@@ -450,15 +450,18 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
       builder: (ctx) {
         return StatefulBuilder(builder: (ctx, setSheet) {
-          return Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                 Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(2))),
                 const SizedBox(height: 20),
                 Text(
@@ -523,7 +526,9 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                 const SizedBox(height: 10),
               ],
             ),
-          );
+          ),
+            ),
+        );
         });
       },
     );
