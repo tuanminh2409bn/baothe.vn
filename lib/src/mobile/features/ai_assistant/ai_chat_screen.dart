@@ -56,7 +56,7 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back_ios_new, color: AppColors.textPrimary(context)),
           onPressed: () => context.pop(),
         ),
         title: Row(
@@ -73,10 +73,10 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
               child: const Icon(Icons.auto_awesome, color: Colors.white, size: 16),
             ),
             const SizedBox(width: 8),
-            const Text(
+            Text(
               'Finy AI',
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: AppColors.textPrimary(context),
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
@@ -85,7 +85,7 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: AppColors.textLight),
+            icon: Icon(Icons.refresh, color: AppColors.textLight(context)),
             onPressed: () {
               ref.read(aiChatControllerProvider.notifier).resetChat();
             },
@@ -115,14 +115,14 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
 
                   final message = chatState.messages[index];
                   if (message.isUser) {
-                    return _buildUserMessage(message.text);
+                    return _buildUserMessage(context, message.text);
                   } else {
-                    return _buildFinyMessage(message);
+                    return _buildFinyMessage(context, message);
                   }
                 },
               ),
             ),
-            _buildInputArea(chatState.isLoading),
+            _buildInputArea(context, chatState.isLoading),
           ],
         ),
       ),
@@ -172,7 +172,7 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
     );
   }
 
-  Widget _buildFinyMessage(ChatMessage message) {
+  Widget _buildFinyMessage(BuildContext context, ChatMessage message) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
@@ -208,8 +208,8 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
                   child: MarkdownBody(
                     data: message.text,
                     styleSheet: MarkdownStyleSheet(
-                      p: const TextStyle(color: AppColors.textPrimary, fontSize: 15, height: 1.5),
-                      strong: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary),
+                      p: TextStyle(color: AppColors.textPrimary(context), fontSize: 15, height: 1.5),
+                      strong: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary(context)),
                     ),
                   ),
                 ),
@@ -222,7 +222,7 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
                       children: message.recommendedCards.map((card) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12.0),
-                          child: _buildCardSuggestionWidget(card),
+                          child: _buildCardSuggestionWidget(context, card),
                         );
                       }).toList(),
                     ),
@@ -236,7 +236,7 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
     );
   }
 
-  Widget _buildCardSuggestionWidget(CreditCard card) {
+  Widget _buildCardSuggestionWidget(BuildContext context, CreditCard card) {
     // Lấy top 2 hạng mục hoàn tiền cao nhất
     final rates = [
       if ((card.supermarketCashbackRate ?? 0) > 0) {'label': 'Siêu thị', 'rate': card.supermarketCashbackRate!},
@@ -315,7 +315,7 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(card.bankName, style: const TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.bold)),
+                      Text(card.bankName, style: TextStyle(color: AppColors.primary(context), fontSize: 11, fontWeight: FontWeight.bold)),
                       if (topRates.isNotEmpty)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -369,7 +369,7 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
                         context.push('/card-detail', extra: userCard);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: AppColors.primary(context),
                         foregroundColor: Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -387,7 +387,7 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
     );
   }
 
-  Widget _buildUserMessage(String text) {
+  Widget _buildUserMessage(BuildContext context, String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
@@ -398,9 +398,9 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: AppColors.primary(context),
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
                   bottomLeft: Radius.circular(20),
@@ -421,7 +421,7 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
     );
   }
 
-  Widget _buildInputArea(bool isLoading) {
+  Widget _buildInputArea(BuildContext context, bool isLoading) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -468,7 +468,7 @@ class _AIChatScreenState extends ConsumerState<AIChatScreen> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isLoading ? Colors.grey : AppColors.primary,
+                color: isLoading ? Colors.grey : AppColors.primary(context),
               ),
               child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
             ),

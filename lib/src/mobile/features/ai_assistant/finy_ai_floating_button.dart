@@ -14,8 +14,8 @@ class FinyAIFloatingButton extends StatelessWidget {
           context.push('/ai-chat');
         },
         child: Container(
-          width: 64,
-          height: 64,
+          width: 52,
+          height: 52,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: const LinearGradient(
@@ -28,10 +28,10 @@ class FinyAIFloatingButton extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
-                blurRadius: 12,
-                spreadRadius: 2,
-                offset: const Offset(0, 4),
+                color: Color(0xFF8B5CF6).withValues(alpha: 0.4),
+                blurRadius: 10,
+                spreadRadius: 1,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -39,7 +39,7 @@ class FinyAIFloatingButton extends StatelessWidget {
             child: Icon(
               Icons.auto_awesome, // Sparkle icon
               color: Colors.white,
-              size: 32,
+              size: 26,
             ),
           ),
         ).animate(onPlay: (controller) => controller.repeat(reverse: true))

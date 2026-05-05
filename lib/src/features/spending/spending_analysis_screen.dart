@@ -24,7 +24,7 @@ class SpendingAnalysisScreen extends ConsumerWidget {
     final transactionsAsync = ref.watch(transactionsStreamProvider(user.uid));
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(title: const Text('Phân Tích Chi Tiêu')),
       body: transactionsAsync.when(
         data: (List<Transaction> transactions) {
@@ -39,13 +39,13 @@ class SpendingAnalysisScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Chi tiêu theo hạng mục', style: AppStyles.h3),
+                Text('Chi tiêu theo hạng mục', style: AppStyles.h3(context)),
                 const SizedBox(height: 24),
                 _buildPieChart(categoryData),
                 const SizedBox(height: 40),
-                Text('Chi tiết hạng mục', style: AppStyles.h3),
+                Text('Chi tiết hạng mục', style: AppStyles.h3(context)),
                 const SizedBox(height: 16),
-                ...categoryData.entries.map((e) => _buildCategoryRow(e.key, e.value, transactions.fold(0.0, (sum, item) => sum + item.amount))),
+                ...categoryData.entries.map((e) => _buildCategoryRow(context, e.key, e.value, transactions.fold(0.0, (sum, item) => sum + item.amount))),
               ],
             ),
           );
@@ -92,7 +92,7 @@ class SpendingAnalysisScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCategoryRow(String category, double amount, double total) {
+  Widget _buildCategoryRow(BuildContext context, String category, double amount, double total) {
     final percent = (amount / total * 100).toStringAsFixed(1);
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
 
@@ -103,11 +103,11 @@ class SpendingAnalysisScreen extends ConsumerWidget {
           Container(
             width: 12,
             height: 12,
-            decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.primary),
+            decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.primary(context)),
           ),
           const SizedBox(width: 12),
-          Expanded(child: Text(category, style: AppStyles.bodyMedium)),
-          Text('$percent%', style: const TextStyle(color: AppColors.textLight, fontSize: 12)),
+          Expanded(child: Text(category, style: AppStyles.bodyMedium(context))),
+          Text('$percent%', style: TextStyle(color: AppColors.textLight(context), fontSize: 12)),
           const SizedBox(width: 16),
           Text(currencyFormat.format(amount), style: const TextStyle(fontWeight: FontWeight.bold)),
         ],

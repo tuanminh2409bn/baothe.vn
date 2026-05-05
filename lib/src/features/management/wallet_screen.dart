@@ -27,13 +27,13 @@ class WalletScreen extends ConsumerWidget {
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
         title: const Text('Ví Thẻ Của Tôi'),
         actions: [
           IconButton(
             onPressed: () => context.push('/add-card'),
-            icon: const Icon(Icons.add_circle_outline, color: AppColors.primary, size: 28),
+            icon: Icon(Icons.add_circle_outline, color: AppColors.primary(context), size: 28),
           ),
           const SizedBox(width: 8),
         ],
@@ -54,7 +54,7 @@ class WalletScreen extends ConsumerWidget {
               children: [
                 _buildSummaryCard(totalLimit, totalBalance, currencyFormat),
                 const SizedBox(height: 24),
-                Text('Danh sách thẻ (${cards.length})', style: AppStyles.h3),
+                Text('Danh sách thẻ (${cards.length})', style: AppStyles.h3(context)),
                 const SizedBox(height: 16),
                 ...cards.map((card) => _buildCardItem(context, card, currencyFormat)),
               ],
@@ -72,16 +72,16 @@ class WalletScreen extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.credit_card_off_outlined, size: 80, color: AppColors.textLight.withValues(alpha: 0.5)),
+          Icon(Icons.credit_card_off_outlined, size: 80, color: AppColors.textLight(context).withValues(alpha: 0.5)),
           const SizedBox(height: 20),
-          Text('Ví của bạn đang trống', style: AppStyles.h3),
+          Text('Ví của bạn đang trống', style: AppStyles.h3(context)),
           const SizedBox(height: 10),
-          Text('Hãy thêm thẻ tín dụng đầu tiên để quản lý', style: AppStyles.labelSmall),
+          Text('Hãy thêm thẻ tín dụng đầu tiên để quản lý', style: AppStyles.labelSmall(context)),
           const SizedBox(height: 30),
           ElevatedButton(
             onPressed: () => context.push('/add-card'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: AppColors.primary(context),
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
@@ -176,7 +176,7 @@ class WalletScreen extends ConsumerWidget {
                   width: 60,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: AppColors.background,
+                    color: AppColors.background(context),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
                   ),
@@ -185,7 +185,7 @@ class WalletScreen extends ConsumerWidget {
                     child: Image.network(
                       card.imagePath,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => const Icon(Icons.credit_card, color: AppColors.textLight),
+                      errorBuilder: (_, _, _) => Icon(Icons.credit_card, color: AppColors.textLight(context)),
                     ),
                   ),
                 ),
@@ -194,14 +194,14 @@ class WalletScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(card.cardName, style: AppStyles.h4, maxLines: 1, overflow: TextOverflow.ellipsis),
-                      Text(card.bankName, style: AppStyles.labelSmall),
+                      Text(card.cardName, style: AppStyles.h4(context), maxLines: 1, overflow: TextOverflow.ellipsis),
+                      Text(card.bankName, style: AppStyles.labelSmall(context)),
                       const SizedBox(height: 8),
                       // Progress bar chi tiêu
                       LinearProgressIndicator(
                         value: usagePercent.toDouble(),
                         backgroundColor: Colors.grey[200],
-                        color: usagePercent > 0.8 ? Colors.red : AppColors.primary,
+                        color: usagePercent > 0.8 ? Colors.red : AppColors.primary(context),
                         minHeight: 4,
                         borderRadius: BorderRadius.circular(2),
                       ),
@@ -216,7 +216,7 @@ class WalletScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right, color: AppColors.textLight),
+                Icon(Icons.chevron_right, color: AppColors.textLight(context)),
               ],
             ),
           ),

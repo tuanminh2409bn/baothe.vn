@@ -51,7 +51,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
@@ -70,20 +70,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 32),
                 Text(
                   _isLogin ? 'Chào mừng trở lại' : 'Tạo tài khoản mới',
-                  style: AppStyles.h1.copyWith(fontSize: 28),
+                  style: AppStyles.h1(context).copyWith(fontSize: 28),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   _isLogin 
                     ? 'Đăng nhập để quản lý thẻ và ưu đãi của bạn' 
                     : 'Tham gia cộng đồng MyFiny ngay hôm nay',
-                  style: AppStyles.labelSmall,
+                  style: AppStyles.labelSmall(context),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 40),
-                _buildTextField('Email', _emailController, false),
+                _buildTextField(context, 'Email', _emailController, false),
                 const SizedBox(height: 20),
-                _buildTextField('Mật khẩu', _passwordController, true),
+                _buildTextField(context, 'Mật khẩu', _passwordController, true),
                 const SizedBox(height: 32),
                 SizedBox(
                   width: double.infinity,
@@ -91,7 +91,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _submit,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: AppColors.primary(context),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     child: _isLoading 
@@ -119,7 +119,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () => context.go('/'),
-                  child: const Text('Về trang chủ', style: TextStyle(color: AppColors.textLight)),
+                  child: Text('Về trang chủ', style: TextStyle(color: AppColors.textLight(context))),
                 ),
               ],
             ),
@@ -129,11 +129,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, bool isPassword) {
+  Widget _buildTextField(BuildContext context, String label, TextEditingController controller, bool isPassword) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppStyles.labelSmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+        Text(label, style: AppStyles.labelSmall(context).copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary(context))),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
@@ -141,7 +141,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           decoration: InputDecoration(
             hintText: 'Nhập $label...',
             filled: true,
-            fillColor: AppColors.background,
+            fillColor: AppColors.background(context),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,

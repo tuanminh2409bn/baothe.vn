@@ -86,7 +86,7 @@ class _CardFormScreenState extends ConsumerState<CardFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(title: const Text('Chi Tiết Thẻ')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -97,13 +97,13 @@ class _CardFormScreenState extends ConsumerState<CardFormScreen> {
             children: [
               _buildCardPreview(),
               const SizedBox(height: 32),
-              Text('Cấu hình hạn mức & số dư', style: AppStyles.h3),
+              Text('Cấu hình hạn mức & số dư', style: AppStyles.h3(context)),
               const SizedBox(height: 16),
               _buildTextField('Hạn mức thẻ (Credit Limit)', _limitController, 'Nhập số tiền hạn mức...'),
               const SizedBox(height: 20),
               _buildTextField('Số dư hiện tại (Số tiền đã dùng)', _balanceController, 'Nhập số tiền đã chi tiêu...'),
               const SizedBox(height: 32),
-              Text('Chu kỳ thanh toán', style: AppStyles.h3),
+              Text('Chu kỳ thanh toán', style: AppStyles.h3(context)),
               const SizedBox(height: 16),
               _buildDayPicker('Ngày chốt sao kê hàng tháng', _statementDay, (val) => setState(() => _statementDay = val!)),
               const SizedBox(height: 20),
@@ -115,7 +115,7 @@ class _CardFormScreenState extends ConsumerState<CardFormScreen> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _save,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: AppColors.primary(context),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: _isLoading 
@@ -149,8 +149,8 @@ class _CardFormScreenState extends ConsumerState<CardFormScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.baseCard.name, style: AppStyles.h4),
-                Text(widget.baseCard.bankName, style: AppStyles.labelSmall),
+                Text(widget.baseCard.name, style: AppStyles.h4(context)),
+                Text(widget.baseCard.bankName, style: AppStyles.labelSmall(context)),
               ],
             ),
           ),
@@ -163,7 +163,7 @@ class _CardFormScreenState extends ConsumerState<CardFormScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppStyles.labelSmall.copyWith(fontWeight: FontWeight.bold)),
+        Text(label, style: AppStyles.labelSmall(context).copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
@@ -185,7 +185,7 @@ class _CardFormScreenState extends ConsumerState<CardFormScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppStyles.labelSmall.copyWith(fontWeight: FontWeight.bold)),
+        Text(label, style: AppStyles.labelSmall(context).copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16),

@@ -19,7 +19,7 @@ class AppSearchBar extends StatelessWidget {
     return Container(
       height: 90, // Tăng chiều cao lên 90px theo chuẩn Gemini prompt
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.surface(context),
         borderRadius: BorderRadius.circular(24), // Bo góc hiện đại, ít tròn hơn một chút
         boxShadow: [
           BoxShadow(
@@ -28,23 +28,23 @@ class AppSearchBar extends StatelessWidget {
             offset: const Offset(0, 10),
           ),
         ],
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.8), width: 1.5),
+        border: Border.all(color: AppColors.border(context).withValues(alpha: 0.8), width: 1.5),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
         children: [
-          const Icon(Icons.search, color: AppColors.textLight, size: 32),
+          Icon(Icons.search, color: AppColors.textLight(context), size: 32),
           const SizedBox(width: 20),
           Expanded(
             child: TextField(
               controller: controller,
               onChanged: onSearch,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Tìm kiếm thẻ, ngân hàng hoặc nhu cầu chi tiêu......',
                 border: InputBorder.none,
-                hintStyle: TextStyle(color: AppColors.textLight, fontSize: 18),
+                hintStyle: TextStyle(color: AppColors.textLight(context), fontSize: 18),
               ),
-              style: AppStyles.bodyMedium.copyWith(fontSize: 20),
+              style: AppStyles.bodyMedium(context).copyWith(fontSize: 20),
             ),
           ),
           const SizedBox(width: 10),
@@ -55,15 +55,15 @@ class AppSearchBar extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF4A3728), Color(0xFF8B5E34)],
+                  gradient: LinearGradient(
+                    colors: [AppColors.primary(context), AppColors.lAccent],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF4A3728).withValues(alpha: 0.3),
+                      color: AppColors.primary(context).withValues(alpha: 0.3),
                       blurRadius: 15,
                       offset: const Offset(0, 5),
                     ),

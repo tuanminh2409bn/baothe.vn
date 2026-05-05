@@ -14,9 +14,9 @@ class ComparisonScreen extends ConsumerWidget {
     final isWeb = MediaQuery.of(context).size.width > 900;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
-        title: Text('So sánh thẻ tín dụng', style: AppStyles.h2),
+        title: Text('So sánh thẻ tín dụng', style: AppStyles.h2(context)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
           onPressed: () => context.go('/'),
@@ -48,16 +48,16 @@ class ComparisonScreen extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.compare_arrows, size: 80, color: AppColors.textLight),
+          Icon(Icons.compare_arrows, size: 80, color: AppColors.textLight(context)),
           const SizedBox(height: 20),
-          Text('Danh sách so sánh đang trống', style: AppStyles.h2),
+          Text('Danh sách so sánh đang trống', style: AppStyles.h2(context)),
           const SizedBox(height: 12),
-          Text('Hãy chọn các thẻ bạn quan tâm để bắt đầu so sánh', style: AppStyles.bodyMedium),
+          Text('Hãy chọn các thẻ bạn quan tâm để bắt đầu so sánh', style: AppStyles.bodyMedium(context)),
           const SizedBox(height: 32),
           ElevatedButton(
             onPressed: () => context.go('/'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: AppColors.primary(context),
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
@@ -82,12 +82,12 @@ class ComparisonScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
           // Các hàng thông số
-          _buildComparisonRow('Ngân hàng', cards.map((c) => c.bankName).toList()),
-          _buildComparisonRow('Phí thường niên', cards.map((c) => c.annualFee != null ? '${c.annualFee!.toInt()} VND' : 'N/A').toList()),
-          _buildComparisonRow('Lãi suất', cards.map((c) => c.interestRate != null ? '${c.interestRate}%/năm' : 'N/A').toList()),
-          _buildComparisonRow('Loại thẻ', cards.map((c) => c.cardType ?? 'N/A').toList()),
-          _buildComparisonRow('Hạng thẻ', cards.map((c) => c.cardTier ?? 'N/A').toList()),
-          _buildComparisonRow('Ưu đãi chính', cards.map((c) => c.cashbackHighlight).toList(), isExpandable: true),
+          _buildComparisonRow(context, 'Ngân hàng', cards.map((c) => c.bankName).toList()),
+          _buildComparisonRow(context, 'Phí thường niên', cards.map((c) => c.annualFee != null ? '${c.annualFee!.toInt()} VND' : 'N/A').toList()),
+          _buildComparisonRow(context, 'Lãi suất', cards.map((c) => c.interestRate != null ? '${c.interestRate}%/năm' : 'N/A').toList()),
+          _buildComparisonRow(context, 'Loại thẻ', cards.map((c) => c.cardType ?? 'N/A').toList()),
+          _buildComparisonRow(context, 'Hạng thẻ', cards.map((c) => c.cardTier ?? 'N/A').toList()),
+          _buildComparisonRow(context, 'Ưu đãi chính', cards.map((c) => c.cashbackHighlight).toList(), isExpandable: true),
         ],
       ),
     );
@@ -106,21 +106,21 @@ class ComparisonScreen extends ConsumerWidget {
             errorBuilder: (context, error, stackTrace) => Container(
               height: 120,
               width: 180,
-              color: AppColors.border,
-              child: const Icon(Icons.credit_card, size: 50, color: AppColors.textLight),
+              color: AppColors.border(context),
+              child: Icon(Icons.credit_card, size: 50, color: AppColors.textLight(context)),
             ),
           ),
           const SizedBox(height: 12),
-          Text(card.name, textAlign: TextAlign.center, style: AppStyles.h2.copyWith(fontSize: 14)),
+          Text(card.name, textAlign: TextAlign.center, style: AppStyles.h2(context).copyWith(fontSize: 14)),
         ],
       ),
     );
   }
 
-  Widget _buildComparisonRow(String label, List<String> values, {bool isExpandable = false}) {
+  Widget _buildComparisonRow(BuildContext context, String label, List<String> values, {bool isExpandable = false}) {
     return Container(
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.border, width: 0.5)),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: AppColors.border(context), width: 0.5)),
       ),
       child: Row(
         children: [
@@ -128,8 +128,8 @@ class ComparisonScreen extends ConsumerWidget {
           Container(
             width: 200,
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-            color: AppColors.surface,
-            child: Text(label, style: AppStyles.h2.copyWith(fontSize: 14, color: AppColors.textSecondary)),
+            color: AppColors.surface(context),
+            child: Text(label, style: AppStyles.h2(context).copyWith(fontSize: 14, color: AppColors.textSecondary(context))),
           ),
           // Các cột giá trị
           ...values.map((val) => Container(
@@ -138,7 +138,7 @@ class ComparisonScreen extends ConsumerWidget {
                 child: Text(
                   val,
                   textAlign: TextAlign.center,
-                  style: AppStyles.bodyMedium.copyWith(fontSize: 14),
+                  style: AppStyles.bodyMedium(context).copyWith(fontSize: 14),
                 ),
               )),
         ],

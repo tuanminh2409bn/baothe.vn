@@ -49,11 +49,12 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
       id: const Uuid().v4(),
       userId: user!.uid,
       userCardId: _selectedCard!.id,
-      cardName: _selectedCard!.cardName,
+      sourceName: _selectedCard!.cardName,
       amount: amount,
       category: _selectedCategory,
       note: _noteController.text,
       timestamp: DateTime.now(),
+      type: TransactionType.credit,
     );
 
     try {
@@ -81,7 +82,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     final userCardsAsync = ref.watch(userCardsStreamProvider(user!.uid));
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(title: const Text('Thêm Giao Dịch')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -90,11 +91,11 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
           children: [
             _buildAmountInput(),
             const SizedBox(height: 32),
-            Text('Hạng mục', style: AppStyles.h3),
+            Text('Hạng mục', style: AppStyles.h3(context)),
             const SizedBox(height: 12),
             _buildCategoryGrid(),
             const SizedBox(height: 32),
-            Text('Chọn thẻ thanh toán', style: AppStyles.h3),
+            Text('Chọn thẻ thanh toán', style: AppStyles.h3(context)),
             const SizedBox(height: 12),
             userCardsAsync.when(
               data: (cards) {
@@ -115,7 +116,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _submit,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: AppColors.primary(context),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 child: _isLoading 
@@ -133,12 +134,12 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Số tiền', style: AppStyles.labelSmall),
+        Text('Số tiền', style: AppStyles.labelSmall(context)),
         const SizedBox(height: 8),
         TextField(
           controller: _amountController,
           keyboardType: TextInputType.number,
-          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.primary),
+          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.primary(context)),
           decoration: const InputDecoration(
             hintText: '0',
             suffixText: '₫',
@@ -160,9 +161,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
           label: Text(cat),
           selected: isSelected,
           onSelected: (selected) => setState(() => _selectedCategory = cat),
-          selectedColor: AppColors.primary.withValues(alpha: 0.2),
+          selectedColor: AppColors.primary(context).withValues(alpha: 0.2),
           labelStyle: TextStyle(
-            color: isSelected ? AppColors.primary : AppColors.textPrimary,
+            color: isSelected ? AppColors.primary(context) : AppColors.textPrimary(context),
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         );
@@ -186,9 +187,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               margin: const EdgeInsets.only(right: 12),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.primary : Colors.white,
+                color: isSelected ? AppColors.primary(context) : Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: isSelected ? AppColors.primary : Colors.grey.withValues(alpha: 0.3)),
+                border: Border.all(color: isSelected ? AppColors.primary(context) : Colors.grey.withValues(alpha: 0.3)),
                 boxShadow: isSelected ? AppStyles.softShadow : null,
               ),
               child: Column(
@@ -198,7 +199,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   Text(
                     card.cardName,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                      color: isSelected ? Colors.white : AppColors.textPrimary(context),
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -208,7 +209,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   Text(
                     card.bankName,
                     style: TextStyle(
-                      color: isSelected ? Colors.white.withValues(alpha: 0.8) : AppColors.textLight,
+                      color: isSelected ? Colors.white.withValues(alpha: 0.8) : AppColors.textLight(context),
                       fontSize: 10,
                     ),
                   ),

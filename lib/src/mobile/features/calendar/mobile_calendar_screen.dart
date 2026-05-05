@@ -26,7 +26,7 @@ class _MobileCalendarScreenState extends ConsumerState<MobileCalendarScreen> {
         : const AsyncValue<List<UserCard>>.data([]);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -37,14 +37,14 @@ class _MobileCalendarScreenState extends ConsumerState<MobileCalendarScreen> {
         ),
       ),
       body: userCardsAsync.when(
-        data: (cards) => _buildBody(cards),
+        data: (cards) => _buildBody(context, cards),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, st) => Center(child: Text('Lỗi: $e')),
       ),
     );
   }
 
-  Widget _buildBody(List<UserCard> cards) {
+  Widget _buildBody(BuildContext context, List<UserCard> cards) {
     return Column(
       children: [
         Container(
@@ -69,15 +69,15 @@ class _MobileCalendarScreenState extends ConsumerState<MobileCalendarScreen> {
               });
             },
             calendarStyle: CalendarStyle(
-              todayDecoration: const BoxDecoration(color: AppColors.accent, shape: BoxShape.circle),
-              selectedDecoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
+              todayDecoration: BoxDecoration(color: AppColors.accent(context), shape: BoxShape.circle),
+              selectedDecoration: BoxDecoration(color: AppColors.primary(context), shape: BoxShape.circle),
               markerDecoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
               cellMargin: const EdgeInsets.all(4),
               defaultTextStyle: GoogleFonts.inter(fontSize: 14),
               weekendTextStyle: GoogleFonts.inter(fontSize: 14, color: Colors.red.shade300),
             ),
             daysOfWeekStyle: DaysOfWeekStyle(
-              weekdayStyle: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+              weekdayStyle: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondary(context)),
               weekendStyle: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.red.shade400),
             ),
             headerStyle: HeaderStyle(
@@ -90,7 +90,7 @@ class _MobileCalendarScreenState extends ConsumerState<MobileCalendarScreen> {
           ),
         ),
         Expanded(
-          child: _buildEventList(_selectedDay ?? _focusedDay, cards),
+          child: _buildEventList(context, _selectedDay ?? _focusedDay, cards),
         ),
       ],
     );
@@ -105,11 +105,11 @@ class _MobileCalendarScreenState extends ConsumerState<MobileCalendarScreen> {
     return events;
   }
 
-  Widget _buildEventList(DateTime day, List<UserCard> cards) {
+  Widget _buildEventList(BuildContext context, DateTime day, List<UserCard> cards) {
     final events = _getEventsForDay(day, cards);
     if (events.isEmpty) {
       return Center(
-        child: Text('Không có sự kiện trong ngày này', style: GoogleFonts.inter(color: AppColors.textLight)),
+        child: Text('Không có sự kiện trong ngày này', style: GoogleFonts.inter(color: AppColors.textLight(context))),
       );
     }
 
@@ -124,13 +124,13 @@ class _MobileCalendarScreenState extends ConsumerState<MobileCalendarScreen> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: isDue ? Colors.red.shade100 : const Color(0xFFF3F4F6)),
+            border: Border.all(color: isDue ? Colors.red.shade100 : AppColors.border(context)),
           ),
           child: Row(
             children: [
               Icon(
                 isDue ? Icons.warning_amber_rounded : Icons.description_outlined,
-                color: isDue ? Colors.red : AppColors.primary,
+                color: isDue ? Colors.red : AppColors.primary(context),
               ),
               const SizedBox(width: 16),
               Expanded(

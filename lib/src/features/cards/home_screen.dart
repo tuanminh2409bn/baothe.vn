@@ -105,12 +105,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final comparisonCards = ref.watch(comparisonProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       floatingActionButton: comparisonCards.isNotEmpty
           ? FloatingActionButton.extended(
               heroTag: 'compare_cards_fab',
               onPressed: () => context.go('/compare'),
-              backgroundColor: AppColors.primary,
+              backgroundColor: AppColors.primary(context),
               icon: const Icon(Icons.compare_arrows, color: Colors.white),
               label: Text(
                 'So sánh (${comparisonCards.length})',
@@ -135,8 +135,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     
                     // TIÊU ĐỀ
                     ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        colors: [Color(0xFF4A3728), Color(0xFF8B5E34), Color(0xFF4A3728)],
+                      shaderCallback: (bounds) => LinearGradient(
+                        colors: [AppColors.primary(context), AppColors.accent(context), AppColors.primary(context)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ).createShader(bounds),
@@ -145,7 +145,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         child: Text(
                           'CÔNG CỤ TRA CỨU THẺ TÍN DỤNG\nTHÔNG MINH DÀNH CHO CHỦ TỊCH',
                           textAlign: TextAlign.center,
-                          style: AppStyles.h1.copyWith(
+                          style: AppStyles.h1(context).copyWith(
                             color: Colors.white,
                             fontSize: screenWidth < 600 ? 28 : 46,
                             fontWeight: FontWeight.w900,
@@ -214,15 +214,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 return Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
-                  decoration: const BoxDecoration(color: Color(0xFFF7F3EE)),
+                  decoration: BoxDecoration(color: AppColors.surface(context)),
                   child: _buildFullBanksSection(ref, selectedBank, availableBanks),
                 );
               },
               loading: () => Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 40),
-                decoration: const BoxDecoration(color: Color(0xFFF7F3EE)),
-                child: const Center(child: CircularProgressIndicator(color: AppColors.accentOrange)),
+                decoration: BoxDecoration(color: AppColors.surface(context)),
+                child: Center(child: CircularProgressIndicator(color: AppColors.primary(context))),
               ),
               error: (_, _) => const SizedBox.shrink(),
             ),
@@ -368,7 +368,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('Gợi ý cho bạn: ', style: AppStyles.labelSmall.copyWith(fontSize: 14)),
+        Text('Gợi ý cho bạn: ', style: AppStyles.labelSmall(context).copyWith(fontSize: 14)),
         const SizedBox(width: 8),
         ...suggestedCategories.map((cat) => Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -384,8 +384,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               borderRadius: BorderRadius.circular(20),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.border.withValues(alpha: 0.5))),
-                child: Text(cat, style: AppStyles.labelSmall.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 13)),
+                decoration: BoxDecoration(
+                  color: AppColors.surface(context), 
+                  borderRadius: BorderRadius.circular(20), 
+                  border: Border.all(color: AppColors.border(context).withValues(alpha: 0.5))
+                ),
+                child: Text(cat, style: AppStyles.labelSmall(context).copyWith(color: AppColors.textPrimary(context), fontWeight: FontWeight.w600, fontSize: 13)),
               ),
             ),
           ),
@@ -398,7 +402,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final userAsync = ref.watch(authStateProvider);
     return Container(
       height: 80, padding: const EdgeInsets.symmetric(horizontal: 40),
-      decoration: const BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: AppColors.border, width: 0.5))),
+      decoration: BoxDecoration(
+        color: AppColors.surface(context), 
+        border: Border(bottom: BorderSide(color: AppColors.border(context), width: 0.5))
+      ),
       child: Row(
         children: [
           InkWell(onTap: () => context.go('/'), child: Image.asset('assets/logo/logo_web.png', height: 45, fit: BoxFit.contain)),
@@ -408,8 +415,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           const SizedBox(width: 20),
           userAsync.when(
             data: (user) => user == null
-                ? ElevatedButton(onPressed: () => context.go('/login'), style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))), child: const Text('Đăng nhập', style: TextStyle(color: Colors.white)))
-                : Row(children: [Text(user.email ?? 'User', style: AppStyles.labelSmall), const SizedBox(width: 10), IconButton(icon: const Icon(Icons.logout, size: 20), onPressed: () => ref.read(authServiceProvider).signOut())]),
+                ? ElevatedButton(
+                    onPressed: () => context.go('/login'), 
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary(context), 
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
+                    ), 
+                    child: const Text('Đăng nhập', style: TextStyle(color: Colors.white))
+                  )
+                : Row(children: [
+                    Text(user.email ?? 'User', style: AppStyles.labelSmall(context)), 
+                    const SizedBox(width: 10), 
+                    IconButton(icon: const Icon(Icons.logout, size: 20), onPressed: () => ref.read(authServiceProvider).signOut())
+                  ]),
             loading: () => const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
             error: (_, _) => const Icon(Icons.error),
           ),
@@ -421,7 +439,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildMenuItem(String title, {bool isSelected = false, VoidCallback? onTap}) {
     return AnimatedHover(
       scale: 1.02,
-      child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(8), child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Text(title, style: AppStyles.h2.copyWith(fontSize: 16, fontWeight: isSelected ? FontWeight.bold : FontWeight.w600, color: isSelected ? AppColors.textPrimary : AppColors.textSecondary)))),
+      child: InkWell(
+        onTap: onTap, 
+        borderRadius: BorderRadius.circular(8), 
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10), 
+          child: Text(
+            title, 
+            style: AppStyles.h2(context).copyWith(
+              fontSize: 16, 
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w600, 
+              color: isSelected ? AppColors.textPrimary(context) : AppColors.textSecondary(context)
+            )
+          )
+        )
+      ),
     );
   }
 
@@ -537,7 +569,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               alignment: Alignment.center, 
               decoration: BoxDecoration(
                 color: Colors.transparent, 
-                border: Border.all(color: isSelected ? AppColors.accentOrange : Colors.transparent, width: 1.5), 
+                border: Border.all(color: isSelected ? AppColors.warning : Colors.transparent, width: 1.5), 
                 borderRadius: BorderRadius.circular(8)
               ), 
               child: Image.asset(
@@ -578,9 +610,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         borderRadius: BorderRadius.circular(20),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.surface(context),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+            border: Border.all(color: AppColors.border(context).withValues(alpha: 0.5)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.03),
@@ -598,9 +630,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF7F3EE),
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  decoration: BoxDecoration(
+                    color: AppColors.background(context),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                   ),
                   child: Stack(
                     children: [
@@ -614,20 +646,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   loadingBuilder: (context, child, loadingProgress) =>
                                       loadingProgress == null
                                           ? child
-                                          : const Center(
+                                          : Center(
                                               child: CircularProgressIndicator(
                                                   strokeWidth: 2,
-                                                  color: AppColors.accentOrange)),
+                                                  color: AppColors.primary(context))),
                                   errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.credit_card,
-                                          color: AppColors.textLight, size: 60),
+                                      Icon(Icons.credit_card,
+                                          color: AppColors.textLight(context), size: 60),
                                 )
                               : Image.asset(
                                   card.imagePath,
                                   fit: BoxFit.contain,
                                   errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.credit_card,
-                                          color: AppColors.textLight, size: 60),
+                                      Icon(Icons.credit_card,
+                                          color: AppColors.textLight(context), size: 60),
                                 ),
                         ),
                       ),
@@ -637,7 +669,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         child: IconButton(
                           icon: Icon(
                             isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite ? Colors.red : AppColors.textLight,
+                            color: isFavorite ? Colors.red : AppColors.textLight(context),
                           ),
                           onPressed: () {
                             ref.read(favoritesProvider.notifier).toggleFavorite(card.id);
@@ -665,7 +697,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             children: [
                               Text(
                                 card.name,
-                                style: AppStyles.h2.copyWith(
+                                style: AppStyles.h2(context).copyWith(
                                   fontSize: 17,
                                   fontWeight: FontWeight.bold,
                                   height: 1.2,
@@ -678,15 +710,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: AppColors.accentOrange.withValues(alpha: 0.1),
+                                  color: AppColors.warning.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
                                   card.cashbackHighlight.toUpperCase(),
-                                  style: AppStyles.labelSmall.copyWith(
+                                  style: AppStyles.labelSmall(context).copyWith(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w800,
-                                    color: AppColors.accentOrange,
+                                    color: AppColors.warning,
                                     letterSpacing: 0.5,
                                   ),
                                 ),
@@ -698,15 +730,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        const Icon(Icons.check_circle,
-                                            size: 14, color: Color(0xFFB4936A)),
+                                        Icon(Icons.check_circle,
+                                            size: 14, color: AppColors.accent(context)),
                                         const SizedBox(width: 8),
                                         Expanded(
                                           child: Text(
                                             detail,
-                                            style: AppStyles.bodyMedium.copyWith(
+                                            style: AppStyles.bodyMedium(context).copyWith(
                                               fontSize: 13,
-                                              color: Colors.black87,
                                               height: 1.3,
                                             ),
                                           ),
@@ -726,7 +757,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             child: ElevatedButton(
                               onPressed: () {},
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
+                                backgroundColor: AppColors.primary(context),
                                 foregroundColor: Colors.white,
                                 elevation: 0,
                                 padding: const EdgeInsets.symmetric(vertical: 14),
@@ -743,7 +774,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                           const SizedBox(width: 8),
                           Material(
-                            color: const Color(0xFFF8FAFC),
+                            color: AppColors.background(context),
                             borderRadius: BorderRadius.circular(10),
                             child: InkWell(
                               onTap: () {
@@ -760,11 +791,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          AppColors.border.withValues(alpha: 0.5)),
+                                          AppColors.border(context).withValues(alpha: 0.5)),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: const Icon(Icons.compare_arrows,
-                                    color: AppColors.primary, size: 20),
+                                child: Icon(Icons.compare_arrows,
+                                    color: AppColors.primary(context), size: 20),
                               ),
                             ),
                           ),
@@ -813,19 +844,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(width: 40, height: 1, color: const Color(0xFFD4AF37)),
+            Container(width: 40, height: 1, color: AppColors.warning),
             const SizedBox(width: 15),
             Text(
               'DANH MỤC ĐẶC QUYỀN',
-              style: AppStyles.h2.copyWith(
+              style: AppStyles.h2(context).copyWith(
                 fontSize: 18,
                 letterSpacing: 4,
-                color: const Color(0xFF4A3728),
+                color: AppColors.textPrimary(context),
                 fontWeight: FontWeight.w800,
               ),
             ),
             const SizedBox(width: 15),
-            Container(width: 40, height: 1, color: const Color(0xFFD4AF37)),
+            Container(width: 40, height: 1, color: AppColors.warning),
           ],
         ),
         const SizedBox(height: 40),
@@ -889,10 +920,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFF4A3728) : Colors.white, 
+            color: isSelected ? AppColors.primary(context) : AppColors.surface(context), 
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isSelected ? const Color(0xFFD4AF37) : const Color(0xFF4A3728).withValues(alpha: 0.1), 
+              color: isSelected ? AppColors.warning : AppColors.border(context).withValues(alpha: 0.1), 
               width: 1.5
             ),
             boxShadow: [
@@ -910,26 +941,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFF7F3EE),
+                  color: isSelected ? Colors.white.withValues(alpha: 0.1) : AppColors.background(context),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
+                    color: AppColors.warning.withValues(alpha: 0.5),
                     width: 1,
                   )
                 ),
                 child: FaIcon(
                   icon, 
                   size: 24, 
-                  color: isSelected ? const Color(0xFFD4AF37) : const Color(0xFF8B5E34)
+                  color: isSelected ? AppColors.warning : AppColors.accent(context)
                 ),
               ),
               const SizedBox(height: 15), 
               Text(
                 label, 
                 textAlign: TextAlign.center,
-                style: AppStyles.labelSmall.copyWith(
+                style: AppStyles.labelSmall(context).copyWith(
                   fontWeight: isSelected ? FontWeight.w900 : FontWeight.bold, 
-                  color: isSelected ? Colors.white : const Color(0xFF4A3728), 
+                  color: isSelected ? Colors.white : AppColors.textPrimary(context), 
                   fontSize: 11,
                   letterSpacing: 1.2,
                 )
@@ -966,7 +997,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Hạng thẻ: ', style: AppStyles.labelSmall.copyWith(fontWeight: FontWeight.bold)),
+              Text('Hạng thẻ: ', style: AppStyles.labelSmall(context).copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(width: 8),
               ...tiers.map((tier) => _buildFilterChip(
                 tier, 
@@ -988,7 +1019,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Loại thẻ: ', style: AppStyles.labelSmall.copyWith(fontWeight: FontWeight.bold)),
+              Text('Loại thẻ: ', style: AppStyles.labelSmall(context).copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(width: 8),
               ...types.map((type) => _buildFilterChip(
                 type, 
@@ -1015,17 +1046,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         label: Text(label),
         selected: isSelected,
         onSelected: (_) => onTap(),
-        selectedColor: AppColors.primary.withValues(alpha: 0.2),
-        checkmarkColor: AppColors.primary,
+        selectedColor: AppColors.primary(context).withValues(alpha: 0.2),
+        checkmarkColor: AppColors.primary(context),
         labelStyle: TextStyle(
-          color: isSelected ? AppColors.primary : AppColors.textPrimary,
+          color: isSelected ? AppColors.primary(context) : AppColors.textPrimary(context),
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           fontSize: 12,
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.surface(context),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: isSelected ? AppColors.primary : AppColors.border),
+          side: BorderSide(color: isSelected ? AppColors.primary(context) : AppColors.border(context)),
         ),
       ),
     );
@@ -1090,9 +1121,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         }).toList();
 
         if (filteredCards.isEmpty) {
-          return const Padding(
-            padding: EdgeInsets.symmetric(vertical: 40),
-            child: Center(child: Text('Không tìm thấy thẻ phù hợp.', style: TextStyle(color: AppColors.textSecondary, fontSize: 16))),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 40),
+            child: Center(child: Text('Không tìm thấy thẻ phù hợp.', style: TextStyle(color: AppColors.textSecondary(context), fontSize: 16))),
           );
         }
 
@@ -1103,11 +1134,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           children: [
             Row(
               children: [
-                Text(title, style: AppStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(title, style: AppStyles.bodyMedium(context).copyWith(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(width: 10),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                  decoration: BoxDecoration(color: AppColors.accentOrange, borderRadius: BorderRadius.circular(12)),
+                  decoration: BoxDecoration(color: AppColors.warning, borderRadius: BorderRadius.circular(12)),
                   child: Text('${filteredCards.length}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
                 ),
                 const Spacer(),
@@ -1133,15 +1164,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                      side: const BorderSide(color: AppColors.primary, width: 1.5),
+                      side: BorderSide(color: AppColors.primary(context), width: 1.5),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(hasMore ? 'XEM THÊM' : 'THU GỌN', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                        Text(hasMore ? 'XEM THÊM' : 'THU GỌN', style: TextStyle(color: AppColors.primary(context), fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                         const SizedBox(width: 10),
-                        Icon(hasMore ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up, color: AppColors.primary),
+                        Icon(hasMore ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up, color: AppColors.primary(context)),
                       ],
                     ),
                   ),
@@ -1151,7 +1182,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.accentOrange)),
+      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.warning)),
       error: (err, stack) => Center(child: Text('Lỗi: $err', style: const TextStyle(color: Colors.red))),
     );
   }

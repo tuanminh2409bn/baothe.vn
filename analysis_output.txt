@@ -1,0 +1,120 @@
+Analyzing baothe_vn...                                          
+
+  error • Methods can't be invoked in constant expressions • lib/src/features/cards/card_detail_screen.dart:37:71 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/features/cards/card_detail_screen.dart:76:77 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/features/cards/card_detail_screen.dart:217:50 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/features/cards/card_detail_screen.dart:229:60 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/features/cards/card_detail_screen.dart:318:45 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/features/comparison/comparison_screen.dart:51:61 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/features/management/add_card_screen.dart:155:63 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/features/management/wallet_screen.dart:36:63 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/features/management/wallet_screen.dart:188:87 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/features/management/wallet_screen.dart:219:56 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/features/spending/add_transaction_screen.dart:142:84 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/features/spending/spending_analysis_screen.dart:106:76 • const_eval_method_invocation
+  error • Undefined name 'context' • lib/src/features/spending/spending_analysis_screen.dart:106:94 • undefined_identifier
+  error • Undefined name 'context' • lib/src/features/spending/spending_analysis_screen.dart:109:70 • undefined_identifier
+  error • Methods can't be invoked in constant expressions • lib/src/features/spending/spending_analysis_screen.dart:110:59 • const_eval_method_invocation
+  error • Undefined name 'context' • lib/src/features/spending/spending_analysis_screen.dart:110:79 • undefined_identifier
+  error • Methods can't be invoked in constant expressions • lib/src/features/spending/spending_screen.dart:37:61 • const_eval_method_invocation
+  error • Undefined name 'context' • lib/src/features/spending/spending_screen.dart:106:71 • undefined_identifier
+  error • Undefined name 'context' • lib/src/features/spending/spending_screen.dart:110:33 • undefined_identifier
+  error • Undefined name 'context' • lib/src/features/spending/spending_screen.dart:110:76 • undefined_identifier
+  error • Methods can't be invoked in constant expressions • lib/src/features/spending/spending_screen.dart:141:95 • const_eval_method_invocation
+   info • Unnecessary use of multiple underscores • lib/src/mobile/app_mobile.dart:38:55 • unnecessary_underscores
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/ai_assistant/ai_chat_screen.dart:59:61 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/ai_assistant/ai_chat_screen.dart:79:24 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/ai_assistant/ai_chat_screen.dart:88:52 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/ai_assistant/ai_chat_screen.dart:211:49 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/ai_assistant/ai_chat_screen.dart:212:83 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/ai_assistant/ai_chat_screen.dart:318:73 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/ai_assistant/ai_chat_screen.dart:402:24 • const_eval_method_invocation
+   info • Use 'const' with the constructor to improve performance • lib/src/mobile/features/ai_assistant/finy_ai_floating_button.dart:31:24 • prefer_const_constructors
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/auth/mobile_email_login_screen.dart:61:53 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/auth/mobile_email_login_screen.dart:170:92 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/auth/mobile_login_screen.dart:188:92 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/auth/mobile_login_screen.dart:409:63 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/auth/mobile_register_screen.dart:127:26 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/auth/mobile_register_screen.dart:141:73 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/auth/mobile_register_screen.dart:279:92 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/calculator/mobile_calculator_screen.dart:91:63 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/calendar/mobile_calendar_screen.dart:72:59 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/calendar/mobile_calendar_screen.dart:73:62 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/compare/mobile_compare_screen.dart:52:61 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/compare/mobile_compare_screen.dart:162:81 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/favorites/mobile_favorites_screen.dart:18:61 • const_eval_method_invocation
+   info • Unnecessary use of multiple underscores • lib/src/mobile/features/home/mobile_home_screen.dart:122:20 • unnecessary_underscores
+   info • Use 'const' with the constructor to improve performance • lib/src/mobile/features/home/mobile_home_screen.dart:336:20 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/src/mobile/features/home/mobile_home_screen.dart:1197:20 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/src/mobile/features/home/mobile_home_screen.dart:1204:20 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/src/mobile/features/home/mobile_home_screen.dart:1211:20 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/src/mobile/features/home/mobile_home_screen.dart:1218:20 • prefer_const_constructors
+   info • Unnecessary use of multiple underscores • lib/src/mobile/features/profile/mobile_profile_screen.dart:105:22 • unnecessary_underscores
+  error • Undefined name 'context' • lib/src/mobile/features/profile/mobile_profile_screen.dart:112:56 • undefined_identifier
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/profile/mobile_profile_screen.dart:114:64 • const_eval_method_invocation
+  error • Undefined name 'context' • lib/src/mobile/features/profile/mobile_profile_screen.dart:114:84 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:149:106 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:160:51 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:164:56 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:191:60 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:196:96 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:233:84 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:234:84 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:264:84 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:265:85 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:319:56 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:327:47 • undefined_identifier
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/reports/mobile_reports_screen.dart:330:61 • const_eval_method_invocation
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:330:79 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:338:105 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:342:127 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:360:56 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:368:47 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:379:108 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/reports/mobile_reports_screen.dart:383:127 • undefined_identifier
+   info • Unnecessary use of multiple underscores • lib/src/mobile/features/transactions/mobile_add_transaction_screen.dart:276:18 • unnecessary_underscores
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/wallet/mobile_add_card_screen.dart:171:55 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/wallet/mobile_add_card_screen.dart:184:66 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/wallet/mobile_add_card_screen.dart:244:71 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/wallet/mobile_add_card_screen.dart:282:77 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/wallet/mobile_add_card_screen.dart:434:75 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/wallet/mobile_add_wallet_screen.dart:99:71 • const_eval_method_invocation
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/wallet/mobile_add_wallet_screen.dart:205:65 • const_eval_method_invocation
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:196:34 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:200:38 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:244:52 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:249:94 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:250:67 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:260:87 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:288:109 • undefined_identifier
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:340:60 • const_eval_method_invocation
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:340:78 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:357:52 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:362:40 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:363:51 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:364:56 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:375:133 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:377:111 • undefined_identifier
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:378:52 • const_eval_method_invocation
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_card_detail_screen.dart:378:73 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:177:108 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:181:77 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:196:53 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:197:46 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:224:83 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:232:55 • undefined_identifier
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:238:45 • const_eval_method_invocation
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:238:62 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:244:73 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:245:82 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:259:77 • undefined_identifier
+  error • Methods can't be invoked in constant expressions • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:323:62 • const_eval_method_invocation
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:435:52 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:443:98 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:447:79 • undefined_identifier
+  error • Undefined name 'context' • lib/src/mobile/features/wallet/mobile_wallet_screen.dart:454:50 • undefined_identifier
+   info • Don't invoke 'print' in production code • lib/src/services/ai_service.dart:82:9 • avoid_print
+   info • Use the null-aware marker '?' rather than a null check via an 'if' • lib/src/services/firestore_service.dart:48:9 • use_null_aware_elements
+   info • Use the null-aware marker '?' rather than a null check via an 'if' • lib/src/services/firestore_service.dart:49:9 • use_null_aware_elements
+
+116 issues found. (ran in 8.0s)

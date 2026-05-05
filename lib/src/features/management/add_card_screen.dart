@@ -21,7 +21,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     final cardsAsync = ref.watch(cardsStreamProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
         title: const Text('Thêm Thẻ Mới'),
         bottom: PreferredSize(
@@ -108,10 +108,10 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 setState(() => _selectedBank = selected ? bank : null);
               },
               backgroundColor: Colors.white,
-              selectedColor: AppColors.primary.withValues(alpha: 0.2),
-              checkmarkColor: AppColors.primary,
+              selectedColor: AppColors.primary(context).withValues(alpha: 0.2),
+              checkmarkColor: AppColors.primary(context),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              side: BorderSide(color: isSelected ? AppColors.primary : Colors.grey.withValues(alpha: 0.3)),
+              side: BorderSide(color: isSelected ? AppColors.primary(context) : Colors.grey.withValues(alpha: 0.3)),
             ),
           );
         },
@@ -145,14 +145,14 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
             errorBuilder: (_, _, _) => Container(
               width: 80,
               height: 50,
-              color: AppColors.background,
+              color: AppColors.background(context),
               child: const Icon(Icons.credit_card, size: 20),
             ),
           ),
         ),
-        title: Text(card.name, style: AppStyles.h4.copyWith(fontSize: 14)),
-        subtitle: Text(card.bankName, style: AppStyles.labelSmall),
-        trailing: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+        title: Text(card.name, style: AppStyles.h4(context).copyWith(fontSize: 14)),
+        subtitle: Text(card.bankName, style: AppStyles.labelSmall(context)),
+        trailing: Icon(Icons.add_circle_outline, color: AppColors.primary(context)),
         onTap: () {
           context.push('/card-form', extra: card);
         },

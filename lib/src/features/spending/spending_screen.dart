@@ -28,13 +28,13 @@ class SpendingScreen extends ConsumerWidget {
     final dateFormat = DateFormat('dd/MM/yyyy HH:mm');
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
         title: const Text('Quản Lý Chi Tiêu'),
         actions: [
           IconButton(
             onPressed: () => context.push('/add-transaction'),
-            icon: const Icon(Icons.add_box_outlined, color: AppColors.primary, size: 28),
+            icon: Icon(Icons.add_box_outlined, color: AppColors.primary(context), size: 28),
           ),
           const SizedBox(width: 8),
         ],
@@ -52,9 +52,9 @@ class SpendingScreen extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-                _buildTotalSpentCard(totalSpent, currencyFormat),
+                _buildTotalSpentCard(context, totalSpent, currencyFormat),
                 const SizedBox(height: 24),
-                Text('Lịch sử giao dịch', style: AppStyles.h3),
+                Text('Lịch sử giao dịch', style: AppStyles.h3(context)),
                 const SizedBox(height: 16),
                 ...transactions.map((tx) => _buildTransactionItem(context, tx, currencyFormat, dateFormat)),
               ],
@@ -72,16 +72,16 @@ class SpendingScreen extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.receipt_long_outlined, size: 80, color: AppColors.textLight.withValues(alpha: 0.5)),
+          Icon(Icons.receipt_long_outlined, size: 80, color: AppColors.textLight(context).withValues(alpha: 0.5)),
           const SizedBox(height: 20),
-          Text('Chưa có giao dịch nào', style: AppStyles.h3),
+          Text('Chưa có giao dịch nào', style: AppStyles.h3(context)),
           const SizedBox(height: 10),
-          Text('Bắt đầu ghi chép chi tiêu để quản lý tài chính tốt hơn', style: AppStyles.labelSmall, textAlign: TextAlign.center),
+          Text('Bắt đầu ghi chép chi tiêu để quản lý tài chính tốt hơn', style: AppStyles.labelSmall(context), textAlign: TextAlign.center),
           const SizedBox(height: 30),
           ElevatedButton(
             onPressed: () => context.push('/add-transaction'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: AppColors.primary(context),
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
@@ -92,7 +92,7 @@ class SpendingScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTotalSpentCard(double total, NumberFormat format) {
+  Widget _buildTotalSpentCard(BuildContext context, double total, NumberFormat format) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -103,11 +103,11 @@ class SpendingScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Tổng chi tiêu tháng này', style: AppStyles.labelSmall),
+          Text('Tổng chi tiêu tháng này', style: AppStyles.labelSmall(context)),
           const SizedBox(height: 8),
           Text(
             format.format(total),
-            style: AppStyles.h1.copyWith(color: AppColors.primary, fontSize: 32),
+            style: AppStyles.h1(context).copyWith(color: AppColors.primary(context), fontSize: 32),
           ),
         ],
       ),
@@ -130,15 +130,15 @@ class SpendingScreen extends ConsumerWidget {
       ),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppColors.background,
-          child: Icon(_getCategoryIcon(tx.category), color: AppColors.primary, size: 20),
+          backgroundColor: AppColors.background(context),
+          child: Icon(_getCategoryIcon(tx.category), color: AppColors.primary(context), size: 20),
         ),
-        title: Text(tx.category, style: AppStyles.h4),
+        title: Text(tx.category, style: AppStyles.h4(context)),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Dùng thẻ: ${tx.cardName}', style: const TextStyle(fontSize: 11)),
-            Text(dateFormat.format(tx.timestamp), style: const TextStyle(fontSize: 10, color: AppColors.textLight)),
+            Text('Dùng thẻ: ${tx.sourceName}', style: const TextStyle(fontSize: 11)),
+            Text(dateFormat.format(tx.timestamp), style: TextStyle(fontSize: 10, color: AppColors.textLight(context))),
           ],
         ),
         trailing: Text(

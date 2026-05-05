@@ -53,8 +53,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textLight,
+        selectedItemColor: AppColors.primary(context),
+        unselectedItemColor: AppColors.textLight(context),
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
         unselectedLabelStyle: const TextStyle(fontSize: 10),
         items: const [
@@ -71,7 +71,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   // GIAO DIỆN WEB
   Widget _buildWebLayout() {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       body: Row(
         children: [
           // Sidebar
@@ -123,21 +123,21 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
+            color: isSelected ? AppColors.primary(context).withValues(alpha: 0.1) : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
               Icon(
                 icon, 
-                color: isSelected ? AppColors.primary : AppColors.textLight,
+                color: isSelected ? AppColors.primary(context) : AppColors.textLight(context),
                 size: 24,
               ),
               const SizedBox(width: 16),
               Text(
                 label,
                 style: TextStyle(
-                  color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                  color: isSelected ? AppColors.primary(context) : AppColors.textPrimary(context),
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   fontSize: 15,
                 ),
@@ -164,7 +164,7 @@ class ProfileScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
         title: const Text('Cá Nhân'),
         backgroundColor: Colors.transparent,
@@ -174,9 +174,9 @@ class ProfileScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.person, size: 100, color: AppColors.primary),
+            Icon(Icons.person, size: 100, color: AppColors.primary(context)),
             const SizedBox(height: 20),
-            Text(user.email ?? 'Người dùng', style: AppStyles.h3),
+            Text(user.email ?? 'Người dùng', style: AppStyles.h3(context)),
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () => ref.read(authServiceProvider).signOut(),

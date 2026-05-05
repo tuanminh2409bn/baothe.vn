@@ -23,13 +23,13 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     // Xác định màu sắc theo type
     final backgroundColor = type == AppButtonType.primary 
-        ? AppColors.primary 
+        ? AppColors.primary(context) 
         : (type == AppButtonType.secondary ? AppColors.accentOrange : Colors.transparent);
     
-    final textColor = type == AppButtonType.outline ? AppColors.primary : Colors.white;
+    final textColor = type == AppButtonType.outline ? AppColors.primary(context) : Colors.white;
     
     final border = type == AppButtonType.outline 
-        ? Border.all(color: AppColors.border, width: 1.5) 
+        ? Border.all(color: AppColors.border(context), width: 1.5) 
         : null;
 
     return Container(

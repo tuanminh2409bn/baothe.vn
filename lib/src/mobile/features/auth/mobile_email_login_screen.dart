@@ -58,7 +58,7 @@ class _MobileEmailLoginScreenState extends ConsumerState<MobileEmailLoginScreen>
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary(context)),
           onPressed: () => context.pop(),
         ),
       ),
@@ -76,7 +76,7 @@ class _MobileEmailLoginScreenState extends ConsumerState<MobileEmailLoginScreen>
                     style: GoogleFonts.inter(
                       fontSize: 32,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
+                      color: AppColors.textPrimary(context),
                       height: 1.2,
                     ),
                   ),
@@ -84,12 +84,14 @@ class _MobileEmailLoginScreenState extends ConsumerState<MobileEmailLoginScreen>
                   
                   // Login Form
                   _buildInputField(
+                    context: context,
                     controller: _emailController,
                     label: 'Email / Username',
                     icon: Icons.person_outline_rounded,
                   ),
                   const SizedBox(height: 16),
                   _buildInputField(
+                    context: context,
                     controller: _passwordController,
                     label: 'Mật khẩu',
                     icon: Icons.lock_outline_rounded,
@@ -106,7 +108,7 @@ class _MobileEmailLoginScreenState extends ConsumerState<MobileEmailLoginScreen>
                       child: Text(
                         'Quên mật khẩu?',
                         style: GoogleFonts.inter(
-                          color: AppColors.textSecondary,
+                          color: AppColors.textSecondary(context),
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                         ),
@@ -123,11 +125,11 @@ class _MobileEmailLoginScreenState extends ConsumerState<MobileEmailLoginScreen>
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _handleLogin,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
+                        backgroundColor: AppColors.primary(context),
+                        disabledBackgroundColor: AppColors.primary(context).withValues(alpha: 0.5),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         elevation: 2,
-                        shadowColor: AppColors.primary.withValues(alpha: 0.3),
+                        shadowColor: AppColors.primary(context).withValues(alpha: 0.3),
                       ),
                       child: Text(
                         'ĐĂNG NHẬP',
@@ -143,14 +145,14 @@ class _MobileEmailLoginScreenState extends ConsumerState<MobileEmailLoginScreen>
                     children: [
                       Text(
                         'Chưa có tài khoản?',
-                        style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 14),
+                        style: GoogleFonts.inter(color: AppColors.textSecondary(context), fontSize: 14),
                       ),
                       TextButton(
                         onPressed: () => context.push('/register'),
                         child: Text(
                           'Đăng ký ngay',
                           style: GoogleFonts.inter(
-                            color: AppColors.primary,
+                            color: AppColors.primary(context),
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -166,8 +168,8 @@ class _MobileEmailLoginScreenState extends ConsumerState<MobileEmailLoginScreen>
           if (_isLoading)
             Container(
               color: Colors.black.withValues(alpha: 0.3),
-              child: const Center(
-                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary)),
+              child: Center(
+                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary(context))),
               ),
             ),
         ],
@@ -176,6 +178,7 @@ class _MobileEmailLoginScreenState extends ConsumerState<MobileEmailLoginScreen>
   }
 
   Widget _buildInputField({
+    required BuildContext context,
     required TextEditingController controller,
     required String label,
     required IconData icon,
@@ -184,20 +187,20 @@ class _MobileEmailLoginScreenState extends ConsumerState<MobileEmailLoginScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
+        color: AppColors.border(context),
         borderRadius: BorderRadius.circular(16),
       ),
       child: TextField(
         controller: controller,
         obscureText: isPassword && !_isPasswordVisible,
         decoration: InputDecoration(
-          icon: Icon(icon, color: AppColors.textLight, size: 20),
+          icon: Icon(icon, color: AppColors.textLight(context), size: 20),
           labelText: label,
-          labelStyle: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary),
+          labelStyle: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary(context)),
           border: InputBorder.none,
           suffixIcon: isPassword 
             ? IconButton(
-                icon: Icon(_isPasswordVisible ? Icons.visibility_off : Icons.visibility, color: AppColors.textLight, size: 20),
+                icon: Icon(_isPasswordVisible ? Icons.visibility_off : Icons.visibility, color: AppColors.textLight(context), size: 20),
                 onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
               )
             : null,

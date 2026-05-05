@@ -66,7 +66,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
     final cardsAsync = ref.watch(cardsStreamProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -146,7 +146,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
       style: GoogleFonts.inter(
         fontSize: 12,
         fontWeight: FontWeight.w900,
-        color: AppColors.textSecondary,
+        color: AppColors.textSecondary(context),
         letterSpacing: 1,
       ),
     );
@@ -160,7 +160,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFF3F4F6)),
+          border: Border.all(color: AppColors.border(context)),
         ),
         child: Row(
           children: [
@@ -168,7 +168,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
               Image.network(_selectedTemplate!.imagePath, width: 24, height: 24,
                   errorBuilder: (_, _, _) => const Icon(Icons.credit_card))
             else
-              const Icon(Icons.search_rounded, color: AppColors.textLight),
+              Icon(Icons.search_rounded, color: AppColors.textLight(context)),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -176,12 +176,12 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                     ? '${_selectedTemplate!.bankName} - ${_selectedTemplate!.name}'
                     : 'Bấm để tìm và chọn loại thẻ',
                 style: TextStyle(
-                  color: _selectedTemplate != null ? AppColors.textPrimary : AppColors.textLight,
+                  color: _selectedTemplate != null ? AppColors.textPrimary(context) : AppColors.textLight(context),
                   fontSize: 14,
                 ),
               ),
             ),
-            const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textLight),
+            Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textLight(context)),
           ],
         ),
       ),
@@ -232,23 +232,23 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.04),
+        color: AppColors.primary(context).withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.12)),
+        border: Border.all(color: AppColors.primary(context).withValues(alpha: 0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.info_outline_rounded, size: 16, color: AppColors.primary),
+              Icon(Icons.info_outline_rounded, size: 16, color: AppColors.primary(context)),
               const SizedBox(width: 6),
               Text(
                 'Ưu đãi nổi bật của thẻ',
                 style: GoogleFonts.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.primary,
+                  color: AppColors.primary(context),
                   letterSpacing: 0.5,
                 ),
               ),
@@ -264,7 +264,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                 Expanded(
                   child: Text(
                     h['text'] as String,
-                    style: GoogleFonts.inter(fontSize: 13, height: 1.4, color: AppColors.textPrimary),
+                    style: GoogleFonts.inter(fontSize: 13, height: 1.4, color: AppColors.textPrimary(context)),
                   ),
                 ),
               ],
@@ -279,10 +279,10 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.check_circle_rounded, size: 14, color: AppColors.primary),
+                    Icon(Icons.check_circle_rounded, size: 14, color: AppColors.primary(context)),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: Text(b, style: GoogleFonts.inter(fontSize: 12, height: 1.4, color: AppColors.textSecondary)),
+                      child: Text(b, style: GoogleFonts.inter(fontSize: 12, height: 1.4, color: AppColors.textSecondary(context))),
                     ),
                   ],
                 ),
@@ -293,7 +293,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
                   '+ ${card.benefits!.length - 3} quyền lợi khác...',
-                  style: GoogleFonts.inter(fontSize: 11, color: AppColors.textLight, fontStyle: FontStyle.italic),
+                  style: GoogleFonts.inter(fontSize: 11, color: AppColors.textLight(context), fontStyle: FontStyle.italic),
                 ),
               ),
           ],
@@ -327,7 +327,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                       hintText: 'Nhập tên ngân hàng hoặc tên thẻ...',
                       prefixIcon: const Icon(Icons.search),
                       filled: true,
-                      fillColor: const Color(0xFFF9FAFB),
+                      fillColor: AppColors.background(context),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                     ),
                   ),
@@ -381,7 +381,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: AppColors.border(context)),
       ),
       child: TextField(
         controller: controller,
@@ -391,13 +391,13 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
           ThousandSeparatorFormatter(),
         ],
         decoration: InputDecoration(
-          icon: Icon(icon, color: AppColors.textLight, size: 20),
+          icon: Icon(icon, color: AppColors.textLight(context), size: 20),
           labelText: label,
           hintText: hint,
           suffixText: 'đ',
-          suffixStyle: GoogleFonts.inter(color: AppColors.textSecondary, fontWeight: FontWeight.bold),
+          suffixStyle: GoogleFonts.inter(color: AppColors.textSecondary(context), fontWeight: FontWeight.bold),
           border: InputBorder.none,
-          labelStyle: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13),
+          labelStyle: GoogleFonts.inter(color: AppColors.textSecondary(context), fontSize: 13),
           hintStyle: GoogleFonts.inter(color: Colors.grey.shade300, fontSize: 14),
         ),
       ),
@@ -417,21 +417,21 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFF3F4F6)),
+          border: Border.all(color: AppColors.border(context)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textLight)),
+            Text(label, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textLight(context))),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Ngày $value',
-                  style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                  style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
                 ),
-                const Icon(Icons.calendar_today_rounded, size: 16, color: AppColors.textLight),
+                Icon(Icons.calendar_today_rounded, size: 16, color: AppColors.textLight(context)),
               ],
             ),
           ],
@@ -463,7 +463,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                 const SizedBox(height: 20),
                 Text(
                   label.toUpperCase(),
-                  style: GoogleFonts.inter(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1, color: AppColors.textSecondary),
+                  style: GoogleFonts.inter(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1, color: AppColors.textSecondary(context)),
                 ),
                 const SizedBox(height: 20),
                 GridView.builder(
@@ -486,7 +486,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 150),
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.primary : const Color(0xFFF9FAFB),
+                          color: isSelected ? AppColors.primary(context) : AppColors.background(context),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         alignment: Alignment.center,
@@ -494,7 +494,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                           '$day',
                           style: GoogleFonts.inter(
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            color: isSelected ? Colors.white : AppColors.textPrimary,
+                            color: isSelected ? Colors.white : AppColors.textPrimary(context),
                             fontSize: 14,
                           ),
                         ),
@@ -512,7 +512,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
                       Navigator.pop(ctx);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: AppColors.primary(context),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       elevation: 0,
                     ),
@@ -536,7 +536,7 @@ class _MobileAddCardScreenState extends ConsumerState<MobileAddCardScreen> {
       child: ElevatedButton(
         onPressed: _saveCard,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.primary(context),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 0,
         ),

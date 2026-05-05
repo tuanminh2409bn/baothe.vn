@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import '../../../constants/app_styles.dart';
 import '../../../services/firestore_service.dart';
 import '../../../services/auth_service.dart';
 import '../../../models/transaction_model.dart';
 import '../../../models/user_card_model.dart';
+import '../../../models/user_wallet_model.dart';
 
 class MobileAddTransactionScreen extends ConsumerStatefulWidget {
-  const MobileAddTransactionScreen({super.key});
+  final TransactionType type;
+  const MobileAddTransactionScreen({super.key, required this.type});
 
   @override
   ConsumerState<MobileAddTransactionScreen> createState() => _MobileAddTransactionScreenState();
@@ -20,33 +24,70 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
   final _amountController = TextEditingController();
   final _noteController = TextEditingController();
   
-  String? _selectedCardId; // Thay thế _selectedCard kiểu UserCard? thành _selectedCardId kiểu String?
+  String? _selectedSourceId; 
   String _selectedCategory = 'Mua sắm';
   bool _isLoading = false;
 
-  final List<String> _categories = [
-    'Mua sắm',
-    'Ăn uống',
-    'Di chuyển',
-    'Giải trí',
-    'Hoá đơn',
-    'Khác'
+  final List<Map<String, dynamic>> _categories = [
+    {'label': 'Mua sắm', 'icon': Icons.shopping_bag_rounded},
+    {'label': 'Ăn uống', 'icon': Icons.fastfood_rounded},
+    {'label': 'Di chuyển', 'icon': Icons.directions_car_rounded},
+    {'label': 'Giải trí', 'icon': Icons.movie_rounded},
+    {'label': 'Hoá đơn', 'icon': Icons.receipt_long_rounded},
+    {'label': 'Siêu thị', 'icon': Icons.local_grocery_store_rounded},
+    {'label': 'Online', 'icon': Icons.language_rounded},
+    {'label': 'Du lịch', 'icon': Icons.flight_takeoff_rounded},
+    {'label': 'Y tế', 'icon': Icons.local_hospital_rounded},
+    {'label': 'Giáo dục', 'icon': Icons.school_rounded},
+    {'label': 'Bảo hiểm', 'icon': Icons.shield_rounded},
+    {'label': 'Gym', 'icon': Icons.fitness_center_rounded},
+    {'label': 'Spa/Làm đẹp', 'icon': Icons.spa_rounded},
+    {'label': 'Chi tiêu', 'icon': Icons.more_horiz_rounded},
   ];
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  void _onAmountChanged(String value) {
+    if (value.isEmpty) return;
+    
+    // Xoá tất cả ký tự không phải số
+    final cleanValue = value.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cleanValue.isEmpty) {
+      _amountController.text = '';
+      return;
+    }
+
+    final double amount = double.parse(cleanValue);
+    final formattedValue = NumberFormat.decimalPattern('vi_VN').format(amount);
+    
+    // Cập nhật text và giữ vị trí con trỏ ở cuối
+    _amountController.value = TextEditingValue(
+      text: formattedValue,
+      selection: TextSelection.collapsed(offset: formattedValue.length),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final user = ref.read(authServiceProvider).currentUser;
-    final userCardsAsync = user != null 
-        ? ref.watch(userCardsStreamProvider(user.uid))
-        : const AsyncValue<List<UserCard>>.data([]);
+    
+    // Watch đúng provider tùy theo loại
+    final sourcesAsync = widget.type == TransactionType.credit
+        ? (user != null ? ref.watch(userCardsStreamProvider(user.uid)) : const AsyncValue<List<UserCard>>.data([]))
+        : (user != null ? ref.watch(userWalletsStreamProvider(user.uid)) : const AsyncValue<List<UserWallet>>.data([]));
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          'THÊM CHI TIÊU',
+          widget.type == TransactionType.credit ? 'CHI TIÊU QUA THẺ' : 'CHI TIÊU CÁ NHÂN',
           style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 1.2),
         ),
         leading: IconButton(
@@ -61,17 +102,11 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
           children: [
             _buildSectionTitle('1. Số tiền chi tiêu'),
             const SizedBox(height: 12),
-            _buildTextField(
-              controller: _amountController,
-              label: 'Nhập số tiền',
-              hint: 'Ví dụ: 1.500.000',
-              icon: Icons.attach_money_rounded,
-              keyboardType: TextInputType.number,
-            ),
+            _buildAmountTextField(),
             const SizedBox(height: 32),
-            _buildSectionTitle('2. Chọn thẻ thanh toán'),
+            _buildSectionTitle(widget.type == TransactionType.credit ? '2. Chọn thẻ thanh toán' : '2. Chọn nguồn tiền'),
             const SizedBox(height: 12),
-            _buildCardSelector(userCardsAsync),
+            _buildSourceSelector(sourcesAsync),
             const SizedBox(height: 32),
             _buildSectionTitle('3. Chọn danh mục'),
             const SizedBox(height: 12),
@@ -87,6 +122,8 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
             ),
             const SizedBox(height: 48),
             _buildSaveButton(),
+            // Khoảng trống bổ sung cho Android navigation bar
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -99,8 +136,44 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
       style: GoogleFonts.inter(
         fontSize: 12,
         fontWeight: FontWeight.w900,
-        color: AppColors.textSecondary,
+        color: AppColors.textSecondary(context),
         letterSpacing: 1,
+      ),
+    );
+  }
+
+  Widget _buildAmountTextField() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border(context)),
+      ),
+      child: TextField(
+        controller: _amountController,
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        onChanged: _onAmountChanged,
+        style: GoogleFonts.inter(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: widget.type == TransactionType.credit ? AppColors.primary(context) : Colors.green.shade700,
+        ),
+        decoration: InputDecoration(
+          icon: Icon(
+            Icons.attach_money_rounded, 
+            color: widget.type == TransactionType.credit ? AppColors.primary(context) : Colors.green.shade700, 
+            size: 28
+          ),
+          labelText: 'Nhập số tiền',
+          hintText: '0',
+          suffixText: 'VNĐ',
+          suffixStyle: GoogleFonts.inter(color: AppColors.textLight(context), fontWeight: FontWeight.bold),
+          border: InputBorder.none,
+          labelStyle: GoogleFonts.inter(color: AppColors.textSecondary(context), fontSize: 13),
+          hintStyle: GoogleFonts.inter(color: Colors.grey.shade300, fontSize: 24),
+        ),
       ),
     );
   }
@@ -117,34 +190,33 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: AppColors.border(context)),
       ),
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
         decoration: InputDecoration(
-          icon: Icon(icon, color: AppColors.textLight, size: 20),
+          icon: Icon(icon, color: AppColors.textLight(context), size: 20),
           labelText: label,
           hintText: hint,
           border: InputBorder.none,
-          labelStyle: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13),
+          labelStyle: GoogleFonts.inter(color: AppColors.textSecondary(context), fontSize: 13),
           hintStyle: GoogleFonts.inter(color: Colors.grey.shade300, fontSize: 14),
         ),
       ),
     );
   }
 
-  Widget _buildCardSelector(AsyncValue<List<UserCard>> cardsAsync) {
-    return cardsAsync.when(
-      data: (cards) {
-        // Kiểm tra xem ID đã chọn còn trong danh sách không
-        if (_selectedCardId != null && !cards.any((c) => c.id == _selectedCardId)) {
+  Widget _buildSourceSelector(AsyncValue<List<dynamic>> sourcesAsync) {
+    return sourcesAsync.when(
+      data: (sources) {
+        if (_selectedSourceId != null && !sources.any((s) => s.id == _selectedSourceId)) {
           Future.microtask(() {
-            if (mounted) setState(() => _selectedCardId = null);
+            if (mounted) setState(() => _selectedSourceId = null);
           });
         }
 
-        if (cards.isEmpty) {
+        if (sources.isEmpty) {
           return Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -158,7 +230,9 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Bạn chưa có thẻ nào trong ví. Hãy thêm thẻ trước.',
+                    widget.type == TransactionType.credit 
+                      ? 'Bạn chưa có thẻ nào. Hãy thêm thẻ trước.'
+                      : 'Bạn chưa có ví nào. Hãy tạo ví trước.',
                     style: GoogleFonts.inter(fontSize: 13, color: Colors.orange.shade800),
                   ),
                 ),
@@ -172,50 +246,83 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFF3F4F6)),
+            border: Border.all(color: AppColors.border(context)),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-              value: _selectedCardId,
-              hint: const Text('Chọn thẻ thanh toán'),
+              value: _selectedSourceId,
+              hint: Text(widget.type == TransactionType.credit ? 'Chọn thẻ thanh toán' : 'Chọn nguồn tiền'),
               isExpanded: true,
-              items: cards.map((card) {
+              items: sources.map((source) {
+                String label;
+                if (source is UserCard) {
+                  label = '${source.bankName} - ${source.cardName}';
+                } else if (source is UserWallet) {
+                  label = source.name;
+                } else {
+                  label = 'Không xác định';
+                }
                 return DropdownMenuItem<String>(
-                  value: card.id,
-                  child: Text('${card.bankName} - ${card.cardName}'),
+                  value: source.id,
+                  child: Text(label),
                 );
               }).toList(),
-              onChanged: (id) => setState(() => _selectedCardId = id),
+              onChanged: (id) => setState(() => _selectedSourceId = id),
             ),
           ),
         );
       },
       loading: () => const CircularProgressIndicator(),
-      error: (_, _) => const Text('Lỗi tải thẻ'),
+      error: (_, __) => const Text('Lỗi tải dữ liệu'),
     );
   }
 
   Widget _buildCategorySelector() {
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: _categories.map((cat) {
-        final isSelected = _selectedCategory == cat;
+      spacing: 10,
+      runSpacing: 10,
+      children: _categories.map<Widget>((cat) {
+        final label = cat['label'] as String;
+        final icon = cat['icon'] as IconData;
+        final isSelected = _selectedCategory == label;
+        
         return GestureDetector(
-          onTap: () => setState(() => _selectedCategory = cat),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          onTap: () => setState(() => _selectedCategory = label),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.primary : Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: isSelected ? AppColors.primary : const Color(0xFFF3F4F6)),
-            ),
-            child: Text(
-              cat,
-              style: GoogleFonts.inter(
-                color: isSelected ? Colors.white : AppColors.textPrimary,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color: isSelected ? AppColors.primary(context) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isSelected ? AppColors.primary(context) : AppColors.border(context),
               ),
+              boxShadow: isSelected ? [
+                BoxShadow(
+                  color: AppColors.primary(context).withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                )
+              ] : [],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 18,
+                  color: isSelected ? Colors.white : AppColors.textSecondary(context),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: isSelected ? Colors.white : AppColors.textPrimary(context),
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -230,14 +337,14 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
       child: ElevatedButton(
         onPressed: _isLoading ? null : _saveTransaction,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: widget.type == TransactionType.credit ? AppColors.primary(context) : Colors.green.shade700,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 0,
         ),
         child: _isLoading 
           ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
           : Text(
-            'THÊM CHI TIÊU',
+            widget.type == TransactionType.credit ? 'THÊM CHI TIÊU THẺ' : 'THÊM CHI TIÊU CÁ NHÂN',
             style: GoogleFonts.inter(fontWeight: FontWeight.bold, letterSpacing: 1, color: Colors.white),
           ),
       ),
@@ -248,13 +355,8 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
     final user = ref.read(authServiceProvider).currentUser;
     if (user == null) return;
 
-    final cards = ref.read(userCardsStreamProvider(user.uid)).value ?? [];
-    final selectedCard = cards.any((c) => c.id == _selectedCardId) 
-        ? cards.firstWhere((c) => c.id == _selectedCardId)
-        : null;
-
-    if (selectedCard == null || _amountController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Vui lòng nhập đủ số tiền và chọn thẻ')));
+    if (_selectedSourceId == null || _amountController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Vui lòng nhập đủ số tiền và chọn nguồn tiền')));
       return;
     }
 
@@ -269,15 +371,26 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
     setState(() => _isLoading = true);
 
     try {
+      String sourceName = '';
+      if (widget.type == TransactionType.credit) {
+        final cards = ref.read(userCardsStreamProvider(user.uid)).value ?? [];
+        sourceName = cards.firstWhere((c) => c.id == _selectedSourceId).cardName;
+      } else {
+        final wallets = ref.read(userWalletsStreamProvider(user.uid)).value ?? [];
+        sourceName = wallets.firstWhere((w) => w.id == _selectedSourceId).name;
+      }
+
       final tx = Transaction(
         id: const Uuid().v4(),
         userId: user.uid,
-        userCardId: selectedCard.id,
-        cardName: selectedCard.cardName,
+        userCardId: widget.type == TransactionType.credit ? _selectedSourceId : null,
+        userWalletId: widget.type == TransactionType.personal ? _selectedSourceId : null,
+        sourceName: sourceName,
         amount: amount,
         category: _selectedCategory,
         note: _noteController.text,
         timestamp: DateTime.now(),
+        type: widget.type,
       );
 
       await ref.read(firestoreServiceProvider).addTransaction(tx);
@@ -288,12 +401,10 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Có lỗi xảy ra, vui lòng thử lại')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
       }
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 }

@@ -24,17 +24,17 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
     final cardAsync = ref.watch(cardDetailProvider(widget.cardId));
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         title: cardAsync.when(
-          data: (card) => Text(card?.bankName ?? 'Chi tiết thẻ', style: AppStyles.h2),
-          loading: () => Text('Đang tải...', style: AppStyles.h2),
-          error: (_, _) => Text('Lỗi', style: AppStyles.h2),
+          data: (card) => Text(card?.bankName ?? 'Chi tiết thẻ', style: AppStyles.h2(context)),
+          loading: () => Text('Đang tải...', style: AppStyles.h2(context)),
+          error: (_, _) => Text('Lỗi', style: AppStyles.h2(context)),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.primary),
+          icon: Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.primary(context)),
           onPressed: () => context.go('/'),
         ),
         actions: [
@@ -46,7 +46,7 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
               return IconButton(
                 icon: Icon(
                   isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: isFavorite ? Colors.red : AppColors.primary,
+                  color: isFavorite ? Colors.red : AppColors.primary(context),
                 ),
                 onPressed: () {
                   ref.read(favoritesProvider.notifier).toggleFavorite(card.id);
@@ -73,7 +73,7 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+        loading: () => Center(child: CircularProgressIndicator(color: AppColors.primary(context))),
         error: (err, stack) => Center(child: Text('Lỗi: $err')),
       ),
     );
@@ -159,12 +159,12 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(card.name, style: AppStyles.h1.copyWith(fontSize: 28)),
+        Text(card.name, style: AppStyles.h1(context).copyWith(fontSize: 28)),
         const SizedBox(height: 8),
-        Text(card.bankName, style: AppStyles.bodyMedium.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
+        Text(card.bankName, style: AppStyles.bodyMedium(context).copyWith(color: AppColors.textSecondary(context), fontWeight: FontWeight.bold)),
         const SizedBox(height: 24),
 
-        Text('ƯU ĐÃI HOÀN TIỀN NỔI BẬT', style: AppStyles.labelSmall.copyWith(letterSpacing: 1, color: AppColors.textLight)),
+        Text('ƯU ĐÃI HOÀN TIỀN NỔI BẬT', style: AppStyles.labelSmall(context).copyWith(letterSpacing: 1, color: AppColors.textLight(context))),
         const SizedBox(height: 12),
         // Highlights Chips
         Wrap(
@@ -196,13 +196,13 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
         color: isSecondary ? const Color(0xFFF7F3EE) : AppColors.accentOrange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(30),
         border: Border.all(
-          color: isSecondary ? AppColors.border : AppColors.accentOrange.withValues(alpha: 0.3),
+          color: isSecondary ? AppColors.border(context) : AppColors.accentOrange.withValues(alpha: 0.3),
         ),
       ),
       child: Text(
         text,
-        style: AppStyles.labelSmall.copyWith(
-          color: isSecondary ? AppColors.textPrimary : AppColors.accentOrange,
+        style: AppStyles.labelSmall(context).copyWith(
+          color: isSecondary ? AppColors.textPrimary(context) : AppColors.accentOrange,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -213,8 +213,8 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
     final tabs = ['Lợi ích', 'Điều kiện', 'Thông tin thẻ', 'Biểu phí'];
     return Container(
       height: 50,
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.border, width: 1)),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: AppColors.border(context), width: 1)),
       ),
       child: Row(
         children: List.generate(tabs.length, (index) {
@@ -226,13 +226,13 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 border: isSelected 
-                  ? const Border(bottom: BorderSide(color: AppColors.primary, width: 3))
+                  ? Border(bottom: BorderSide(color: AppColors.primary(context), width: 3))
                   : null,
               ),
               child: Text(
                 tabs[index],
-                style: AppStyles.bodyMedium.copyWith(
-                  color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                style: AppStyles.bodyMedium(context).copyWith(
+                  color: isSelected ? AppColors.primary(context) : AppColors.textSecondary(context),
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
@@ -255,7 +255,7 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
     if (data == null || data.isEmpty) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Text('Thông tin đang được cập nhật...', style: AppStyles.bodyMedium),
+        child: Text('Thông tin đang được cập nhật...', style: AppStyles.bodyMedium(context)),
       );
     }
 
@@ -273,14 +273,14 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppColors.border(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: AppStyles.h2.copyWith(fontSize: 18, color: AppColors.primary)),
+          Text(title, style: AppStyles.h2(context).copyWith(fontSize: 18, color: AppColors.primary(context))),
           const SizedBox(height: 12),
-          Text(content, style: AppStyles.bodyMedium.copyWith(height: 1.6, color: AppColors.textSecondary)),
+          Text(content, style: AppStyles.bodyMedium(context).copyWith(height: 1.6, color: AppColors.textSecondary(context))),
         ],
       ),
     );
@@ -295,7 +295,7 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
           child: ElevatedButton(
             onPressed: () => _launchUrl(card.applyUrl),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: AppColors.primary(context),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               elevation: 0,
@@ -315,11 +315,11 @@ class _CardDetailScreenState extends ConsumerState<CardDetailScreen> {
               );
             },
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: AppColors.border),
+              side: BorderSide(color: AppColors.border(context)),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             child: Text('Thêm vào danh sách so sánh', 
-              style: AppStyles.buttonText.copyWith(color: AppColors.primary)),
+              style: AppStyles.buttonText.copyWith(color: AppColors.primary(context))),
           ),
         ),
       ],

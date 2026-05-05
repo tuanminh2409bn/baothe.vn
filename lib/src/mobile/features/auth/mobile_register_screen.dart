@@ -120,11 +120,11 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xFFFFFFFF), Color(0xFFF3F4F6), Color(0xFFE5E7EB)],
+                colors: [AppColors.surface(context), AppColors.border(context), Color(0xFFE5E7EB)],
               ),
             ),
           ),
@@ -138,7 +138,7 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textPrimary),
+                      icon: Icon(Icons.arrow_back_ios_new, color: AppColors.textPrimary(context)),
                       onPressed: () {
                         if (context.canPop()) {
                           context.pop();
@@ -162,25 +162,28 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: AppColors.textPrimary(context),
                     ),
                   ).animate().fadeIn(delay: 300.ms),
                   const SizedBox(height: 30),
 
                   // Register Form
                   _buildInputField(
+                    context: context,
                     controller: _nameController,
                     label: 'Họ và tên',
                     icon: Icons.person_outline_rounded,
                   ).animate().fadeIn(delay: 400.ms).slideX(begin: 0.1),
                   const SizedBox(height: 16),
                   _buildInputField(
+                    context: context,
                     controller: _emailController,
                     label: 'Email',
                     icon: Icons.email_outlined,
                   ).animate().fadeIn(delay: 450.ms).slideX(begin: 0.1),
                   const SizedBox(height: 16),
                   _buildInputField(
+                    context: context,
                     controller: _passwordController,
                     label: 'Mật khẩu',
                     icon: Icons.lock_outline_rounded,
@@ -190,6 +193,7 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
                   ).animate().fadeIn(delay: 500.ms).slideX(begin: 0.1),
                   const SizedBox(height: 16),
                   _buildInputField(
+                    context: context,
                     controller: _confirmPasswordController,
                     label: 'Xác nhận mật khẩu',
                     icon: Icons.lock_outline_rounded,
@@ -202,6 +206,7 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
                   
                   // Register Button
                   _buildPrimaryButton(
+                    context: context,
                     label: 'ĐĂNG KÝ',
                     onPressed: _isLoading ? null : _handleRegister,
                   ).animate().fadeIn(delay: 600.ms).scale(),
@@ -214,7 +219,7 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
                       Expanded(child: Divider(color: Colors.grey.shade300)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text('Đăng ký bằng mạng xã hội', style: GoogleFonts.inter(color: AppColors.textLight, fontSize: 13)),
+                        child: Text('Đăng ký bằng mạng xã hội', style: GoogleFonts.inter(color: AppColors.textLight(context), fontSize: 13)),
                       ),
                       Expanded(child: Divider(color: Colors.grey.shade300)),
                     ],
@@ -246,7 +251,7 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
                     children: [
                       Text(
                         'Đã có tài khoản?',
-                        style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 14),
+                        style: GoogleFonts.inter(color: AppColors.textSecondary(context), fontSize: 14),
                       ),
                       TextButton(
                         onPressed: () {
@@ -259,7 +264,7 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
                         child: Text(
                           'Đăng nhập',
                           style: GoogleFonts.inter(
-                            color: AppColors.primary,
+                            color: AppColors.primary(context),
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -275,8 +280,8 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
           if (_isLoading)
             Container(
               color: Colors.black.withValues(alpha: 0.3),
-              child: const Center(
-                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary)),
+              child: Center(
+                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary(context))),
               ),
             ),
         ],
@@ -285,6 +290,7 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
   }
 
   Widget _buildInputField({
+    required BuildContext context,
     required TextEditingController controller,
     required String label,
     required IconData icon,
@@ -305,13 +311,13 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
         controller: controller,
         obscureText: isPassword && !isVisible,
         decoration: InputDecoration(
-          icon: Icon(icon, color: AppColors.textLight, size: 20),
+          icon: Icon(icon, color: AppColors.textLight(context), size: 20),
           labelText: label,
-          labelStyle: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary),
+          labelStyle: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary(context)),
           border: InputBorder.none,
           suffixIcon: isPassword 
             ? IconButton(
-                icon: Icon(isVisible ? Icons.visibility_off : Icons.visibility, color: AppColors.textLight, size: 20),
+                icon: Icon(isVisible ? Icons.visibility_off : Icons.visibility, color: AppColors.textLight(context), size: 20),
                 onPressed: onVisibilityChanged,
               )
             : null,
@@ -320,18 +326,18 @@ class _MobileRegisterScreenState extends ConsumerState<MobileRegisterScreen> {
     );
   }
 
-  Widget _buildPrimaryButton({required String label, required VoidCallback? onPressed}) {
+  Widget _buildPrimaryButton({required BuildContext context, required String label, required VoidCallback? onPressed}) {
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
+          backgroundColor: AppColors.primary(context),
+          disabledBackgroundColor: AppColors.primary(context).withValues(alpha: 0.5),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 2,
-          shadowColor: AppColors.primary.withValues(alpha: 0.3),
+          shadowColor: AppColors.primary(context).withValues(alpha: 0.3),
         ),
         child: Text(
           label,
@@ -361,13 +367,13 @@ class _SocialLoginButton extends StatelessWidget {
           side: const BorderSide(color: Color(0xFFE5E7EB), width: 1.5),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           backgroundColor: Colors.white,
-          foregroundColor: AppColors.textPrimary,
+          foregroundColor: AppColors.textPrimary(context),
           elevation: 0,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ?customIcon,
+            if (customIcon != null) customIcon!,
             if (icon != null) ...[
               if (icon is IconData)
                 Icon(icon as IconData, size: 20)

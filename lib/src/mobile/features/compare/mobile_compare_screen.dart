@@ -43,19 +43,19 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
         : const AsyncValue<List<UserCard>>.data([]);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary(context)),
           onPressed: () => context.pop(),
         ),
         title: Text(
           'SO SÁNH THẺ',
           style: GoogleFonts.inter(
-            color: AppColors.textPrimary,
+            color: AppColors.textPrimary(context),
             fontSize: 16,
             fontWeight: FontWeight.w800,
             letterSpacing: 1,
@@ -72,7 +72,7 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
               style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
-                color: AppColors.textSecondary,
+                color: AppColors.textSecondary(context),
                 letterSpacing: 0.5,
               ),
             ),
@@ -86,9 +86,9 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
             ),
             const SizedBox(height: 32),
             if (_card1 != null && _card2 != null)
-              _buildCompareTable()
+              _buildCompareTable(context)
             else
-              _buildEmptyState(),
+              _buildEmptyState(context),
           ],
         ),
       ),
@@ -103,7 +103,7 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: selectedCard != null ? AppColors.primary : Colors.grey.shade200, width: selectedCard != null ? 2 : 1),
+          border: Border.all(color: selectedCard != null ? AppColors.primary(context) : Colors.grey.shade200, width: selectedCard != null ? 2 : 1),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -159,9 +159,9 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.add_circle_outline_rounded, size: 32, color: AppColors.primary),
+                  Icon(Icons.add_circle_outline_rounded, size: 32, color: AppColors.primary(context)),
                   const SizedBox(height: 8),
-                  Text('Thêm thẻ', style: GoogleFonts.inter(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                  Text('Thêm thẻ', style: GoogleFonts.inter(color: AppColors.primary(context), fontWeight: FontWeight.bold)),
                 ],
               ),
       ),
@@ -213,13 +213,13 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
     );
   }
 
-  Widget _buildCompareTable() {
+  Widget _buildCompareTable(BuildContext context) {
     return Column(
       children: [
         Container(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: AppColors.primary(context),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
@@ -276,7 +276,7 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
                   flex: 3,
                   child: Text(
                     cat['label']!,
-                    style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w500),
+                    style: GoogleFonts.inter(color: AppColors.textSecondary(context), fontSize: 13, fontWeight: FontWeight.w500),
                   ),
                 ),
                 Expanded(
@@ -290,7 +290,7 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
                     child: Text(
                       value1,
                       style: GoogleFonts.inter(
-                        color: isBest1 ? Colors.green.shade700 : AppColors.textPrimary,
+                        color: isBest1 ? Colors.green.shade700 : AppColors.textPrimary(context),
                         fontWeight: isBest1 ? FontWeight.w900 : FontWeight.normal,
                         fontSize: 14,
                       ),
@@ -309,7 +309,7 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
                     child: Text(
                       value2,
                       style: GoogleFonts.inter(
-                        color: isBest2 ? Colors.green.shade700 : AppColors.textPrimary,
+                        color: isBest2 ? Colors.green.shade700 : AppColors.textPrimary(context),
                         fontWeight: isBest2 ? FontWeight.w900 : FontWeight.normal,
                         fontSize: 14,
                       ),
@@ -345,7 +345,7 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
     }
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         children: [
@@ -354,13 +354,13 @@ class _MobileCompareScreenState extends ConsumerState<MobileCompareScreen> {
           const SizedBox(height: 16),
           Text(
             'Chưa có dữ liệu so sánh',
-            style: GoogleFonts.inter(color: AppColors.textSecondary, fontWeight: FontWeight.bold),
+            style: GoogleFonts.inter(color: AppColors.textSecondary(context), fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
             'Vui lòng chọn 2 thẻ để thấy sự khác biệt về ưu đãi hoàn tiền.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(color: AppColors.textLight, fontSize: 13),
+            style: GoogleFonts.inter(color: AppColors.textLight(context), fontSize: 13),
           ),
         ],
       ),

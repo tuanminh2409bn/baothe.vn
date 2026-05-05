@@ -181,7 +181,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
     final cardsAsync = ref.watch(cardsStreamProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.background(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -193,15 +193,15 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
                 child: Column(
                   children: [
-                    Text('TÍNH TOÁN HOÀN TIỀN', textAlign: TextAlign.center, style: AppStyles.h1.copyWith(color: AppColors.primary, fontSize: isMobile ? 32 : 48, fontWeight: FontWeight.bold)),
+                    Text('TÍNH TOÁN HOÀN TIỀN', textAlign: TextAlign.center, style: AppStyles.h1(context).copyWith(color: AppColors.primary(context), fontSize: isMobile ? 32 : 48, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 10),
-                    Text('Nhập chi tiết chi tiêu để tìm "chiến thần" hoàn tiền từ dữ liệu thật.', textAlign: TextAlign.center, style: AppStyles.h2.copyWith(color: AppColors.textSecondary, fontSize: isMobile ? 18 : 22, fontWeight: FontWeight.w500)),
+                    Text('Nhập chi tiết chi tiêu để tìm "chiến thần" hoàn tiền từ dữ liệu thật.', textAlign: TextAlign.center, style: AppStyles.h2(context).copyWith(color: AppColors.textSecondary(context), fontSize: isMobile ? 18 : 22, fontWeight: FontWeight.w500)),
                     const SizedBox(height: 50),
                     cardsAsync.when(
                       data: (cards) => isMobile
                         ? Column(children: [_buildInputForm(isMobile, () => _calculateCashback(cards)), const SizedBox(height: 40), _buildTop5Cards()])
                         : Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Expanded(flex: 6, child: _buildInputForm(isMobile, () => _calculateCashback(cards))), const SizedBox(width: 40), Expanded(flex: 4, child: _buildTop5Cards())]),
-                      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.accentOrange)),
+                      loading: () => const Center(child: CircularProgressIndicator(color: AppColors.warning)),
                       error: (err, _) => Center(child: Text('Lỗi: $err')),
                     ),
                   ],
@@ -217,13 +217,13 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
   Widget _buildHeader(BuildContext context) {
     return Container(
       height: 80, padding: const EdgeInsets.symmetric(horizontal: 40),
-      decoration: const BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: AppColors.border, width: 0.5))),
+      decoration: BoxDecoration(color: AppColors.surface(context), border: Border(bottom: BorderSide(color: AppColors.border(context), width: 0.5))),
       child: Row(children: [InkWell(onTap: () => context.go('/'), child: Image.asset('assets/logo/logo_web.png', height: 45, fit: BoxFit.contain)), const Spacer(), _buildMenuItem('TRA CỨU', onTap: () => context.go('/')), _buildMenuItem('TÍNH TOÁN', isSelected: true)]),
     );
   }
 
   Widget _buildMenuItem(String title, {bool isSelected = false, VoidCallback? onTap}) {
-    return AnimatedHover(scale: 1.02, child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(8), child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Text(title, style: AppStyles.h2.copyWith(fontSize: 16, fontWeight: isSelected ? FontWeight.bold : FontWeight.w600, color: isSelected ? AppColors.textPrimary : AppColors.textSecondary)))));
+    return AnimatedHover(scale: 1.02, child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(8), child: Padding(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Text(title, style: AppStyles.h2(context).copyWith(fontSize: 16, fontWeight: isSelected ? FontWeight.bold : FontWeight.w600, color: isSelected ? AppColors.textPrimary(context) : AppColors.textSecondary(context))))));
   }
 
   Widget _buildBannerSlider(double width) {
@@ -256,11 +256,11 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
   Widget _buildInputForm(bool isMobile, VoidCallback onCalculate) {
     return Container(
       padding: const EdgeInsets.all(30),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10))]),
+      decoration: BoxDecoration(color: AppColors.surface(context), borderRadius: BorderRadius.circular(20), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10))]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [Container(padding: const EdgeInsets.all(12), decoration: const BoxDecoration(color: Color(0xFFF7F3EE), shape: BoxShape.circle), child: const Icon(Icons.calculate, color: AppColors.primary, size: 30)), const SizedBox(width: 15), Text('Chi tiêu tháng này (VNĐ)', style: AppStyles.h1.copyWith(fontSize: 24, color: AppColors.textPrimary))]),
+          Row(children: [Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: AppColors.background(context), shape: BoxShape.circle), child: Icon(Icons.calculate, color: AppColors.primary(context), size: 30)), const SizedBox(width: 15), Text('Chi tiêu tháng này (VNĐ)', style: AppStyles.h1(context).copyWith(fontSize: 24, color: AppColors.textPrimary(context)))]),
           const SizedBox(height: 30),
           GridView.builder(
             shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
@@ -269,7 +269,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
             itemBuilder: (context, index) => _buildInputField(_categories[index]['icon'] as IconData, _categories[index]['label'] as String),
           ),
           const SizedBox(height: 40),
-          AnimatedHover(scale: 1.02, child: SizedBox(width: double.infinity, height: 60, child: ElevatedButton(onPressed: onCalculate, style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), child: Text('PHÂN TÍCH & TÌM THẺ THỰC TẾ', style: AppStyles.buttonText.copyWith(fontSize: 18, letterSpacing: 1, color: Colors.white))))),
+          AnimatedHover(scale: 1.02, child: SizedBox(width: double.infinity, height: 60, child: ElevatedButton(onPressed: onCalculate, style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary(context), elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), child: Text('PHÂN TÍCH & TÌM THẺ THỰC TẾ', style: AppStyles.buttonText.copyWith(fontSize: 18, letterSpacing: 1, color: Colors.white))))),
         ],
       ),
     );
@@ -279,14 +279,14 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [Icon(icon, size: 16, color: AppColors.textSecondary), const SizedBox(width: 5), Flexible(child: Text(label, style: AppStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textPrimary), overflow: TextOverflow.ellipsis))]),
+        Row(children: [Icon(icon, size: 16, color: AppColors.textSecondary(context)), const SizedBox(width: 5), Flexible(child: Text(label, style: AppStyles.labelSmall(context).copyWith(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)), overflow: TextOverflow.ellipsis))]),
         const SizedBox(height: 5),
         Expanded(
           child: TextField(
             controller: _controllers[label],
             inputFormatters: [FilteringTextInputFormatter.digitsOnly, ThousandsSeparatorInputFormatter()],
-            decoration: InputDecoration(contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8), border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: AppColors.border, width: 1)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: AppColors.border, width: 1)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: AppColors.primary, width: 1.5))),
-            style: AppStyles.bodyMedium.copyWith(fontSize: 14), keyboardType: TextInputType.number,
+            decoration: InputDecoration(contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8), border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: AppColors.border(context), width: 1)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: AppColors.border(context), width: 1)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: AppColors.primary(context), width: 1.5))),
+            style: AppStyles.bodyMedium(context).copyWith(fontSize: 14), keyboardType: TextInputType.number,
           ),
         ),
       ],
@@ -298,7 +298,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Thẻ đề xuất (Mẫu)', style: AppStyles.h2.copyWith(fontSize: 20)),
+          Text('Thẻ đề xuất (Mẫu)', style: AppStyles.h2(context).copyWith(fontSize: 20)),
           const SizedBox(height: 20),
           _buildMockResultCard('#1', 'VCB Vibe Platinum', 'Hoàn 20% Du lịch/Ẩm thực', '500.000đ', Colors.orange),
           const SizedBox(height: 15),
@@ -313,12 +313,12 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
       );
     }
 
-    if (_topCards.isEmpty) return const Center(child: Text('Không tìm thấy thẻ phù hợp.'));
+    if (_topCards.isEmpty) return Center(child: Text('Không tìm thấy thẻ phù hợp.', style: TextStyle(color: AppColors.textSecondary(context))));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Top 5 thẻ đề xuất (Dữ liệu thật)', style: AppStyles.h2.copyWith(fontSize: 20)),
+        Text('Top 5 thẻ đề xuất (Dữ liệu thật)', style: AppStyles.h2(context).copyWith(fontSize: 20)),
         const SizedBox(height: 20),
         ..._topCards.asMap().entries.map((entry) {
           final card = entry.value['card'] as CreditCard;
@@ -333,14 +333,14 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
   Widget _buildMockResultCard(String rank, String name, String desc, String cashback, Color color) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.border.withValues(alpha: 0.5))),
+      decoration: BoxDecoration(color: AppColors.surface(context), borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.border(context).withValues(alpha: 0.5))),
       child: Row(children: [
-        Text(rank, style: AppStyles.h1.copyWith(color: const Color(0xFFD1D5DB), fontSize: 24)),
+        Text(rank, style: AppStyles.h1(context).copyWith(color: AppColors.textLight(context), fontSize: 24)),
         const SizedBox(width: 15),
         Container(width: 50, height: 35, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4))),
         const SizedBox(width: 15),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(name, style: AppStyles.h2.copyWith(fontSize: 16)), Text(desc, style: AppStyles.labelSmall)])),
-        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [Text('ƯỚC TÍNH', style: AppStyles.labelSmall.copyWith(fontSize: 10)), Text(cashback, style: AppStyles.h1.copyWith(color: AppColors.accent, fontSize: 18))]),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(name, style: AppStyles.h2(context).copyWith(fontSize: 16)), Text(desc, style: AppStyles.labelSmall(context))])),
+        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [Text('ƯỚC TÍNH', style: AppStyles.labelSmall(context).copyWith(fontSize: 10)), Text(cashback, style: AppStyles.h1(context).copyWith(color: AppColors.accent(context), fontSize: 18))]),
       ]),
     );
   }
@@ -354,14 +354,14 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.primary.withValues(alpha: 0.3), width: 1.5)),
+          decoration: BoxDecoration(color: AppColors.surface(context), borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.primary(context).withValues(alpha: 0.3), width: 1.5)),
           child: Row(children: [
-            Text(rank, style: AppStyles.h1.copyWith(color: AppColors.primary.withValues(alpha: 0.2), fontSize: 24)),
+            Text(rank, style: AppStyles.h1(context).copyWith(color: AppColors.primary(context).withValues(alpha: 0.2), fontSize: 24)),
             const SizedBox(width: 15),
-            Container(width: 80, height: 50, decoration: BoxDecoration(color: const Color(0xFFF7F3EE), borderRadius: BorderRadius.circular(8)), child: ClipRRect(borderRadius: BorderRadius.circular(8), child: card.imagePath.isNotEmpty ? Image.network(card.imagePath, fit: BoxFit.contain, errorBuilder: (_, _, _) => const Icon(Icons.credit_card)) : const Icon(Icons.credit_card))),
+            Container(width: 80, height: 50, decoration: BoxDecoration(color: AppColors.background(context), borderRadius: BorderRadius.circular(8)), child: ClipRRect(borderRadius: BorderRadius.circular(8), child: card.imagePath.isNotEmpty ? (card.imagePath.startsWith('http') ? Image.network(card.imagePath, fit: BoxFit.contain, errorBuilder: (_, _, _) => const Icon(Icons.credit_card)) : Image.asset(card.imagePath, fit: BoxFit.contain, errorBuilder: (_, _, _) => const Icon(Icons.credit_card))) : const Icon(Icons.credit_card))),
             const SizedBox(width: 15),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(card.name, style: AppStyles.h2.copyWith(fontSize: 15), maxLines: 1), Text(card.bankName, style: AppStyles.labelSmall.copyWith(color: AppColors.accentOrange, fontSize: 11)), if (tags.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 5), child: Wrap(spacing: 5, children: tags.map((l) => Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppColors.success.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)), child: Text(l, style: const TextStyle(color: AppColors.success, fontSize: 9, fontWeight: FontWeight.bold)))).toList()))])),
-            Column(crossAxisAlignment: CrossAxisAlignment.end, children: [Text('HOÀN TIỀN', style: AppStyles.labelSmall.copyWith(fontSize: 10)), Text(cashback, style: AppStyles.h1.copyWith(color: AppColors.accentOrange, fontSize: 18))]),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(card.name, style: AppStyles.h2(context).copyWith(fontSize: 15), maxLines: 1), Text(card.bankName, style: AppStyles.labelSmall(context).copyWith(color: AppColors.warning, fontSize: 11)), if (tags.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 5), child: Wrap(spacing: 5, children: tags.map((l) => Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppColors.success.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)), child: Text(l, style: const TextStyle(color: AppColors.success, fontSize: 9, fontWeight: FontWeight.bold)))).toList()))])),
+            Column(crossAxisAlignment: CrossAxisAlignment.end, children: [Text('HOÀN TIỀN', style: AppStyles.labelSmall(context).copyWith(fontSize: 10)), Text(cashback, style: AppStyles.h1(context).copyWith(color: AppColors.warning, fontSize: 18))]),
           ]),
         ),
       ),

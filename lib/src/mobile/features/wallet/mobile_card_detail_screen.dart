@@ -19,14 +19,14 @@ class MobileCardDetailScreen extends ConsumerWidget {
     final cardDetailAsync = ref.watch(cardDetailProvider(userCard.cardId));
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.background(context),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         title: Text(
           'CHI TIẾT THẺ',
-          style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 1.2, color: AppColors.textPrimary),
+          style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 1.2, color: AppColors.textPrimary(context)),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
@@ -45,9 +45,9 @@ class MobileCardDetailScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildCardHero(),
+            _buildCardHero(context),
             const SizedBox(height: 24),
-            _buildFinancialSummary(),
+            _buildFinancialSummary(context),
             const SizedBox(height: 24),
             cardDetailAsync.when(
               data: (creditCard) {
@@ -58,7 +58,7 @@ class MobileCardDetailScreen extends ConsumerWidget {
                   children: [
                     _buildCashbackGrid(creditCard),
                     const SizedBox(height: 32),
-                    _buildCardBenefits(creditCard),
+                    _buildCardBenefits(context, creditCard),
                   ],
                 );
               },
@@ -86,7 +86,7 @@ class MobileCardDetailScreen extends ConsumerWidget {
       {'label': 'Giải trí', 'rate': card.entertainmentCashbackRate, 'icon': Icons.movie_rounded, 'color': Colors.deepPurple},
       {'label': 'Gym', 'rate': card.gymCashbackRate, 'icon': Icons.fitness_center_rounded, 'color': Colors.blueGrey},
       {'label': 'Bảo hiểm', 'rate': card.insuranceCashbackRate, 'icon': Icons.security_rounded, 'color': Colors.cyan},
-      {'label': 'Khác', 'rate': card.otherCashbackRate, 'icon': Icons.more_horiz_rounded, 'color': Colors.grey},
+      {'label': 'Chi tiêu', 'rate': card.otherCashbackRate, 'icon': Icons.more_horiz_rounded, 'color': Colors.grey},
     ].where((cat) => (cat['rate'] as double? ?? 0) > 0).toList();
 
     if (categories.isEmpty) return const SizedBox.shrink();
@@ -129,7 +129,7 @@ class MobileCardDetailScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFFF3F4F6)),
+                border: Border.all(color: AppColors.border(context)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.02),
@@ -150,9 +150,9 @@ class MobileCardDetailScreen extends ConsumerWidget {
                     child: Icon(cat['icon'] as IconData, color: (cat['color'] as MaterialColor).shade600, size: 20),
                   ),
                   const SizedBox(height: 8),
-                  Text(cat['label'] as String, style: GoogleFonts.inter(fontSize: 11, color: AppColors.textLight)),
+                  Text(cat['label'] as String, style: GoogleFonts.inter(fontSize: 11, color: AppColors.textLight(context))),
                   const SizedBox(height: 2),
-                  Text('${cat['rate']}%', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                  Text('${cat['rate']}%', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context))),
                 ],
               ),
             );
@@ -172,7 +172,7 @@ class MobileCardDetailScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Hủy', style: GoogleFonts.inter(color: AppColors.textLight)),
+            child: Text('Hủy', style: GoogleFonts.inter(color: AppColors.textLight(context))),
           ),
           TextButton(
             onPressed: () {
@@ -188,16 +188,16 @@ class MobileCardDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCardHero() {
+  Widget _buildCardHero(BuildContext context) {
     return Container(
       width: double.infinity,
       height: 200,
       decoration: BoxDecoration(
-        color: AppColors.primary,
+        color: AppColors.primary(context),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.3),
+            color: AppColors.primary(context).withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           )
@@ -232,7 +232,7 @@ class MobileCardDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildFinancialSummary() {
+  Widget _buildFinancialSummary(BuildContext context) {
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
     final available = userCard.limit - userCard.balance;
 
@@ -241,40 +241,40 @@ class MobileCardDetailScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: AppColors.border(context)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStat('Hạn mức', currencyFormat.format(userCard.limit), AppColors.textPrimary),
-          Container(width: 1, height: 40, color: const Color(0xFFF3F4F6)),
-          _buildStat('Khả dụng', currencyFormat.format(available), Colors.green),
+          _buildStat(context, 'Hạn mức', currencyFormat.format(userCard.limit), AppColors.textPrimary(context)),
+          Container(width: 1, height: 40, color: AppColors.border(context)),
+          _buildStat(context, 'Khả dụng', currencyFormat.format(available), Colors.green),
         ],
       ),
     );
   }
 
-  Widget _buildStat(String label, String value, Color color) {
+  Widget _buildStat(BuildContext context, String label, String value, Color color) {
     return Column(
       children: [
-        Text(label, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textLight)),
+        Text(label, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textLight(context))),
         const SizedBox(height: 4),
         Text(value, style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold, color: color)),
       ],
     );
   }
 
-  Widget _buildCardBenefits(CreditCard card) {
+  Widget _buildCardBenefits(BuildContext context, CreditCard card) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (card.cashbackHighlight.isNotEmpty) ...[
-          _buildHighlightCard(Icons.local_offer_rounded, 'Khuyến mãi nổi bật', card.cashbackHighlight, Colors.orange),
+          _buildHighlightCard(context, Icons.local_offer_rounded, 'Khuyến mãi nổi bật', card.cashbackHighlight, Colors.orange),
           const SizedBox(height: 16),
         ],
         
         if (card.promoHighlight != null && card.promoHighlight!.isNotEmpty) ...[
-          _buildHighlightCard(Icons.star_rounded, 'Chương trình đặc biệt', card.promoHighlight!, Colors.purple),
+          _buildHighlightCard(context, Icons.star_rounded, 'Chương trình đặc biệt', card.promoHighlight!, Colors.purple),
           const SizedBox(height: 24),
         ],
 
@@ -282,26 +282,26 @@ class MobileCardDetailScreen extends ConsumerWidget {
         const SizedBox(height: 12),
         
         if (card.benefits != null && card.benefits!.isNotEmpty)
-          ...card.benefits!.map((b) => _buildBenefitItem(b)),
+          ...card.benefits!.map((b) => _buildBenefitItem(context, b)),
           
         if (card.benefits == null || card.benefits!.isEmpty)
-          Text('Thẻ này hiện không có mô tả quyền lợi', style: GoogleFonts.inter(color: AppColors.textLight, fontStyle: FontStyle.italic)),
+          Text('Thẻ này hiện không có mô tả quyền lợi', style: GoogleFonts.inter(color: AppColors.textLight(context), fontStyle: FontStyle.italic)),
 
         const SizedBox(height: 32),
         
         if (card.benefitsDetail != null && card.benefitsDetail!.isNotEmpty)
-          _buildDetailAccordion('Chi tiết ưu đãi', Icons.card_giftcard_rounded, card.benefitsDetail!),
+          _buildDetailAccordion(context, 'Chi tiết ưu đãi', Icons.card_giftcard_rounded, card.benefitsDetail!),
           
         if (card.conditionsDetail != null && card.conditionsDetail!.isNotEmpty)
-          _buildDetailAccordion('Điều kiện mở thẻ', Icons.gavel_rounded, card.conditionsDetail!),
+          _buildDetailAccordion(context, 'Điều kiện mở thẻ', Icons.gavel_rounded, card.conditionsDetail!),
           
         if (card.feeDetail != null && card.feeDetail!.isNotEmpty)
-          _buildDetailAccordion('Biểu phí dịch vụ', Icons.receipt_long_rounded, card.feeDetail!),
+          _buildDetailAccordion(context, 'Biểu phí dịch vụ', Icons.receipt_long_rounded, card.feeDetail!),
       ],
     );
   }
 
-  Widget _buildHighlightCard(IconData icon, String title, String content, MaterialColor color) {
+  Widget _buildHighlightCard(BuildContext context, IconData icon, String title, String content, MaterialColor color) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -329,15 +329,15 @@ class MobileCardDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildBenefitItem(String text) {
+  Widget _buildBenefitItem(BuildContext context, String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 2),
-            child: Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 18),
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Icon(Icons.check_circle_rounded, color: AppColors.primary(context), size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -348,20 +348,20 @@ class MobileCardDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDetailAccordion(String title, IconData icon, List<Map<String, String>> items) {
+  Widget _buildDetailAccordion(BuildContext context, String title, IconData icon, List<Map<String, String>> items) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: AppColors.border(context)),
       ),
       child: Theme(
         data: ThemeData().copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
-          iconColor: AppColors.primary,
-          collapsedIconColor: AppColors.textLight,
-          leading: Icon(icon, color: AppColors.primary),
+          iconColor: AppColors.primary(context),
+          collapsedIconColor: AppColors.textLight(context),
+          leading: Icon(icon, color: AppColors.primary(context)),
           title: Text(title, style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 15)),
           childrenPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
           children: items.map((item) {
@@ -372,10 +372,10 @@ class MobileCardDetailScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(subTitle, style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textSecondary)),
+                  Text(subTitle, style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textSecondary(context))),
                   const SizedBox(height: 4),
-                  Text(desc, style: GoogleFonts.inter(fontSize: 13, height: 1.5, color: AppColors.textPrimary)),
-                  const Divider(height: 16, color: Color(0xFFF9FAFB)),
+                  Text(desc, style: GoogleFonts.inter(fontSize: 13, height: 1.5, color: AppColors.textPrimary(context))),
+                  Divider(height: 16, color: AppColors.background(context)),
                 ],
               ),
             );

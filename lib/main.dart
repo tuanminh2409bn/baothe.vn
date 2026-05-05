@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'firebase_options.dart';
 import 'src/constants/app_styles.dart';
+import 'src/services/theme_service.dart';
 import 'src/features/cards/home_screen.dart';
 import 'src/features/cards/card_detail_screen.dart';
 import 'src/features/comparison/calculator_screen.dart';
@@ -55,37 +57,57 @@ final _router = GoRouter(
   ],
 );
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+    
     return MaterialApp.router(
       title: 'MyFiny',
       debugShowCheckedModeBanner: false,
       routerConfig: _router,
+      themeMode: themeMode,
       theme: ThemeData(
         brightness: Brightness.light,
-        scaffoldBackgroundColor: AppColors.background,
-        primaryColor: AppColors.primary,
+        scaffoldBackgroundColor: AppColors.lBackground,
+        primaryColor: AppColors.lPrimary,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primary,
-          surface: AppColors.surface,
-          onSurface: AppColors.textPrimary,
+          seedColor: AppColors.lPrimary,
+          brightness: Brightness.light,
+          surface: AppColors.lSurface,
+          onSurface: AppColors.lTextPrimary,
+          primary: AppColors.lPrimary,
         ),
-        appBarTheme: AppBarTheme(
-          backgroundColor: AppColors.surface,
-          elevation: 0,
-          centerTitle: false,
-          iconTheme: const IconThemeData(color: AppColors.textPrimary),
-          titleTextStyle: AppStyles.h2,
-        ),
-        textTheme: Theme.of(context).textTheme.apply(
-              fontFamily: AppStyles.fontFamily,
-              bodyColor: AppColors.textPrimary,
-              displayColor: AppColors.textPrimary,
-            ),
         useMaterial3: true,
+        textTheme: GoogleFonts.interTextTheme(),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: AppColors.lSurface,
+          foregroundColor: AppColors.lTextPrimary,
+          elevation: 0,
+        ),
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: AppColors.dBackground,
+        primaryColor: AppColors.dPrimary,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.dPrimary,
+          brightness: Brightness.dark,
+          surface: AppColors.dSurface,
+          onSurface: AppColors.dTextPrimary,
+          primary: AppColors.dPrimary,
+        ),
+        useMaterial3: true,
+        textTheme: GoogleFonts.interTextTheme(
+          ThemeData.dark().textTheme,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: AppColors.dSurface,
+          foregroundColor: AppColors.dTextPrimary,
+          elevation: 0,
+        ),
       ),
     );
   }

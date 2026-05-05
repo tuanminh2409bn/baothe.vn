@@ -35,7 +35,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
         : const AsyncValue<List<Transaction>>.data([]);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.background(context),
       appBar: _buildAppBar(),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -60,41 +60,66 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
   }
 
   PreferredSizeWidget _buildAppBar() {
-    final user = ref.watch(authServiceProvider).currentUser;
+    final authUser = ref.watch(authServiceProvider).currentUser;
+    final userProfileAsync = authUser != null 
+        ? ref.watch(userProfileProvider(authUser.uid))
+        : const AsyncValue<Map<String, dynamic>?>.data(null);
+
+    // Xác định lời chào dựa trên thời gian
+    final hour = DateTime.now().hour;
+    String greeting;
+    if (hour < 12) {
+      greeting = 'Chào buổi sáng,';
+    } else if (hour < 18) {
+      greeting = 'Chào buổi chiều,';
+    } else {
+      greeting = 'Chào buổi tối,';
+    }
+
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      title: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: AppColors.primary,
-            child: Text(
-              user?.email?.substring(0, 1).toUpperCase() ?? 'U',
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      title: userProfileAsync.when(
+        data: (profile) {
+          final displayName = profile?['displayName'] ?? authUser?.displayName ?? authUser?.email?.split('@')[0] ?? 'Người dùng';
+          final photoURL = profile?['photoURL'] ?? authUser?.photoURL;
+          
+          return Row(
             children: [
-              Text(
-                'Chào buổi sáng,',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                ),
+              CircleAvatar(
+                backgroundColor: AppColors.primary(context),
+                backgroundImage: photoURL != null ? NetworkImage(photoURL) : null,
+                child: photoURL == null ? Text(
+                  displayName.substring(0, 1).toUpperCase(),
+                  style: const TextStyle(color: Colors.white),
+                ) : null,
               ),
-              Text(
-                user?.email?.split('@')[0] ?? 'Người dùng',
-                style: GoogleFonts.inter(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    greeting,
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: AppColors.textSecondary(context),
+                    ),
+                  ),
+                  Text(
+                    displayName,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary(context),
+                    ),
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
+          );
+        },
+        loading: () => const SizedBox.shrink(),
+        error: (_, __) => const Text('Lỗi tải profile'),
       ),
       actions: [
         IconButton(
@@ -118,7 +143,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
             'Tổng dư nợ hiện tại',
             style: GoogleFonts.inter(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: AppColors.textSecondary(context),
             ),
           ),
           const SizedBox(height: 4),
@@ -138,7 +163,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                         style: GoogleFonts.inter(
                           fontSize: 32,
                           fontWeight: FontWeight.w900,
-                          color: AppColors.textPrimary,
+                          color: AppColors.textPrimary(context),
                           letterSpacing: -1,
                         ),
                       ),
@@ -164,7 +189,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                         ),
                       ],
                     ],
-                  ).animate().fadeIn(), // Đơn giản hóa animation ở đây
+                  ).animate().fadeIn(), 
                   if (isMock)
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
@@ -206,7 +231,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
         return Column(
           children: [
             SizedBox(
-              height: 200,
+              height: 270, // Tăng chiều cao để chứa badges bên dưới
               child: PageView.builder(
                 controller: _cardController,
                 itemCount: itemCount,
@@ -223,11 +248,11 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
             SmoothPageIndicator(
               controller: _cardController,
               count: itemCount,
-              effect: const ExpandingDotsEffect(
+              effect: ExpandingDotsEffect(
                 dotHeight: 6,
                 dotWidth: 6,
-                activeDotColor: AppColors.primary,
-                dotColor: AppColors.border,
+                activeDotColor: AppColors.primary(context),
+                dotColor: AppColors.border(context),
               ),
             ),
           ],
@@ -239,63 +264,214 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
   }
 
   Widget _buildMockCreditCardItem(CreditCard? card, int index) {
-    return Container(
-      margin: const EdgeInsets.only(right: 15),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: index % 2 == 0 
-            ? [const Color(0xFF1E293B), const Color(0xFF334155)]
-            : [const Color(0xFF4338CA), const Color(0xFF6366F1)],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+    return Column(
+      children: [
+        Container(
+          height: 200,
+          margin: const EdgeInsets.only(right: 15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: index % 2 == 0 
+                ? [const Color(0xFF1E293B), const Color(0xFF334155)]
+                : [const Color(0xFF4338CA), const Color(0xFF6366F1)],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.contactless_outlined, color: Colors.white54),
-                Icon(Icons.credit_card, color: Colors.white54),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Icon(Icons.contactless_outlined, color: Colors.white54),
+                    Icon(Icons.credit_card, color: Colors.white54),
+                  ],
+                ),
+                const Spacer(),
+                Text(
+                  card?.name ?? 'Thẻ mẫu',
+                  style: GoogleFonts.inter(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  card?.bankName ?? 'Ngân hàng',
+                  style: GoogleFonts.inter(color: Colors.white70, fontSize: 12),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  '•••• •••• •••• 0000',
+                  style: GoogleFonts.inter(color: Colors.white, fontSize: 18, letterSpacing: 2),
+                ),
               ],
             ),
-            const Spacer(),
-            Text(
-              card?.name ?? 'Thẻ mẫu',
-              style: GoogleFonts.inter(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Text(
-              card?.bankName ?? 'Ngân hàng',
-              style: GoogleFonts.inter(color: Colors.white70, fontSize: 12),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              '•••• •••• •••• 0000',
-              style: GoogleFonts.inter(color: Colors.white, fontSize: 18, letterSpacing: 2),
-            ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildCreditCardItem(UserCard card, int index) {
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
     
-    // Tìm mức hoàn tiền cao nhất
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          height: 200,
+          margin: const EdgeInsets.only(right: 15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Color(0xFF1E293B),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.15),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              children: [
+                // Ảnh thẻ...
+                Positioned.fill(
+                  child: card.imagePath.isNotEmpty
+                      ? (card.imagePath.startsWith('http')
+                          ? Image.network(
+                              card.imagePath,
+                              fit: BoxFit.cover,
+                              alignment: Alignment.center,
+                              errorBuilder: (_, _, _) => _buildFallbackGradient(index),
+                            )
+                          : Image.asset(
+                              card.imagePath,
+                              fit: BoxFit.cover,
+                              alignment: Alignment.center,
+                              errorBuilder: (_, _, _) => _buildFallbackGradient(index),
+                            ))
+                      : _buildFallbackGradient(index),
+                ),
+                // Overlay...
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withValues(alpha: 0.1),
+                          Colors.black.withValues(alpha: 0.6),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // Nội dung thông tin trên thẻ
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Icon(Icons.contactless_outlined, color: Colors.white70),
+                          Text(
+                            'CREDIT CARD',
+                            style: GoogleFonts.inter(
+                              color: Colors.white.withValues(alpha: 0.7),
+                              fontSize: 10,
+                              letterSpacing: 2,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      Text(
+                        card.cardName,
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          shadows: [const Shadow(color: Colors.black45, blurRadius: 4, offset: Offset(0, 2))],
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        card.bankName,
+                        style: GoogleFonts.inter(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'DƯ NỢ HIỆN TẠI',
+                                style: GoogleFonts.inter(
+                                  color: Colors.white.withValues(alpha: 0.7),
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                currencyFormat.format(card.balance),
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Icon(Icons.credit_card, color: Colors.white),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.only(right: 15),
+          child: _buildCashbackBadges(card),
+        ),
+      ],
+    ).animate().scale(delay: (index * 50).ms, duration: 400.ms, curve: Curves.easeOutBack);
+  }
+
+  Widget _buildCashbackBadges(UserCard card) {
+    final List<Widget> badges = [];
+    
+    // 1. Luôn hiển thị hoàn tiền chi tiêu chung nếu có
+    if ((card.otherCashbackRate ?? 0) > 0) {
+      badges.add(_buildSingleBadge('Chi tiêu: ${card.otherCashbackRate?.toStringAsFixed(0)}%', Colors.green.shade600));
+    }
+
+    // 2. Tìm top các hạng mục hoàn tiền khác
     final cashbackRates = {
       'Siêu thị': card.supermarketCashbackRate ?? 0,
       'Online': card.onlineCashbackRate ?? 0,
@@ -306,172 +482,56 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
       'Di chuyển': card.transportCashbackRate ?? 0,
       'Mua sắm': card.shoppingCashbackRate ?? 0,
       'Bảo hiểm': card.insuranceCashbackRate ?? 0,
+      'Hóa đơn': card.utilitiesCashbackRate ?? 0,
       'Giải trí': card.entertainmentCashbackRate ?? 0,
       'Gym': card.gymCashbackRate ?? 0,
     };
 
-    String topCategory = '';
-    double topRate = 0;
-    cashbackRates.forEach((cat, rate) {
-      if (rate > topRate) {
-        topRate = rate;
-        topCategory = cat;
+    final sortedEntries = cashbackRates.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    int count = 0;
+    for (var entry in sortedEntries) {
+      if (entry.value > 0 && count < 3) { // Lấy thêm 3 hạng mục cao nhất để đầy hàng ngang
+        badges.add(_buildSingleBadge('${entry.key}: ${entry.value.toStringAsFixed(0)}%', AppColors.primary(context)));
+        count++;
       }
-    });
-    
+    }
+
+    if (badges.isEmpty) return const SizedBox.shrink();
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      alignment: WrapAlignment.start,
+      children: badges,
+    ).animate().fadeIn(delay: 400.ms);
+  }
+
+  Widget _buildSingleBadge(String text, Color color) {
     return Container(
-      margin: const EdgeInsets.only(right: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: const Color(0xFF1E293B),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.flash_on_rounded, size: 12, color: color),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: GoogleFonts.inter(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          children: [
-            // Ảnh thẻ...
-            Positioned.fill(
-              child: card.imagePath.isNotEmpty
-                  ? (card.imagePath.startsWith('http')
-                      ? Image.network(
-                          card.imagePath,
-                          fit: BoxFit.cover,
-                          alignment: Alignment.center,
-                          errorBuilder: (_, _, _) => _buildFallbackGradient(index),
-                        )
-                      : Image.asset(
-                          card.imagePath,
-                          fit: BoxFit.cover,
-                          alignment: Alignment.center,
-                          errorBuilder: (_, _, _) => _buildFallbackGradient(index),
-                        ))
-                  : _buildFallbackGradient(index),
-            ),
-            // Overlay...
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.1),
-                      Colors.black.withValues(alpha: 0.6),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            // Cashback Tag
-            if (topRate > 0)
-              Positioned(
-                top: 16,
-                right: 16,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.amber.withValues(alpha: 0.9),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.flash_on_rounded, size: 12, color: Colors.black),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Hoàn ${topRate.toStringAsFixed(0)}% $topCategory',
-                        style: GoogleFonts.inter(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ).animate().fadeIn(delay: 400.ms).slideX(begin: 0.5),
-              ),
-            // Nội dung thông tin trên thẻ
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Icon(Icons.contactless_outlined, color: Colors.white70),
-                      Text(
-                        'CREDIT CARD',
-                        style: GoogleFonts.inter(
-                          color: Colors.white.withValues(alpha: 0.7),
-                          fontSize: 10,
-                          letterSpacing: 2,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Text(
-                    card.cardName,
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      shadows: [const Shadow(color: Colors.black45, blurRadius: 4, offset: Offset(0, 2))],
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    card.bankName,
-                    style: GoogleFonts.inter(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontSize: 13,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'DƯ NỢ HIỆN TẠI',
-                            style: GoogleFonts.inter(
-                              color: Colors.white.withValues(alpha: 0.7),
-                              fontSize: 9,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            currencyFormat.format(card.balance),
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Icon(Icons.credit_card, color: Colors.white),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    ).animate().scale(delay: (index * 50).ms, duration: 400.ms, curve: Curves.easeOutBack);
+    );
   }
 
   Widget _buildFallbackGradient(int index) {
@@ -662,6 +722,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary(context),
                 ),
               ),
               TextButton(
@@ -669,6 +730,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                   showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,
+                    backgroundColor: AppColors.surface(context),
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(32),
@@ -688,7 +750,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                                 width: 40,
                                 height: 4,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
+                                  color: AppColors.border(context),
                                   borderRadius: BorderRadius.circular(2),
                                 ),
                               ),
@@ -700,6 +762,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1,
+                                color: AppColors.textPrimary(context),
                               ),
                             ),
                             const SizedBox(height: 20),
@@ -745,7 +808,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                                           style: GoogleFonts.inter(
                                             fontSize: 11,
                                             fontWeight: FontWeight.w500,
-                                            color: AppColors.textPrimary,
+                                            color: AppColors.textPrimary(context),
                                           ),
                                           textAlign: TextAlign.center,
                                           maxLines: 2,
@@ -763,7 +826,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                     ),
                   );
                 },
-                child: const Text('Xem tất cả'),
+                child: Text('Xem tất cả', style: TextStyle(color: AppColors.primary(context))),
               ),
             ],
           ),
@@ -805,7 +868,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                             style: GoogleFonts.inter(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                              color: AppColors.textPrimary,
+                              color: AppColors.textPrimary(context),
                             ),
                             textAlign: TextAlign.center,
                             maxLines: 1,
@@ -825,12 +888,139 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
     );
   }
 
+  void _showAddTransactionOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: AppColors.surface(context),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.border(context),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'BẠN MUỐN CHI TIÊU BẰNG GÌ?',
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
+                color: AppColors.textSecondary(context),
+              ),
+            ),
+            const SizedBox(height: 24),
+            _buildOptionCard(
+              context,
+              icon: Icons.credit_card_rounded,
+              title: 'Chi tiêu qua Thẻ tín dụng',
+              subtitle: 'Quẹt thẻ để nhận hoàn tiền & ưu đãi',
+              color: AppColors.primary(context),
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/add-transaction', extra: 'credit');
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildOptionCard(
+              context,
+              icon: Icons.account_balance_wallet_rounded,
+              title: 'Chi tiêu Cá nhân',
+              subtitle: 'Tiền mặt, Chuyển khoản, MoMo...',
+              color: Colors.green.shade600,
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/add-transaction', extra: 'personal');
+              },
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AppColors.surface(context),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.border(context).withValues(alpha: 0.5)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(icon, color: color),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.bold, 
+                      fontSize: 16,
+                      color: AppColors.textPrimary(context),
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.inter(
+                      color: AppColors.textLight(context), 
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: AppColors.textLight(context)),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showCategoryCards(BuildContext context, Map<String, dynamic> category) {
     final cardsAsync = ref.read(cardsStreamProvider);
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: AppColors.surface(context),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
@@ -850,7 +1040,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
+                        color: AppColors.border(context),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -862,6 +1052,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
+                      color: AppColors.textPrimary(context),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -885,9 +1076,10 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                         }).toList();
 
                         if (matchedCards.isEmpty) {
-                          return const Center(
+                          return Center(
                             child: Text(
                               'Không tìm thấy thẻ phù hợp trong danh mục này.',
+                              style: TextStyle(color: AppColors.textSecondary(context)),
                             ),
                           );
                         }
@@ -922,9 +1114,9 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
   Widget _buildRecommendedCard(CreditCard card) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: AppColors.border(context).withValues(alpha: 0.5)),
       ),
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -934,7 +1126,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
             height: 50,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              color: const Color(0xFFF9FAFB),
+              color: AppColors.background(context),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
@@ -943,13 +1135,13 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                       card.imagePath,
                       fit: BoxFit.contain,
                       errorBuilder: (_, _, _) =>
-                          const Icon(Icons.credit_card),
+                          Icon(Icons.credit_card, color: AppColors.textLight(context)),
                     )
                   : Image.asset(
                       card.imagePath,
                       fit: BoxFit.contain,
                       errorBuilder: (_, _, _) =>
-                          const Icon(Icons.credit_card),
+                          Icon(Icons.credit_card, color: AppColors.textLight(context)),
                     ),
             ),
           ),
@@ -963,13 +1155,14 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                   style: GoogleFonts.inter(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
+                    color: AppColors.textPrimary(context),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   card.bankName,
                   style: GoogleFonts.inter(
-                    color: AppColors.textLight,
+                    color: AppColors.textLight(context),
                     fontSize: 12,
                   ),
                 ),
@@ -1001,51 +1194,33 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
           _QuickActionButton(
             icon: Icons.add_rounded,
             label: 'Chi tiêu',
-            color: const Color(0xFFEFF6FF),
+            color: Color(0xFFEFF6FF),
             iconColor: Colors.blue,
-            onTap: () {
-              cardsAsync.maybeWhen(
-                data: (cards) {
-                  if (cards.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Vui lòng thêm thẻ (ví thật) trước khi thêm chi tiêu.',
-                        ),
-                      ),
-                    );
-                  } else {
-                    context.push('/add-transaction');
-                  }
-                },
-                orElse: () => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Vui lòng thử lại sau.')),
-                ),
-              );
-            },
+            onTap: () => _showAddTransactionOptions(context),
           ),
           _QuickActionButton(
             icon: Icons.wallet_rounded,
             label: 'Thanh toán',
-            color: const Color(0xFFFFF7ED),
+            color: Color(0xFFFFF7ED),
             iconColor: Colors.orange,
             onTap: () => context.push('/wallet'),
           ),
           _QuickActionButton(
             icon: Icons.analytics_rounded,
             label: 'Báo cáo',
-            color: const Color(0xFFFAF5FF),
+            color: Color(0xFFFAF5FF),
             iconColor: Colors.purple,
             onTap: () => context.push('/reports'),
           ),
           _QuickActionButton(
             icon: Icons.grid_view_rounded,
             label: 'Chi tiêu',
-            color: const Color(0xFFF0FDF4),
+            color: Color(0xFFF0FDF4),
             iconColor: Colors.green,
             onTap: () {
               showModalBottomSheet(
                 context: context,
+                backgroundColor: AppColors.surface(context),
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
                 ),
@@ -1059,28 +1234,29 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                         style: GoogleFonts.inter(
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
+                          color: AppColors.textPrimary(context),
                         ),
                       ),
                       const SizedBox(height: 24),
                       ListTile(
-                        leading: const Icon(Icons.compare_arrows_rounded),
-                        title: const Text('So sánh thẻ'),
+                        leading: Icon(Icons.compare_arrows_rounded, color: AppColors.primary(context)),
+                        title: Text('So sánh thẻ', style: TextStyle(color: AppColors.textPrimary(context))),
                         onTap: () {
                           Navigator.pop(context);
                           context.push('/compare');
                         },
                       ),
                       ListTile(
-                        leading: const Icon(Icons.calculate_outlined),
-                        title: const Text('Công cụ tính toán'),
+                        leading: Icon(Icons.calculate_outlined, color: AppColors.primary(context)),
+                        title: Text('Công cụ tính toán', style: TextStyle(color: AppColors.textPrimary(context))),
                         onTap: () {
                           Navigator.pop(context);
                           context.push('/calculator');
                         },
                       ),
                       ListTile(
-                        leading: const Icon(Icons.star_outline_rounded),
-                        title: const Text('Thẻ yêu thích'),
+                        leading: Icon(Icons.star_outline_rounded, color: AppColors.primary(context)),
+                        title: Text('Thẻ yêu thích', style: TextStyle(color: AppColors.textPrimary(context))),
                         onTap: () {
                           Navigator.pop(context);
                           context.push('/favorites');
@@ -1114,9 +1290,13 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary(context),
                 ),
               ),
-              TextButton(onPressed: () {}, child: const Text('Xem tất cả')),
+              TextButton(
+                onPressed: () {}, 
+                child: Text('Xem tất cả', style: TextStyle(color: AppColors.primary(context)))
+              ),
             ],
           ),
           const SizedBox(height: 10),
@@ -1142,7 +1322,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Text(
                       'Chưa có giao dịch thực tế nào.',
-                      style: GoogleFonts.inter(color: AppColors.textLight),
+                      style: GoogleFonts.inter(color: AppColors.textLight(context)),
                     ),
                   ),
                 );
@@ -1186,7 +1366,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
                   return _TransactionItem(
                     icon: catIcon,
                     title: tx.category,
-                    subtitle: tx.note.isNotEmpty ? tx.note : tx.cardName,
+                    subtitle: tx.note.isNotEmpty ? tx.note : tx.sourceName,
                     amount: '-${currencyFormat.format(tx.amount)}',
                     time: dateFormat.format(tx.timestamp),
                     isPositive: false,
@@ -1235,7 +1415,11 @@ class _QuickActionButton extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             label,
-            style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500),
+            style: GoogleFonts.inter(
+              fontSize: 12, 
+              fontWeight: FontWeight.w500,
+              color: AppColors.textPrimary(context),
+            ),
           ),
         ],
       ),
@@ -1266,19 +1450,19 @@ class _TransactionItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface(context),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: AppColors.border(context).withValues(alpha: 0.5)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFF9FAFB),
+              color: AppColors.background(context),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: AppColors.textPrimary),
+            child: Icon(icon, color: AppColors.textPrimary(context)),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -1290,12 +1474,13 @@ class _TransactionItem extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
+                    color: AppColors.textPrimary(context),
                   ),
                 ),
                 Text(
                   subtitle,
                   style: GoogleFonts.inter(
-                    color: AppColors.textLight,
+                    color: AppColors.textLight(context),
                     fontSize: 12,
                   ),
                 ),
@@ -1311,13 +1496,13 @@ class _TransactionItem extends StatelessWidget {
                   fontWeight: FontWeight.w900,
                   color: isPositive
                       ? const Color(0xFF10B981)
-                      : AppColors.textPrimary,
+                      : AppColors.textPrimary(context),
                 ),
               ),
               Text(
                 time,
                 style: GoogleFonts.inter(
-                  color: AppColors.textLight,
+                  color: AppColors.textLight(context),
                   fontSize: 11,
                 ),
               ),

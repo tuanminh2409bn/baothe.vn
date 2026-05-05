@@ -24,7 +24,7 @@ class MobileMainLayout extends StatelessWidget {
         // Finy AI Assistant Floating Button
         Positioned(
           right: 0,
-          bottom: Theme.of(context).platform == TargetPlatform.android ? 130 : 100, // Đặt cao hơn bottom nav bar
+          bottom: Theme.of(context).platform == TargetPlatform.android ? 120 : 100, // Hạ thấp xuống cùng với bottom nav
           child: const FinyAIFloatingButton(),
         ),
       ],
@@ -35,7 +35,7 @@ class MobileMainLayout extends StatelessWidget {
     return FloatingActionButton(
       heroTag: 'main_add_fab',
       onPressed: () => context.push('/add-card'),
-      backgroundColor: AppColors.primary,
+      backgroundColor: AppColors.primary(context),
       shape: const CircleBorder(),
       child: const Icon(Icons.add, color: Colors.white, size: 30),
     ); // Thêm animation sau nếu cần
@@ -47,18 +47,15 @@ class MobileMainLayout extends StatelessWidget {
     final double bottomPadding = MediaQuery.paddingOf(context).bottom;
     
     // Chiều cao của phần nền (không tính Safe Area). 
-    // Mặc định Android (không có tai thỏ) là 60px cho dễ bóm.
-    // Với iOS (có bottomPadding ~ 34px), ta chỉ cần phần nền cao 42px. 
-    // Tổng chiều cao iOS sẽ là: 42 + 34 = 76px (rất mỏng gọn).
-    // Việc hạ chiều cao nền này sẽ TỰ ĐỘNG kéo dấu X (FAB) thấp xuống theo viền mép trên của BottomAppBar.
     final bool isAndroid = Theme.of(context).platform == TargetPlatform.android;
-    final double appBarHeight = isAndroid ? 70 : (bottomPadding > 0 ? 42 : 60);
+    // Giảm độ cao Android từ 70 xuống 60 để thanh menu trông gọn hơn
+    final double appBarHeight = isAndroid ? 60 : (bottomPadding > 0 ? 42 : 60);
 
     return BottomAppBar(
       height: appBarHeight,
       shape: const CircularNotchedRectangle(),
       notchMargin: 6,
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       shadowColor: Colors.black.withValues(alpha: 0.1),
       elevation: 20,
       padding: EdgeInsets.zero,
@@ -67,6 +64,7 @@ class MobileMainLayout extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildNavItem(
+            context: context,
             icon: Icons.home_filled, 
             label: 'Trang chủ', 
             index: 0, 
@@ -74,6 +72,7 @@ class MobileMainLayout extends StatelessWidget {
             isAndroid: isAndroid,
           ),
           _buildNavItem(
+            context: context,
             icon: Icons.account_balance_wallet_outlined, 
             label: 'Ví thẻ', 
             index: 1, 
@@ -82,6 +81,7 @@ class MobileMainLayout extends StatelessWidget {
           ),
           const SizedBox(width: 40), // Không gian cho Add FAB (Floating Action Button)
           _buildNavItem(
+            context: context,
             icon: Icons.calendar_today_outlined, 
             label: 'Lịch hiển thị', 
             index: 2, 
@@ -89,6 +89,7 @@ class MobileMainLayout extends StatelessWidget {
             isAndroid: isAndroid,
           ),
           _buildNavItem(
+            context: context,
             icon: Icons.person_outline_rounded, 
             label: 'Cá nhân', 
             index: 3, 
@@ -101,6 +102,7 @@ class MobileMainLayout extends StatelessWidget {
   }
 
   Widget _buildNavItem({
+    required BuildContext context,
     required IconData icon, 
     required String label, 
     required int index, 
@@ -108,14 +110,12 @@ class MobileMainLayout extends StatelessWidget {
     required bool isAndroid,
   }) {
     final isSelected = index == currentIndex;
-    final double iconSize = isSelected 
-        ? (isAndroid ? 32.0 : 28.0) 
-        : (isAndroid ? 28.0 : 24.0);
+    final double iconSize = isSelected ? 28.0 : 24.0;
 
     return IconButton(
       icon: Icon(
         icon,
-        color: isSelected ? AppColors.primary : AppColors.textLight,
+        color: isSelected ? AppColors.primary(context) : AppColors.textLight(context),
         size: iconSize,
       ),
       onPressed: () {

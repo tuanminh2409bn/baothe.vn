@@ -82,19 +82,19 @@ class _MobileCalculatorScreenState extends ConsumerState<MobileCalculatorScreen>
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF9FAFB),
+        backgroundColor: AppColors.background(context),
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+            icon: Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary(context)),
             onPressed: () => context.pop(),
           ),
           title: Text(
             'CÔNG CỤ TÍNH TOÁN',
             style: GoogleFonts.inter(
-              color: AppColors.textPrimary,
+              color: AppColors.textPrimary(context),
               fontSize: 16,
               fontWeight: FontWeight.w800,
               letterSpacing: 1,
@@ -102,9 +102,9 @@ class _MobileCalculatorScreenState extends ConsumerState<MobileCalculatorScreen>
           ),
           bottom: TabBar(
             isScrollable: true,
-            labelColor: AppColors.primary,
-            unselectedLabelColor: AppColors.textLight,
-            indicatorColor: AppColors.primary,
+            labelColor: AppColors.primary(context),
+            unselectedLabelColor: AppColors.textLight(context),
+            indicatorColor: AppColors.primary(context),
             labelStyle: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 13),
             tabs: const [
               Tab(text: 'Hoàn tiền'),
@@ -116,17 +116,17 @@ class _MobileCalculatorScreenState extends ConsumerState<MobileCalculatorScreen>
         ),
         body: TabBarView(
           children: [
-            _buildCashbackTab(userCardsAsync),
-            _buildLegacyTab('Tính lãi suất trả thiểu'),
-            _buildLegacyTab('Tính phí chuyển đổi trả góp'),
-            _buildLegacyTab('Tính phí rút tiền mặt'),
+            _buildCashbackTab(context, userCardsAsync),
+            _buildLegacyTab(context, 'Tính lãi suất trả thiểu'),
+            _buildLegacyTab(context, 'Tính phí chuyển đổi trả góp'),
+            _buildLegacyTab(context, 'Tính phí rút tiền mặt'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCashbackTab(AsyncValue<List<UserCard>> cardsAsync) {
+  Widget _buildCashbackTab(BuildContext context, AsyncValue<List<UserCard>> cardsAsync) {
     final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
 
     return SingleChildScrollView(
@@ -136,26 +136,26 @@ class _MobileCalculatorScreenState extends ConsumerState<MobileCalculatorScreen>
         children: [
           Text(
             '1. CHỌN THẺ CẦN TÍNH',
-            style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w900, color: AppColors.textSecondary, letterSpacing: 0.5),
+            style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w900, color: AppColors.textSecondary(context), letterSpacing: 0.5),
           ),
           const SizedBox(height: 12),
-          _buildCardSelector(cardsAsync),
+          _buildCardSelector(context, cardsAsync),
           const SizedBox(height: 32),
           Text(
             '2. NHẬP CHI TIÊU DỰ KIẾN (VNĐ)',
-            style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w900, color: AppColors.textSecondary, letterSpacing: 0.5),
+            style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w900, color: AppColors.textSecondary(context), letterSpacing: 0.5),
           ),
           const SizedBox(height: 16),
-          ..._categories.map((cat) => _buildSpendingInput(cat['label']!, cat['id']!)),
+          ..._categories.map((cat) => _buildSpendingInput(context, cat['label']!, cat['id']!)),
           const SizedBox(height: 32),
-          _buildResultSection(currencyFormat),
+          _buildResultSection(context, currencyFormat),
           const SizedBox(height: 40),
         ],
       ),
     );
   }
 
-  Widget _buildCardSelector(AsyncValue<List<UserCard>> cardsAsync) {
+  Widget _buildCardSelector(BuildContext context, AsyncValue<List<UserCard>> cardsAsync) {
     return cardsAsync.when(
       data: (cards) {
         if (cards.isEmpty) return const Text('Bạn chưa có thẻ nào.');
@@ -164,7 +164,7 @@ class _MobileCalculatorScreenState extends ConsumerState<MobileCalculatorScreen>
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFF3F4F6)),
+            border: Border.all(color: AppColors.border(context)),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<UserCard>(
@@ -190,7 +190,7 @@ class _MobileCalculatorScreenState extends ConsumerState<MobileCalculatorScreen>
     );
   }
 
-  Widget _buildSpendingInput(String label, String id) {
+  Widget _buildSpendingInput(BuildContext context, String label, String id) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: TextField(
@@ -199,7 +199,7 @@ class _MobileCalculatorScreenState extends ConsumerState<MobileCalculatorScreen>
         onChanged: (_) => _calculateCashback(),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary),
+          labelStyle: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary(context)),
           suffixText: 'đ',
           filled: true,
           fillColor: Colors.white,
@@ -213,15 +213,15 @@ class _MobileCalculatorScreenState extends ConsumerState<MobileCalculatorScreen>
     );
   }
 
-  Widget _buildResultSection(NumberFormat format) {
+  Widget _buildResultSection(BuildContext context, NumberFormat format) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.primary,
+        color: AppColors.primary(context),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
-          BoxShadow(color: AppColors.primary.withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 8)),
+          BoxShadow(color: AppColors.primary(context).withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 8)),
         ],
       ),
       child: Column(
@@ -245,16 +245,16 @@ class _MobileCalculatorScreenState extends ConsumerState<MobileCalculatorScreen>
     );
   }
 
-  Widget _buildLegacyTab(String title) {
+  Widget _buildLegacyTab(BuildContext context, String title) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.construction_rounded, size: 64, color: Colors.grey.shade200),
           const SizedBox(height: 16),
-          Text(title, style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+          Text(title, style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: AppColors.textSecondary(context))),
           const SizedBox(height: 8),
-          Text('Tính năng đang được phát triển nâng cao.', style: GoogleFonts.inter(color: AppColors.textLight, fontSize: 13)),
+          Text('Tính năng đang được phát triển nâng cao.', style: GoogleFonts.inter(color: AppColors.textLight(context), fontSize: 13)),
         ],
       ),
     );

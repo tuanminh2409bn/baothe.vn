@@ -111,29 +111,17 @@ class _MobileLoginScreenState extends ConsumerState<MobileLoginScreen> {
                   
                   const SizedBox(height: 24),
                   
-                  // Title
+                  // New Single Title
                   Text(
-                    'So Sánh & Quản Lý\nThẻ Tín Dụng',
+                    'Khai phá sức mạnh thẻ tín dụng, kiểm soát chi tiêu thông minh',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inter(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                      height: 1.2,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary(context),
+                      height: 1.4,
                     ),
                   ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2),
-                  
-                  const SizedBox(height: 12),
-                  
-                  // Subtitle
-                  Text(
-                    'Tìm thẻ tốt nhất và tối ưu hóa chi tiêu của bạn.',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      fontSize: 15,
-                      color: AppColors.textSecondary,
-                    ),
-                  ).animate().fadeIn(delay: 500.ms).slideY(begin: 0.2),
                   
                   const SizedBox(height: 40),
                   
@@ -153,7 +141,7 @@ class _MobileLoginScreenState extends ConsumerState<MobileLoginScreen> {
                     customIcon: Image.asset('assets/logo/google_logo.png', height: 24),
                     label: 'Tiếp tục với Google',
                     backgroundColor: Colors.white,
-                    textColor: AppColors.textPrimary,
+                    textColor: AppColors.textPrimary(context),
                     borderColor: const Color(0xFFE5E7EB),
                     onPressed: _isLoading ? () {} : _handleGoogleSignIn,
                   ).animate().fadeIn(delay: 700.ms).slideY(begin: 0.1),
@@ -163,7 +151,7 @@ class _MobileLoginScreenState extends ConsumerState<MobileLoginScreen> {
                   _LoginButton(
                     icon: Icons.email_outlined,
                     label: 'Tiếp tục với Email',
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: AppColors.primary(context),
                     textColor: Colors.white,
                     onPressed: () => context.push('/login-email'),
                   ).animate().fadeIn(delay: 800.ms).slideY(begin: 0.1),
@@ -176,12 +164,12 @@ class _MobileLoginScreenState extends ConsumerState<MobileLoginScreen> {
                     child: RichText(
                       text: TextSpan(
                         text: 'Chưa có tài khoản? ',
-                        style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 14),
+                        style: GoogleFonts.inter(color: AppColors.textSecondary(context), fontSize: 14),
                         children: [
                           TextSpan(
                             text: 'Đăng ký ngay',
                             style: GoogleFonts.inter(
-                              color: AppColors.primary,
+                              color: AppColors.primary(context),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -196,8 +184,8 @@ class _MobileLoginScreenState extends ConsumerState<MobileLoginScreen> {
           if (_isLoading)
             Container(
               color: Colors.black.withValues(alpha: 0.3),
-              child: const Center(
-                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary)),
+              child: Center(
+                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary(context))),
               ),
             ),
         ],
@@ -244,7 +232,7 @@ class _LoginButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ?customIcon,
+            if (customIcon != null) customIcon!,
             if (icon != null) ...[
               if (icon is IconData) 
                 Icon(icon as IconData, size: 24, color: textColor)
@@ -415,10 +403,10 @@ class _CardColumnState extends State<_CardColumn> {
               fit: BoxFit.contain,
               placeholder: (context, url) => Container(
                 color: Colors.grey.shade200,
-                child: const Center(
+                child: Center(
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary(context)),
                   ),
                 ),
               ),

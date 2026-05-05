@@ -17,16 +17,16 @@ class AuthPlaceholder extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.lock_outline,
               size: 80,
-              color: AppColors.textLight,
+              color: AppColors.textLight(context),
             ),
             const SizedBox(height: 24),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: AppStyles.h3.copyWith(color: AppColors.textSecondary),
+              style: AppStyles.h3(context).copyWith(color: AppColors.textSecondary(context)),
             ),
             const SizedBox(height: 32),
             Row(
@@ -38,7 +38,7 @@ class AuthPlaceholder extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () => context.push('/login'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: AppColors.primary(context),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -54,8 +54,8 @@ class AuthPlaceholder extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () => context.push('/login'), // Giả định dùng chung màn login cho cả đăng ký
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppColors.primary, width: 1.5),
-                      foregroundColor: AppColors.primary,
+                      side: BorderSide(color: AppColors.primary(context), width: 1.5),
+                      foregroundColor: AppColors.primary(context),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/credit_card_model.dart';
 import '../models/user_card_model.dart';
+import '../models/user_wallet_model.dart';
 import '../models/transaction_model.dart';
 import 'auth_service.dart';
 
@@ -89,6 +90,24 @@ class FirestoreService {
     await _db.collection('user_cards').doc(card.id).set(card.toMap());
   }
 
+  // --- USER WALLETS ---
+
+  // Lấy danh sách ví của một user
+  Stream<List<UserWallet>> getUserWallets(String userId) {
+    return _db
+        .collection('user_wallets')
+        .where('userId', isEqualTo: userId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => UserWallet.fromMap(doc.data())).toList());
+  }
+
+  // Thêm ví mới
+  Future<void> addUserWallet(UserWallet wallet) async {
+    await _db.collection('user_wallets').doc(wallet.id).set(wallet.toMap());
+  }
+
   // --- TRANSACTIONS (Spending) ---
 
   // Lấy lịch sử giao dịch của user
@@ -107,20 +126,43 @@ class FirestoreService {
     // 1. Lưu giao dịch
     await _db.collection('transactions').doc(transaction.id).set(transaction.toMap());
 
-    // 2. Cập nhật số dư (balance) của thẻ tương ứng
-    final cardRef = _db.collection('user_cards').doc(transaction.userCardId);
-    await _db.runTransaction((tx) async {
-      final snapshot = await tx.get(cardRef);
-      if (snapshot.exists) {
-        final currentBalance = (snapshot.data()?['balance'] as num?)?.toDouble() ?? 0.0;
-        tx.update(cardRef, {'balance': currentBalance + transaction.amount});
-      }
-    });
+    // 2. Cập nhật số dư
+    if (transaction.type == TransactionType.credit && transaction.userCardId != null) {
+      // Thẻ tín dụng: Tăng nợ (balance)
+      final cardRef = _db.collection('user_cards').doc(transaction.userCardId!);
+      await _db.runTransaction((tx) async {
+        final snapshot = await tx.get(cardRef);
+        if (snapshot.exists) {
+          final currentBalance = (snapshot.data()?['balance'] as num?)?.toDouble() ?? 0.0;
+          tx.update(cardRef, {'balance': currentBalance + transaction.amount});
+        }
+      });
+    } else if (transaction.type == TransactionType.personal && transaction.userWalletId != null) {
+      // Ví cá nhân: Giảm số dư (balance)
+      final walletRef = _db.collection('user_wallets').doc(transaction.userWalletId!);
+      await _db.runTransaction((tx) async {
+        final snapshot = await tx.get(walletRef);
+        if (snapshot.exists) {
+          final currentBalance = (snapshot.data()?['balance'] as num?)?.toDouble() ?? 0.0;
+          tx.update(walletRef, {'balance': currentBalance - transaction.amount});
+        }
+      });
+    }
+  }
+
+  // Lấy thông tin profile người dùng
+  Stream<Map<String, dynamic>?> getUserProfile(String userId) {
+    return _db.collection('users').doc(userId).snapshots().map((doc) => doc.data());
   }
 }
 
 // Provider để truy cập Firestore Service
 final firestoreServiceProvider = Provider((ref) => FirestoreService());
+
+// Provider cung cấp thông tin profile người dùng
+final userProfileProvider = StreamProvider.autoDispose.family<Map<String, dynamic>?, String>((ref, userId) {
+  return ref.watch(firestoreServiceProvider).getUserProfile(userId);
+});
 
 // Provider cung cấp danh sách thẻ công khai (Stream)
 final cardsStreamProvider = StreamProvider<List<CreditCard>>((ref) {
@@ -139,6 +181,15 @@ final userCardsStreamProvider = StreamProvider.autoDispose.family<List<UserCard>
     return const Stream.empty();
   }
   return ref.watch(firestoreServiceProvider).getUserCards(userId);
+});
+
+// Provider cung cấp danh sách ví của user (Stream)
+final userWalletsStreamProvider = StreamProvider.autoDispose.family<List<UserWallet>, String>((ref, userId) {
+  final user = ref.watch(authStateProvider).value;
+  if (user == null || user.uid != userId) {
+    return const Stream.empty();
+  }
+  return ref.watch(firestoreServiceProvider).getUserWallets(userId);
 });
 
 // Provider cung cấp danh sách giao dịch của user (Stream)
