@@ -56,7 +56,7 @@ class FirestoreService {
   // Lấy danh sách tất cả các thẻ
   Stream<List<CreditCard>> getCards() {
     return _db.collection('cards').snapshots().map((snapshot) =>
-        snapshot.docs.map((doc) => CreditCard.fromMap(doc.data())).toList());
+        snapshot.docs.map((doc) => CreditCard.fromMap(doc.data() as Map<String, dynamic>)).toList());
   }
 
   // Lấy chi tiết một thẻ theo ID
@@ -82,7 +82,7 @@ class FirestoreService {
         .where('userId', isEqualTo: userId)
         .snapshots()
         .map((snapshot) =>
-            snapshot.docs.map((doc) => UserCard.fromMap(doc.data())).toList());
+            snapshot.docs.map((doc) => UserCard.fromMap(doc.data() as Map<String, dynamic>)).toList());
   }
 
   // Thêm thẻ mới vào ví của user
@@ -100,7 +100,7 @@ class FirestoreService {
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) =>
-            snapshot.docs.map((doc) => UserWallet.fromMap(doc.data())).toList());
+            snapshot.docs.map((doc) => UserWallet.fromMap(doc.data() as Map<String, dynamic>)).toList());
   }
 
   // Thêm ví mới
@@ -118,36 +118,74 @@ class FirestoreService {
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) =>
-            snapshot.docs.map((doc) => Transaction.fromMap(doc.data())).toList());
+            snapshot.docs.map((doc) => Transaction.fromMap(doc.data() as Map<String, dynamic>)).toList());
+  }
+
+  // Lấy lịch sử giao dịch theo ví hoặc thẻ
+  Stream<List<Transaction>> getTransactionsBySource(String userId, {String? walletId, String? cardId}) {
+    Query query = _db.collection('transactions').where('userId', isEqualTo: userId);
+    
+    if (walletId != null) {
+      query = query.where('userWalletId', isEqualTo: walletId);
+    } else if (cardId != null) {
+      query = query.where('userCardId', isEqualTo: cardId);
+    }
+    
+    return query
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => Transaction.fromMap(doc.data() as Map<String, dynamic>)).toList());
   }
 
   // Thêm giao dịch mới
   Future<void> addTransaction(Transaction transaction) async {
+    final batch = _db.batch();
+    
     // 1. Lưu giao dịch
-    await _db.collection('transactions').doc(transaction.id).set(transaction.toMap());
+    final txRef = _db.collection('transactions').doc(transaction.id);
+    batch.set(txRef, transaction.toMap());
 
-    // 2. Cập nhật số dư
+    // 2. Cập nhật số dư và hoàn tiền
     if (transaction.type == TransactionType.credit && transaction.userCardId != null) {
-      // Thẻ tín dụng: Tăng nợ (balance)
+      // Thẻ tín dụng: Tăng nợ (balance) và tính toán hoàn tiền
       final cardRef = _db.collection('user_cards').doc(transaction.userCardId!);
-      await _db.runTransaction((tx) async {
-        final snapshot = await tx.get(cardRef);
-        if (snapshot.exists) {
-          final currentBalance = (snapshot.data()?['balance'] as num?)?.toDouble() ?? 0.0;
-          tx.update(cardRef, {'balance': currentBalance + transaction.amount});
+      
+      // Lấy thông tin thẻ để tính hoàn tiền
+      final cardDoc = await cardRef.get();
+      double earnedCashback = 0;
+      
+      if (cardDoc.exists) {
+        final cardData = cardDoc.data()!;
+        double rate = 0;
+        switch (transaction.category) {
+          case 'Siêu thị': rate = (cardData['supermarketCashbackRate'] as num?)?.toDouble() ?? 0; break;
+          case 'Ẩm thực': rate = (cardData['diningCashbackRate'] as num?)?.toDouble() ?? 0; break;
+          case 'Mua sắm': rate = (cardData['shoppingCashbackRate'] as num?)?.toDouble() ?? 0; break;
+          case 'Online': rate = (cardData['onlineCashbackRate'] as num?)?.toDouble() ?? 0; break;
+          case 'Di chuyển': rate = (cardData['transportCashbackRate'] as num?)?.toDouble() ?? 0; break;
+          case 'Giải trí': rate = (cardData['entertainmentCashbackRate'] as num?)?.toDouble() ?? 0; break;
+          case 'Y tế': rate = (cardData['medicalCashbackRate'] as num?)?.toDouble() ?? 0; break;
+          case 'Giáo dục': rate = (cardData['educationCashbackRate'] as num?)?.toDouble() ?? 0; break;
+          case 'Gym': rate = (cardData['gymCashbackRate'] as num?)?.toDouble() ?? 0; break;
+          case 'Bảo hiểm': rate = (cardData['insuranceCashbackRate'] as num?)?.toDouble() ?? 0; break;
+          case 'Hoá đơn': rate = (cardData['utilitiesCashbackRate'] as num?)?.toDouble() ?? 0; break;
+          default: rate = (cardData['otherCashbackRate'] as num?)?.toDouble() ?? 0; break;
         }
+        earnedCashback = (transaction.amount * rate) / 100;
+      }
+      
+      batch.update(cardRef, {
+        'balance': FieldValue.increment(transaction.amount),
+        if (earnedCashback > 0) 'totalCashback': FieldValue.increment(earnedCashback),
       });
     } else if (transaction.type == TransactionType.personal && transaction.userWalletId != null) {
       // Ví cá nhân: Giảm số dư (balance)
       final walletRef = _db.collection('user_wallets').doc(transaction.userWalletId!);
-      await _db.runTransaction((tx) async {
-        final snapshot = await tx.get(walletRef);
-        if (snapshot.exists) {
-          final currentBalance = (snapshot.data()?['balance'] as num?)?.toDouble() ?? 0.0;
-          tx.update(walletRef, {'balance': currentBalance - transaction.amount});
-        }
-      });
+      batch.update(walletRef, {'balance': FieldValue.increment(-transaction.amount)});
     }
+
+    await batch.commit();
   }
 
   // Lấy thông tin profile người dùng
@@ -199,6 +237,19 @@ final transactionsStreamProvider = StreamProvider.autoDispose.family<List<Transa
     return const Stream.empty();
   }
   return ref.watch(firestoreServiceProvider).getTransactions(userId);
+});
+
+// Provider cung cấp danh sách giao dịch theo ví hoặc thẻ
+final filteredTransactionsProvider = StreamProvider.autoDispose.family<List<Transaction>, ({String userId, String? walletId, String? cardId})>((ref, arg) {
+  final user = ref.watch(authStateProvider).value;
+  if (user == null || user.uid != arg.userId) {
+    return const Stream.empty();
+  }
+  return ref.watch(firestoreServiceProvider).getTransactionsBySource(
+    arg.userId, 
+    walletId: arg.walletId, 
+    cardId: arg.cardId
+  );
 });
 
 // Provider cung cấp danh sách thẻ mẫu (Mock) cho Home Screen khi user chưa có thẻ

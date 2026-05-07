@@ -7,6 +7,7 @@ import '../../../constants/app_styles.dart';
 import '../../../models/user_card_model.dart';
 import '../../../services/firestore_service.dart';
 import '../../../services/auth_service.dart';
+import '../../../utils/currency_formatter.dart';
 
 class MobileCalculatorScreen extends ConsumerStatefulWidget {
   const MobileCalculatorScreen({super.key});
@@ -196,6 +197,7 @@ class _MobileCalculatorScreenState extends ConsumerState<MobileCalculatorScreen>
       child: TextField(
         controller: _controllers[id],
         keyboardType: TextInputType.number,
+        inputFormatters: [CurrencyInputFormatter()],
         onChanged: (_) => _calculateCashback(),
         decoration: InputDecoration(
           labelText: label,

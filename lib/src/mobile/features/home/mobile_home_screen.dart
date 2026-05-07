@@ -543,7 +543,7 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
     
     // 1. Luôn hiển thị hoàn tiền chi tiêu chung nếu có
     if ((card.otherCashbackRate ?? 0) > 0) {
-      badges.add(_buildSingleBadge('Chi tiêu: ${card.otherCashbackRate?.toStringAsFixed(0)}%', Colors.green.shade600));
+      badges.add(_buildSingleBadge('Chi tiêu: ${card.otherCashbackRate?.toStringAsFixed(1)}%', Colors.green.shade700, isHighlight: true));
     }
 
     // 2. Tìm top các hạng mục hoàn tiền khác
@@ -565,43 +565,51 @@ class _MobileHomeScreenState extends ConsumerState<MobileHomeScreen> {
     final sortedEntries = cashbackRates.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
-    int count = 0;
     for (var entry in sortedEntries) {
-      if (entry.value > 0 && count < 3) { // Lấy thêm 3 hạng mục cao nhất để đầy hàng ngang
+      if (entry.value > 0) {
         badges.add(_buildSingleBadge('${entry.key}: ${entry.value.toStringAsFixed(0)}%', AppColors.primary(context)));
-        count++;
       }
     }
 
     if (badges.isEmpty) return const SizedBox.shrink();
 
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      alignment: WrapAlignment.start,
-      children: badges,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      child: Row(
+        children: badges.asMap().entries.map((entry) {
+          return Padding(
+            padding: EdgeInsets.only(right: entry.key == badges.length - 1 ? 0 : 8),
+            child: entry.value,
+          );
+        }).toList(),
+      ),
     ).animate().fadeIn(delay: 400.ms);
   }
 
-  Widget _buildSingleBadge(String text, Color color) {
+  Widget _buildSingleBadge(String text, Color color, {bool isHighlight = false}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
+        color: isHighlight ? color : color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: isHighlight ? color : color.withValues(alpha: 0.2), width: 0.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.flash_on_rounded, size: 12, color: color),
+          Icon(
+            isHighlight ? Icons.star_rounded : Icons.local_offer_rounded,
+            size: 14,
+            color: isHighlight ? Colors.white : color,
+          ),
           const SizedBox(width: 4),
           Text(
             text,
             style: GoogleFonts.inter(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              color: color,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: isHighlight ? Colors.white : color,
             ),
           ),
         ],

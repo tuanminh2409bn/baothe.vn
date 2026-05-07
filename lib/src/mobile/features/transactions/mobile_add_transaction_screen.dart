@@ -11,6 +11,7 @@ import '../../../services/auth_service.dart';
 import '../../../models/transaction_model.dart';
 import '../../../models/user_card_model.dart';
 import '../../../models/user_wallet_model.dart';
+import '../../../utils/currency_formatter.dart';
 
 class MobileAddTransactionScreen extends ConsumerStatefulWidget {
   final TransactionType type;
@@ -180,7 +181,7 @@ class _MobileAddTransactionScreenState extends ConsumerState<MobileAddTransactio
       child: TextField(
         controller: _amountController,
         keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        inputFormatters: [CurrencyInputFormatter()],
         onChanged: _onAmountChanged,
         style: GoogleFonts.inter(
           fontSize: 24,

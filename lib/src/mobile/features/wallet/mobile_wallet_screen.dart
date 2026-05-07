@@ -39,13 +39,13 @@ class MobileWalletScreen extends ConsumerWidget {
           children: [
             // Tab 1: Thẻ tín dụng
             userCardsAsync.when(
-              data: (cards) => _buildCardsTab(context, cards, currencyFormat),
+              data: (cards) => _buildCardsTab(context, ref, cards, currencyFormat),
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, st) => Center(child: Text('Lỗi: $e')),
             ),
             // Tab 2: Ví & Tài khoản
             userWalletsAsync.when(
-              data: (wallets) => _buildWalletsTab(context, wallets, currencyFormat),
+              data: (wallets) => _buildWalletsTab(context, ref, wallets, currencyFormat),
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, st) => Center(child: Text('Lỗi: $e')),
             ),
@@ -85,13 +85,18 @@ class MobileWalletScreen extends ConsumerWidget {
 
   // --- CARDS TAB ---
 
-  Widget _buildCardsTab(BuildContext context, List<UserCard> cards, NumberFormat format) {
+  Widget _buildCardsTab(BuildContext context, WidgetRef ref, List<UserCard> cards, NumberFormat format) {
+    final user = ref.read(authServiceProvider).currentUser;
     final totalLimit = cards.fold<double>(0, (sum, item) => sum + item.limit);
     final totalBalance = cards.fold<double>(0, (sum, item) => sum + item.balance);
     final totalAvailable = totalLimit - totalBalance;
 
     return RefreshIndicator(
-      onRefresh: () async => {}, // Firestore stream tự cập nhật
+      onRefresh: () async {
+        if (user != null) {
+          ref.invalidate(userCardsStreamProvider(user.uid));
+        }
+      },
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -130,11 +135,16 @@ class MobileWalletScreen extends ConsumerWidget {
 
   // --- WALLETS TAB ---
 
-  Widget _buildWalletsTab(BuildContext context, List<UserWallet> wallets, NumberFormat format) {
+  Widget _buildWalletsTab(BuildContext context, WidgetRef ref, List<UserWallet> wallets, NumberFormat format) {
+    final user = ref.read(authServiceProvider).currentUser;
     final totalBalance = wallets.fold<double>(0, (sum, item) => sum + item.balance);
 
     return RefreshIndicator(
-      onRefresh: () async => {},
+      onRefresh: () async {
+        if (user != null) {
+          ref.invalidate(userWalletsStreamProvider(user.uid));
+        }
+      },
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -231,13 +241,14 @@ class MobileWalletScreen extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             format.format(balance),
+            key: ValueKey('balance_$balance'),
             style: GoogleFonts.inter(
               fontSize: 32,
               fontWeight: FontWeight.w900,
               color: isCredit ? AppColors.textPrimary(context) : Colors.green.shade700,
               letterSpacing: -1,
             ),
-          ).animate().fadeIn().scale(),
+          ).animate(key: ValueKey('anim_$balance')).fadeIn().scale(),
           if (isCredit) ...[
             const SizedBox(height: 24),
             Divider(height: 1, color: AppColors.border(context)),
@@ -358,6 +369,31 @@ class MobileWalletScreen extends ConsumerWidget {
               ),
             ),
           ),
+          if (card.totalCashback > 0) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.green.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.stars_rounded, size: 16, color: Colors.green.shade700),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Tiền hoàn tích lũy:',
+                    style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.green.shade700),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '+${format.format(card.totalCashback)}',
+                    style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.green.shade700),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     )).animate().fadeIn(delay: (index * 100).ms).slideX(begin: 0.05);
@@ -382,45 +418,54 @@ class MobileWalletScreen extends ConsumerWidget {
         break;
     }
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.border(context)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
+    return GestureDetector(
+      onTap: () => context.push('/wallet-detail', extra: wallet),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppColors.border(context)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(icon, color: iconColor, size: 24),
             ),
-            child: Icon(icon, color: iconColor, size: 24),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    wallet.name,
+                    style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  Text(
+                    wallet.type == WalletType.cash ? 'Tiền mặt' : (wallet.type == WalletType.bankAccount ? 'Tài khoản' : 'Ví điện tử'),
+                    style: GoogleFonts.inter(color: AppColors.textLight(context), fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            Row(
               children: [
                 Text(
-                  wallet.name,
-                  style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16),
+                  format.format(wallet.balance),
+                  style: GoogleFonts.inter(fontWeight: FontWeight.w900, fontSize: 15, color: AppColors.textPrimary(context)),
                 ),
-                Text(
-                  wallet.type == WalletType.cash ? 'Tiền mặt' : (wallet.type == WalletType.bankAccount ? 'Tài khoản' : 'Ví điện tử'),
-                  style: GoogleFonts.inter(color: AppColors.textLight(context), fontSize: 12),
-                ),
+                const SizedBox(width: 8),
+                Icon(Icons.chevron_right_rounded, color: AppColors.textLight(context), size: 20),
               ],
             ),
-          ),
-          Text(
-            format.format(wallet.balance),
-            style: GoogleFonts.inter(fontWeight: FontWeight.w900, fontSize: 15, color: AppColors.textPrimary(context)),
-          ),
-        ],
+          ],
+        ),
       ),
     ).animate().fadeIn(delay: (index * 100).ms).slideX(begin: 0.05);
   }

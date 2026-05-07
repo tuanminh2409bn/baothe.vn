@@ -28,6 +28,7 @@ class UserCard {
   final double? gymCashbackRate;
   final double? otherCashbackRate;
   final double? maxCashbackPerMonth;
+  final double totalCashback;
 
   UserCard({
     required this.id,
@@ -55,6 +56,7 @@ class UserCard {
     this.gymCashbackRate,
     this.otherCashbackRate,
     this.maxCashbackPerMonth,
+    this.totalCashback = 0.0,
   });
 
   @override
@@ -115,6 +117,7 @@ class UserCard {
       'gymCashbackRate': gymCashbackRate,
       'otherCashbackRate': otherCashbackRate,
       'maxCashbackPerMonth': maxCashbackPerMonth,
+      'totalCashback': totalCashback,
     };
   }
 
@@ -147,6 +150,7 @@ class UserCard {
       gymCashbackRate: (map['gymCashbackRate'] as num?)?.toDouble(),
       otherCashbackRate: (map['otherCashbackRate'] as num?)?.toDouble(),
       maxCashbackPerMonth: (map['maxCashbackPerMonth'] as num?)?.toDouble(),
+      totalCashback: (map['totalCashback'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -155,6 +159,7 @@ class UserCard {
     double? balance,
     int? statementDay,
     int? dueDay,
+    double? totalCashback,
   }) {
     return UserCard(
       id: id,
@@ -182,6 +187,7 @@ class UserCard {
       gymCashbackRate: gymCashbackRate,
       otherCashbackRate: otherCashbackRate,
       maxCashbackPerMonth: maxCashbackPerMonth,
+      totalCashback: totalCashback ?? this.totalCashback,
     );
   }
 }

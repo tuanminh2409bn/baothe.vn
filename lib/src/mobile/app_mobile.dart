@@ -18,12 +18,14 @@ import 'features/profile/mobile_profile_screen.dart';
 import 'features/transactions/mobile_add_transaction_screen.dart';
 import '../models/transaction_model.dart';
 import 'features/wallet/mobile_card_detail_screen.dart';
+import 'features/wallet/mobile_wallet_detail_screen.dart';
 import 'features/wallet/mobile_public_card_detail_screen.dart';
 import 'features/compare/mobile_compare_screen.dart';
 import 'features/calculator/mobile_calculator_screen.dart';
 import 'features/favorites/mobile_favorites_screen.dart';
 import 'features/ai_assistant/ai_chat_screen.dart';
 import '../models/user_card_model.dart';
+import '../models/user_wallet_model.dart';
 import '../models/credit_card_model.dart';
 
 import 'mobile_main_layout.dart';
@@ -129,6 +131,14 @@ final mobileRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final userCard = state.extra as UserCard;
           return MobileCardDetailScreen(userCard: userCard);
+        },
+      ),
+      GoRoute(
+        path: '/wallet-detail',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final wallet = state.extra as UserWallet;
+          return MobileWalletDetailScreen(wallet: wallet);
         },
       ),
       GoRoute(
