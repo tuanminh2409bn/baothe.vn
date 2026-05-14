@@ -1,0 +1,3818 @@
+{
+  "_type" : {
+    "_name" : "ActionsInvocationRecord"
+  },
+  "actions" : {
+    "_type" : {
+      "_name" : "Array"
+    },
+    "_values" : [
+      {
+        "_type" : {
+          "_name" : "ActionRecord"
+        },
+        "actionResult" : {
+          "_type" : {
+            "_name" : "ActionResult"
+          },
+          "coverage" : {
+            "_type" : {
+              "_name" : "CodeCoverageInfo"
+            }
+          },
+          "issues" : {
+            "_type" : {
+              "_name" : "ResultIssueSummaries"
+            }
+          },
+          "metrics" : {
+            "_type" : {
+              "_name" : "ResultMetrics"
+            }
+          },
+          "resultName" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "action"
+          },
+          "status" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "cancelled"
+          }
+        },
+        "buildResult" : {
+          "_type" : {
+            "_name" : "ActionResult"
+          },
+          "coverage" : {
+            "_type" : {
+              "_name" : "CodeCoverageInfo"
+            }
+          },
+          "issues" : {
+            "_type" : {
+              "_name" : "ResultIssueSummaries"
+            },
+            "errorSummaries" : {
+              "_type" : {
+                "_name" : "Array"
+              },
+              "_values" : [
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Uncategorized"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Command PhaseScriptExecution failed with a nonzero exit code"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Runner"
+                  }
+                }
+              ]
+            },
+            "warningSummaries" : {
+              "_type" : {
+                "_name" : "Array"
+              },
+              "_values" : [
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/sign_in_with_apple-7.0.1\/ios\/Classes\/SignInWithAppleError.swift#EndingColumnNumber=12&EndingLineNumber=98&StartingColumnNumber=12&StartingLineNumber=98&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Swift Compiler Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Switch must be exhaustive"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "sign_in_with_apple"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22sign_in_with_apple%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "sign_in_with_apple"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/url_launcher_ios-6.3.4\/ios\/url_launcher_ios\/Sources\/url_launcher_ios\/URLLauncherPlugin.swift#EndingColumnNumber=25&EndingLineNumber=21&StartingColumnNumber=25&StartingLineNumber=21&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "DeprecatedDeclaration"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'keyWindow' was deprecated in iOS 13.0: Should not be used for applications that support multiple scenes as it returns a key window across all connected scenes"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "url_launcher_ios"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22url_launcher_ios%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "url_launcher_ios"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22shared_preferences_foundation%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "shared_preferences_foundation"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22path_provider_foundation%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "path_provider_foundation"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22leveldb-library%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Ignoring duplicate libraries: '-lc++'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "leveldb-library"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Run script build phase 'Create Symlinks to Header Folders' will be run during every build because it does not specify any outputs. To address this issue, either add output dependencies to the script phase, or configure it to run in every build by unchecking \"Based on dependency analysis\" in the script phase."
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "BoringSSL-GRPC"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/gRPC-Core\/third_party\/zlib\/zutil.h#EndingColumnNumber=10&EndingLineNumber=169&StartingColumnNumber=10&StartingLineNumber=169&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Lexical or Preprocessor Issue"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'OS_CODE' macro redefined"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "gRPC-Core"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22gRPC-Core%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Ignoring duplicate libraries: '-lc++'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "gRPC-Core"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22gRPC-C++%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Ignoring duplicate libraries: '-lc++'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "gRPC-C++"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/flutter_local_notifications-20.1.0\/ios\/flutter_local_notifications\/Sources\/flutter_local_notifications\/FlutterLocalNotificationsPlugin.m#EndingColumnNumber=29&EndingLineNumber=1004&StartingColumnNumber=29&StartingLineNumber=1004&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Deprecations"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'UNNotificationPresentationOptionAlert' is deprecated: first deprecated in iOS 14.0"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "flutter_local_notifications"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_core-4.7.0\/ios\/firebase_core\/Sources\/firebase_core\/FLTFirebaseCorePlugin.m#EndingColumnNumber=34&EndingLineNumber=91&StartingColumnNumber=34&StartingLineNumber=91&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Semantic Issue"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Incompatible pointer types assigning to 'NSString * _Nullable' from 'NSNull * _Nonnull'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "firebase_core"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'dummy.o' has no symbols"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "firebase_core"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=71&EndingLineNumber=131&StartingColumnNumber=71&StartingLineNumber=131&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Semantic Issue"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Sending 'FLTFirebaseAuthPlugin *__strong' to parameter of incompatible type 'id<FLTFirebasePlugin> _Nonnull'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "firebase_auth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=10&EndingLineNumber=346&StartingColumnNumber=10&StartingLineNumber=346&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Unused Entity Issue"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Unused variable 'errorCode'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "firebase_auth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=13&EndingLineNumber=450&StartingColumnNumber=13&StartingLineNumber=450&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Unused Entity Issue"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Unused variable 'capturedCompletion'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "firebase_auth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=13&EndingLineNumber=461&StartingColumnNumber=13&StartingLineNumber=461&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Unused Entity Issue"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Unused variable 'capturedCompletion'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "firebase_auth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=13&EndingLineNumber=472&StartingColumnNumber=13&StartingLineNumber=472&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Unused Entity Issue"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Unused variable 'capturedCompletion'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "firebase_auth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=44&EndingLineNumber=925&StartingColumnNumber=44&StartingLineNumber=925&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Deprecations"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'keyWindow' is deprecated: first deprecated in iOS 13.0 - Should not be used for applications that support multiple scenes as it returns a key window across all connected scenes"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "firebase_auth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=8&EndingLineNumber=1355&StartingColumnNumber=8&StartingLineNumber=1355&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Deprecations"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'fetchSignInMethodsForEmail:completion:' is deprecated: `fetchSignInMethods` is deprecated and will be removed in a future release. This method returns an empty list when Email Enumeration Protection is enabled."
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "firebase_auth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=15&EndingLineNumber=2163&StartingColumnNumber=15&StartingLineNumber=2163&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Deprecations"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'updateEmail:completion:' is deprecated: `updateEmail` is deprecated and will be removed in a future release. Use sendEmailVerification(beforeUpdatingEmail:) instead."
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "firebase_auth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/cloud_firestore-6.3.0\/ios\/cloud_firestore\/Sources\/cloud_firestore\/FLTPipelineParser.m#EndingColumnNumber=65&EndingLineNumber=1136&StartingColumnNumber=65&StartingLineNumber=1136&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Semantic Issue"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Incompatible pointer types sending 'NSString *' to parameter of type 'FIRExprBridge * _Nullable'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "cloud_firestore"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/cloud_firestore-6.3.0\/ios\/cloud_firestore\/Sources\/cloud_firestore\/FLTPipelineParser.m#EndingColumnNumber=16&EndingLineNumber=33&StartingColumnNumber=16&StartingLineNumber=33&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Unused Entity Issue"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Unused function 'pipelineUnavailableError'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "cloud_firestore"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/cloud_firestore-6.3.0\/ios\/cloud_firestore\/Sources\/cloud_firestore\/FLTFirebaseFirestorePlugin.m#EndingColumnNumber=13&EndingLineNumber=585&StartingColumnNumber=13&StartingLineNumber=585&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Deprecations"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'setIndexConfigurationFromJSON:completion:' is deprecated: Instead of creating cache indexes manually, consider using `PersistentCacheIndexManager.enableIndexAutoCreation()` to let the SDK decide whether to create cache indexes for queries running locally."
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "cloud_firestore"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22abseil%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Ignoring duplicate libraries: '-lc++'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "abseil"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/GoogleSignIn\/GoogleSignIn\/Sources\/GIDAppCheck\/UI\/GIDActivityIndicatorViewController.m#EndingColumnNumber=12&EndingLineNumber=33&StartingColumnNumber=12&StartingLineNumber=33&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Deprecations"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'UIActivityIndicatorViewStyleGray' is deprecated: first deprecated in iOS 13.0"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "GoogleSignIn"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22GTMAppAuth%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "GTMAppAuth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22FirebaseSharedSwift%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "FirebaseSharedSwift"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/DerivedData\/Build\/Intermediates.noindex\/ArchiveIntermediates\/Runner\/BuildProductsPath\/Release-iphoneos\/abseil\/absl.framework\/Headers\/types\/internal\/optional.h#EndingColumnNumber=48&EndingLineNumber=124&StartingColumnNumber=48&StartingLineNumber=124&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Value Conversion Issue"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Implicit conversion loses integer precision: 'long long' to 'int'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "FirebaseFirestoreInternal"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22FirebaseFirestoreInternal%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Ignoring duplicate libraries: '-lc++'"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "FirebaseFirestoreInternal"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/FirebaseFirestore\/Firestore\/Swift\/Source\/ExpressionImplementation.swift#EndingColumnNumber=8&EndingLineNumber=1391&StartingColumnNumber=8&StartingLineNumber=1391&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Swift Compiler Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Variable 'args' was never mutated; consider changing to 'let' constant"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "FirebaseFirestore"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22FirebaseFirestore%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "FirebaseFirestore"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22FirebaseCoreInternal%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "FirebaseCoreInternal"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "Xcode3ProjectDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22FirebaseAuth%22%5D%7D%7D"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Warning"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "FirebaseAuth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOSCustomBrowser.m#EndingColumnNumber=43&EndingLineNumber=150&StartingColumnNumber=43&StartingLineNumber=150&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Deprecations"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'openURL:' is deprecated: first deprecated in iOS 10.0"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "AppAuth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOSCustomBrowser.m#EndingColumnNumber=62&EndingLineNumber=164&StartingColumnNumber=62&StartingLineNumber=164&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Deprecations"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'openURL:' is deprecated: first deprecated in iOS 10.0"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "AppAuth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOS.m#EndingColumnNumber=2&EndingLineNumber=52&StartingColumnNumber=2&StartingLineNumber=52&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Deprecations"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'SFAuthenticationSession' is deprecated: first deprecated in iOS 12.0"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "AppAuth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOS.m#EndingColumnNumber=6&EndingLineNumber=142&StartingColumnNumber=6&StartingLineNumber=142&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Deprecations"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'SFAuthenticationSession' is deprecated: first deprecated in iOS 12.0"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "AppAuth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOS.m#EndingColumnNumber=36&EndingLineNumber=143&StartingColumnNumber=36&StartingLineNumber=143&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Deprecations"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'SFAuthenticationSession' is deprecated: first deprecated in iOS 12.0"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "AppAuth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOS.m#EndingColumnNumber=57&EndingLineNumber=179&StartingColumnNumber=57&StartingLineNumber=179&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Deprecations"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'openURL:' is deprecated: first deprecated in iOS 10.0"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "AppAuth"
+                  }
+                },
+                {
+                  "_type" : {
+                    "_name" : "IssueSummary"
+                  },
+                  "documentLocationInCreatingWorkspace" : {
+                    "_type" : {
+                      "_name" : "DocumentLocation"
+                    },
+                    "concreteTypeName" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "DVTTextDocumentLocation"
+                    },
+                    "url" : {
+                      "_type" : {
+                        "_name" : "String"
+                      },
+                      "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOS.m#EndingColumnNumber=2&EndingLineNumber=202&StartingColumnNumber=2&StartingLineNumber=202&Timestamp=800420177.6740119"
+                    }
+                  },
+                  "issueType" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "Deprecations"
+                  },
+                  "message" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "'SFAuthenticationSession' is deprecated: first deprecated in iOS 12.0"
+                  },
+                  "producingTarget" : {
+                    "_type" : {
+                      "_name" : "String"
+                    },
+                    "_value" : "AppAuth"
+                  }
+                }
+              ]
+            }
+          },
+          "logRef" : {
+            "_type" : {
+              "_name" : "Reference"
+            },
+            "id" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "0~24JxjzBFwbbQw992uNgbKW06yuHjcfL_J_gwP1p_m2HMUo92DVSeqLup39a76BDSwCKWW4gqjzqyuQQ_rkUCFg=="
+            },
+            "targetType" : {
+              "_type" : {
+                "_name" : "TypeDefinition"
+              },
+              "name" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "ActivityLogSection"
+              }
+            }
+          },
+          "metrics" : {
+            "_type" : {
+              "_name" : "ResultMetrics"
+            },
+            "errorCount" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "1"
+            },
+            "warningCount" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "42"
+            }
+          },
+          "resultName" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "build"
+          },
+          "status" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "failed"
+          }
+        },
+        "endedTime" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-05-13T20:03:39.287-0700"
+        },
+        "runDestination" : {
+          "_type" : {
+            "_name" : "ActionRunDestinationRecord"
+          },
+          "displayName" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Any iOS Device"
+          },
+          "localComputerRecord" : {
+            "_type" : {
+              "_name" : "ActionDeviceRecord"
+            },
+            "busSpeedInMHz" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "100"
+            },
+            "cpuCount" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "12"
+            },
+            "cpuKind" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Unknown"
+            },
+            "cpuSpeedInMHz" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "2000"
+            },
+            "identifier" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "30895873-82C0-4AA5-AA29-92488127A128"
+            },
+            "isConcreteDevice" : {
+              "_type" : {
+                "_name" : "Bool"
+              },
+              "_value" : "true"
+            },
+            "logicalCPUCoresPerPackage" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "1"
+            },
+            "modelCode" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "MacVM1,1"
+            },
+            "modelName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Mac"
+            },
+            "modelUTI" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "com.apple.mac"
+            },
+            "name" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "My Mac"
+            },
+            "nativeArchitecture" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "x86_64h"
+            },
+            "operatingSystemVersion" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "26.4"
+            },
+            "operatingSystemVersionWithBuildNumber" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "26.4 (25E246)"
+            },
+            "physicalCPUCoresPerPackage" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "1"
+            },
+            "platformRecord" : {
+              "_type" : {
+                "_name" : "ActionPlatformRecord"
+              },
+              "identifier" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.platform.macosx"
+              },
+              "userDescription" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "macOS"
+              }
+            },
+            "ramSizeInMegabytes" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "32768"
+            }
+          },
+          "targetArchitecture" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "undefined_arch"
+          },
+          "targetDeviceRecord" : {
+            "_type" : {
+              "_name" : "ActionDeviceRecord"
+            },
+            "busSpeedInMHz" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "0"
+            },
+            "cpuCount" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "0"
+            },
+            "cpuSpeedInMHz" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "0"
+            },
+            "identifier" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "dvtdevice-DVTiPhonePlaceholder-iphoneos:placeholder"
+            },
+            "logicalCPUCoresPerPackage" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "0"
+            },
+            "modelCode" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "GenericiOS"
+            },
+            "modelName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "GenericiOS"
+            },
+            "modelUTI" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "com.apple.dt.Xcode.device.GenericiOS"
+            },
+            "name" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Any iOS Device"
+            },
+            "nativeArchitecture" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "undefined_arch"
+            },
+            "physicalCPUCoresPerPackage" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "0"
+            },
+            "platformRecord" : {
+              "_type" : {
+                "_name" : "ActionPlatformRecord"
+              },
+              "identifier" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "com.apple.platform.iphoneos"
+              },
+              "userDescription" : {
+                "_type" : {
+                  "_name" : "String"
+                },
+                "_value" : "iOS"
+              }
+            },
+            "ramSizeInMegabytes" : {
+              "_type" : {
+                "_name" : "Int"
+              },
+              "_value" : "0"
+            }
+          },
+          "targetSDKRecord" : {
+            "_type" : {
+              "_name" : "ActionSDKRecord"
+            },
+            "identifier" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "iphoneos26.5"
+            },
+            "name" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "iOS 26.5"
+            },
+            "operatingSystemVersion" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "26.5"
+            }
+          }
+        },
+        "schemeCommandName" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "Archive"
+        },
+        "schemeTaskName" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "BuildAndAction"
+        },
+        "startedTime" : {
+          "_type" : {
+            "_name" : "Date"
+          },
+          "_value" : "2026-05-13T19:56:17.648-0700"
+        },
+        "title" : {
+          "_type" : {
+            "_name" : "String"
+          },
+          "_value" : "Archiving workspace Runner with scheme Runner"
+        }
+      }
+    ]
+  },
+  "archive" : {
+    "_type" : {
+      "_name" : "ArchiveInfo"
+    },
+    "path" : {
+      "_type" : {
+        "_name" : "String"
+      },
+      "_value" : "\/Volumes\/workspace\/build.xcarchive"
+    }
+  },
+  "issues" : {
+    "_type" : {
+      "_name" : "ResultIssueSummaries"
+    },
+    "errorSummaries" : {
+      "_type" : {
+        "_name" : "Array"
+      },
+      "_values" : [
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Uncategorized"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Command PhaseScriptExecution failed with a nonzero exit code"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Runner"
+          }
+        }
+      ]
+    },
+    "warningSummaries" : {
+      "_type" : {
+        "_name" : "Array"
+      },
+      "_values" : [
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/sign_in_with_apple-7.0.1\/ios\/Classes\/SignInWithAppleError.swift#EndingColumnNumber=12&EndingLineNumber=98&StartingColumnNumber=12&StartingLineNumber=98&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Swift Compiler Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Switch must be exhaustive"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "sign_in_with_apple"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22sign_in_with_apple%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "sign_in_with_apple"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/url_launcher_ios-6.3.4\/ios\/url_launcher_ios\/Sources\/url_launcher_ios\/URLLauncherPlugin.swift#EndingColumnNumber=25&EndingLineNumber=21&StartingColumnNumber=25&StartingLineNumber=21&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "DeprecatedDeclaration"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'keyWindow' was deprecated in iOS 13.0: Should not be used for applications that support multiple scenes as it returns a key window across all connected scenes"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "url_launcher_ios"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22url_launcher_ios%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "url_launcher_ios"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22shared_preferences_foundation%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "shared_preferences_foundation"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22path_provider_foundation%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "path_provider_foundation"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22leveldb-library%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Ignoring duplicate libraries: '-lc++'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "leveldb-library"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Run script build phase 'Create Symlinks to Header Folders' will be run during every build because it does not specify any outputs. To address this issue, either add output dependencies to the script phase, or configure it to run in every build by unchecking \"Based on dependency analysis\" in the script phase."
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "BoringSSL-GRPC"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/gRPC-Core\/third_party\/zlib\/zutil.h#EndingColumnNumber=10&EndingLineNumber=169&StartingColumnNumber=10&StartingLineNumber=169&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Lexical or Preprocessor Issue"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'OS_CODE' macro redefined"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "gRPC-Core"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22gRPC-Core%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Ignoring duplicate libraries: '-lc++'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "gRPC-Core"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22gRPC-C++%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Ignoring duplicate libraries: '-lc++'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "gRPC-C++"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/flutter_local_notifications-20.1.0\/ios\/flutter_local_notifications\/Sources\/flutter_local_notifications\/FlutterLocalNotificationsPlugin.m#EndingColumnNumber=29&EndingLineNumber=1004&StartingColumnNumber=29&StartingLineNumber=1004&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Deprecations"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'UNNotificationPresentationOptionAlert' is deprecated: first deprecated in iOS 14.0"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "flutter_local_notifications"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_core-4.7.0\/ios\/firebase_core\/Sources\/firebase_core\/FLTFirebaseCorePlugin.m#EndingColumnNumber=34&EndingLineNumber=91&StartingColumnNumber=34&StartingLineNumber=91&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Semantic Issue"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Incompatible pointer types assigning to 'NSString * _Nullable' from 'NSNull * _Nonnull'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "firebase_core"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'dummy.o' has no symbols"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "firebase_core"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=71&EndingLineNumber=131&StartingColumnNumber=71&StartingLineNumber=131&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Semantic Issue"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Sending 'FLTFirebaseAuthPlugin *__strong' to parameter of incompatible type 'id<FLTFirebasePlugin> _Nonnull'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "firebase_auth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=10&EndingLineNumber=346&StartingColumnNumber=10&StartingLineNumber=346&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Unused Entity Issue"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Unused variable 'errorCode'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "firebase_auth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=13&EndingLineNumber=450&StartingColumnNumber=13&StartingLineNumber=450&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Unused Entity Issue"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Unused variable 'capturedCompletion'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "firebase_auth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=13&EndingLineNumber=461&StartingColumnNumber=13&StartingLineNumber=461&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Unused Entity Issue"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Unused variable 'capturedCompletion'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "firebase_auth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=13&EndingLineNumber=472&StartingColumnNumber=13&StartingLineNumber=472&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Unused Entity Issue"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Unused variable 'capturedCompletion'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "firebase_auth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=44&EndingLineNumber=925&StartingColumnNumber=44&StartingLineNumber=925&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Deprecations"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'keyWindow' is deprecated: first deprecated in iOS 13.0 - Should not be used for applications that support multiple scenes as it returns a key window across all connected scenes"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "firebase_auth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=8&EndingLineNumber=1355&StartingColumnNumber=8&StartingLineNumber=1355&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Deprecations"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'fetchSignInMethodsForEmail:completion:' is deprecated: `fetchSignInMethods` is deprecated and will be removed in a future release. This method returns an empty list when Email Enumeration Protection is enabled."
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "firebase_auth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/firebase_auth-6.4.0\/ios\/firebase_auth\/Sources\/firebase_auth\/FLTFirebaseAuthPlugin.m#EndingColumnNumber=15&EndingLineNumber=2163&StartingColumnNumber=15&StartingLineNumber=2163&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Deprecations"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'updateEmail:completion:' is deprecated: `updateEmail` is deprecated and will be removed in a future release. Use sendEmailVerification(beforeUpdatingEmail:) instead."
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "firebase_auth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/cloud_firestore-6.3.0\/ios\/cloud_firestore\/Sources\/cloud_firestore\/FLTPipelineParser.m#EndingColumnNumber=65&EndingLineNumber=1136&StartingColumnNumber=65&StartingLineNumber=1136&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Semantic Issue"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Incompatible pointer types sending 'NSString *' to parameter of type 'FIRExprBridge * _Nullable'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "cloud_firestore"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/cloud_firestore-6.3.0\/ios\/cloud_firestore\/Sources\/cloud_firestore\/FLTPipelineParser.m#EndingColumnNumber=16&EndingLineNumber=33&StartingColumnNumber=16&StartingLineNumber=33&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Unused Entity Issue"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Unused function 'pipelineUnavailableError'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "cloud_firestore"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Users\/local\/.pub-cache\/hosted\/pub.dev\/cloud_firestore-6.3.0\/ios\/cloud_firestore\/Sources\/cloud_firestore\/FLTFirebaseFirestorePlugin.m#EndingColumnNumber=13&EndingLineNumber=585&StartingColumnNumber=13&StartingLineNumber=585&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Deprecations"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'setIndexConfigurationFromJSON:completion:' is deprecated: Instead of creating cache indexes manually, consider using `PersistentCacheIndexManager.enableIndexAutoCreation()` to let the SDK decide whether to create cache indexes for queries running locally."
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "cloud_firestore"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22abseil%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Ignoring duplicate libraries: '-lc++'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "abseil"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/GoogleSignIn\/GoogleSignIn\/Sources\/GIDAppCheck\/UI\/GIDActivityIndicatorViewController.m#EndingColumnNumber=12&EndingLineNumber=33&StartingColumnNumber=12&StartingLineNumber=33&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Deprecations"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'UIActivityIndicatorViewStyleGray' is deprecated: first deprecated in iOS 13.0"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "GoogleSignIn"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22GTMAppAuth%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "GTMAppAuth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22FirebaseSharedSwift%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "FirebaseSharedSwift"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/DerivedData\/Build\/Intermediates.noindex\/ArchiveIntermediates\/Runner\/BuildProductsPath\/Release-iphoneos\/abseil\/absl.framework\/Headers\/types\/internal\/optional.h#EndingColumnNumber=48&EndingLineNumber=124&StartingColumnNumber=48&StartingLineNumber=124&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Value Conversion Issue"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Implicit conversion loses integer precision: 'long long' to 'int'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "FirebaseFirestoreInternal"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22FirebaseFirestoreInternal%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Ignoring duplicate libraries: '-lc++'"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "FirebaseFirestoreInternal"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/FirebaseFirestore\/Firestore\/Swift\/Source\/ExpressionImplementation.swift#EndingColumnNumber=8&EndingLineNumber=1391&StartingColumnNumber=8&StartingLineNumber=1391&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Swift Compiler Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Variable 'args' was never mutated; consider changing to 'let' constant"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "FirebaseFirestore"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22FirebaseFirestore%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "FirebaseFirestore"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22FirebaseCoreInternal%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "FirebaseCoreInternal"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "Xcode3ProjectDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/Pods.xcodeproj#Timestamp=800420177.6740119&XcodeLocation=%7B%22Selection%22:%7B%22Targets%22:%5B%22FirebaseAuth%22%5D%7D%7D"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Warning"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Search path '\/Users\/local\/Library\/Developer\/DVTDownloads\/MetalToolchain\/mounts\/ABE14F83-C6EE-4340-85E9-AA2E4AB60666\/Metal.xctoolchain\/usr\/lib\/swift\/iphoneos' not found"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "FirebaseAuth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOSCustomBrowser.m#EndingColumnNumber=43&EndingLineNumber=150&StartingColumnNumber=43&StartingLineNumber=150&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Deprecations"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'openURL:' is deprecated: first deprecated in iOS 10.0"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "AppAuth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOSCustomBrowser.m#EndingColumnNumber=62&EndingLineNumber=164&StartingColumnNumber=62&StartingLineNumber=164&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Deprecations"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'openURL:' is deprecated: first deprecated in iOS 10.0"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "AppAuth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOS.m#EndingColumnNumber=2&EndingLineNumber=52&StartingColumnNumber=2&StartingLineNumber=52&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Deprecations"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'SFAuthenticationSession' is deprecated: first deprecated in iOS 12.0"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "AppAuth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOS.m#EndingColumnNumber=6&EndingLineNumber=142&StartingColumnNumber=6&StartingLineNumber=142&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Deprecations"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'SFAuthenticationSession' is deprecated: first deprecated in iOS 12.0"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "AppAuth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOS.m#EndingColumnNumber=36&EndingLineNumber=143&StartingColumnNumber=36&StartingLineNumber=143&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Deprecations"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'SFAuthenticationSession' is deprecated: first deprecated in iOS 12.0"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "AppAuth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOS.m#EndingColumnNumber=57&EndingLineNumber=179&StartingColumnNumber=57&StartingLineNumber=179&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Deprecations"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'openURL:' is deprecated: first deprecated in iOS 10.0"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "AppAuth"
+          }
+        },
+        {
+          "_type" : {
+            "_name" : "IssueSummary"
+          },
+          "documentLocationInCreatingWorkspace" : {
+            "_type" : {
+              "_name" : "DocumentLocation"
+            },
+            "concreteTypeName" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "DVTTextDocumentLocation"
+            },
+            "url" : {
+              "_type" : {
+                "_name" : "String"
+              },
+              "_value" : "file:\/\/\/Volumes\/workspace\/repository\/ios\/Pods\/AppAuth\/Sources\/AppAuth\/iOS\/OIDExternalUserAgentIOS.m#EndingColumnNumber=2&EndingLineNumber=202&StartingColumnNumber=2&StartingLineNumber=202&Timestamp=800420177.6740119"
+            }
+          },
+          "issueType" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "Deprecations"
+          },
+          "message" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "'SFAuthenticationSession' is deprecated: first deprecated in iOS 12.0"
+          },
+          "producingTarget" : {
+            "_type" : {
+              "_name" : "String"
+            },
+            "_value" : "AppAuth"
+          }
+        }
+      ]
+    }
+  },
+  "metadataRef" : {
+    "_type" : {
+      "_name" : "Reference"
+    },
+    "id" : {
+      "_type" : {
+        "_name" : "String"
+      },
+      "_value" : "0~yQTAtpBFDm_BxkCPKEIAnhmfnj9r9RKTVYC5seqGb4SMijZyuoflrQ-q4aQCeAQZnyMDtIHScoQ___NqaSTazw=="
+    },
+    "targetType" : {
+      "_type" : {
+        "_name" : "TypeDefinition"
+      },
+      "name" : {
+        "_type" : {
+          "_name" : "String"
+        },
+        "_value" : "ActionsInvocationMetadata"
+      }
+    }
+  },
+  "metrics" : {
+    "_type" : {
+      "_name" : "ResultMetrics"
+    },
+    "errorCount" : {
+      "_type" : {
+        "_name" : "Int"
+      },
+      "_value" : "1"
+    },
+    "warningCount" : {
+      "_type" : {
+        "_name" : "Int"
+      },
+      "_value" : "42"
+    }
+  }
+}
