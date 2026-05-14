@@ -175,7 +175,14 @@ class MSBScraper(BaseScraper):
 
             online_img = self.download_image_via_browser(detail_data['img'], f"msb_{img_id}")
 
-            return {
+            detail_data['benefits'] = self.clean_garbage_data(detail_data['benefits'])
+            detail_data['conditions'] = self.clean_garbage_data(detail_data['conditions'])
+            detail_data['fees'] = self.clean_garbage_data(detail_data['fees'])
+
+            full_text = str(detail_data['highlight'] or "") + " " + " ".join([b.get('content', '') for b in detail_data['benefits']])
+            cashback_rates = self.extract_cashback_rates(full_text)
+
+            card_doc = {
                 "id": f"msb-{img_id}",
                 "name": detail_data['name'],
                 "bankName": "MSB",
@@ -189,6 +196,8 @@ class MSBScraper(BaseScraper):
                 "feeDetail": detail_data['fees'],
                 "productInfoDetail": []
             }
+            card_doc.update(cashback_rates)
+            return card_doc
         except Exception as e:
             print(f"    ! Lỗi cào chi tiết {url}: {e}")
             return None

@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import firebase_admin
 from firebase_admin import credentials, storage, firestore
 from selenium import webdriver
@@ -46,6 +47,120 @@ class BaseScraper:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
         driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         return driver
+
+    def extract_cashback_rates(self, text):
+        rates = {}
+        if not text: return rates
+        
+        text_lower = text.lower()
+        
+        # Tìm các mẫu như "hoàn 10%", "hoàn tiền 5%", "cashback 6%"
+        matches = re.finditer(r'(hoàn tiền|hoàn|cashback)\s*(lên đến|đến|tới|tối đa)?\s*(\d+(?:[\.,]\d+)?)\s*%', text_lower)
+        
+        # Dictionary map các từ khóa với loại hoàn tiền
+        categories = {
+            'siêu thị': 'supermarketCashbackRate',
+            'coopmart': 'supermarketCashbackRate',
+            'online': 'onlineCashbackRate',
+            'trực tuyến': 'onlineCashbackRate',
+            'du lịch': 'travelCashbackRate',
+            'đặt phòng': 'travelCashbackRate',
+            'vé máy bay': 'travelCashbackRate',
+            'ẩm thực': 'diningCashbackRate',
+            'ăn uống': 'diningCashbackRate',
+            'nhà hàng': 'diningCashbackRate',
+            'y tế': 'medicalCashbackRate',
+            'bệnh viện': 'medicalCashbackRate',
+            'giáo dục': 'educationCashbackRate',
+            'học phí': 'educationCashbackRate',
+            'di chuyển': 'transportCashbackRate',
+            'grab': 'transportCashbackRate',
+            'be': 'transportCashbackRate',
+            'mua sắm': 'shoppingCashbackRate',
+            'thời trang': 'shoppingCashbackRate',
+            'bảo hiểm': 'insuranceCashbackRate',
+            'hóa đơn': 'utilitiesCashbackRate',
+            'điện nước': 'utilitiesCashbackRate',
+            'giải trí': 'entertainmentCashbackRate',
+            'xem phim': 'entertainmentCashbackRate',
+            'gym': 'gymCashbackRate',
+            'thể thao': 'gymCashbackRate',
+            'chi tiêu khác': 'otherCashbackRate',
+            'mọi chi tiêu': 'otherCashbackRate'
+        }
+        
+        for match in matches:
+            rate_str = match.group(3).replace(',', '.')
+            try:
+                rate = float(rate_str)
+                # Tìm ngữ cảnh xung quanh % (trước và sau đó khoảng 50 ký tự)
+                start_idx = max(0, match.start() - 50)
+                end_idx = min(len(text_lower), match.end() + 50)
+                context = text_lower[start_idx:end_idx]
+                
+                matched_category = False
+                for kw, field in categories.items():
+                    if kw in context:
+                        if field not in rates or rate > rates[field]:
+                            rates[field] = rate
+                        matched_category = True
+                        
+                # Nếu không tìm thấy ngữ cảnh cụ thể, cho vào chi tiêu chung
+                if not matched_category:
+                    if 'otherCashbackRate' not in rates or rate > rates['otherCashbackRate']:
+                        rates['otherCashbackRate'] = rate
+                        
+            except ValueError:
+                continue
+                
+        return rates
+
+    def clean_garbage_data(self, data_list):
+        if not data_list: return []
+        cleaned = []
+        garbage_keywords = [
+            'tải ứng dụng', 'đăng ký tư vấn', 'đăng ký trực tuyến', 'mở thẻ ngay',
+            'liên hệ', 'chi tiết biểu phí', 'điều khoản', 'hướng dẫn', 'xem thêm',
+            'đăng ký mở thẻ', 'mở thẻ tín dụng', 'quét mã qr', 'app store', 'google play'
+        ]
+        
+        seen_titles = set()
+        for item in data_list:
+            title = item.get('title', '').strip()
+            content = item.get('content', '').strip()
+            
+            # Loại bỏ mục không có nội dung hoặc quá ngắn
+            if not content or len(content) < 5:
+                continue
+                
+            # Loại bỏ nếu chứa từ khóa rác
+            title_lower = title.lower()
+            content_lower = content.lower()
+            
+            is_garbage = any(kw in title_lower or kw in content_lower[:40] for kw in garbage_keywords)
+            
+            # Xử lý các mục bị trùng lặp tiêu đề
+            if not is_garbage:
+                if title:
+                    if title in seen_titles and len(content) < 30:
+                        # Bỏ qua nếu title đã có và nội dung quá ngắn (khả năng cao là nút bấm bị lấy nhầm)
+                        continue
+                    seen_titles.add(title)
+                    
+                cleaned.append({
+                    'title': title,
+                    'content': content
+                })
+                
+        # Loại bỏ các item trùng lặp hoàn toàn nội dung
+        unique_cleaned = []
+        seen_contents = set()
+        for item in cleaned:
+            if item['content'] not in seen_contents:
+                unique_cleaned.append(item)
+                seen_contents.add(item['content'])
+                
+        return unique_cleaned
 
     def download_image_via_browser(self, url, card_id):
         if not url: return None

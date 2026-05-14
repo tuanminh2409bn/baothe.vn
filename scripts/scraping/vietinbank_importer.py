@@ -1,5 +1,13 @@
 import os
+import sys
 import json
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from clean_firestore_data import clean_garbage_data, extract_cashback_rates
+except ImportError:
+    def clean_garbage_data(data): return data
+    def extract_cashback_rates(text): return {}
 import firebase_admin
 from firebase_admin import credentials, storage, firestore
 from selenium import webdriver
@@ -191,25 +199,36 @@ def scrape_vietinbank():
         elif "ultimate" in name.lower(): card_tier = "Ultimate"
         elif "platinum" in name.lower() or "premium" in name.lower(): card_tier = "Platinum"
 
+        cashback_highlight = "\n".join([f"• {h}" for h in card['highlights']])
+        
+        benefits_clean = clean_garbage_data(details_map['benefits'])
+        if not benefits_clean:
+            benefits_clean = [{'title': 'Lợi ích', 'content': cashback_highlight}]
+            
+        conditions_clean = clean_garbage_data(details_map['conditions'])
+        product_clean = clean_garbage_data(details_map['product'])
+        fees_clean = clean_garbage_data(details_map['fees'])
+
+        full_text = cashback_highlight + "\n" + "\n".join([item.get('content', '') for item in benefits_clean + product_clean])
+        cashback_rates = extract_cashback_rates(full_text)
+
         card_doc = {
             'id': card_id,
             'name': name,
             'bankName': 'VietinBank',
             'imagePath': image_path,
-            'cashbackHighlight': "\n".join([f"• {h}" for h in card['highlights']]),
+            'cashbackHighlight': cashback_highlight,
             'details': card['highlights'],
             'applyUrl': card['url'],
             'cardType': card_type,
             'cardTier': card_tier,
-            'benefitsDetail': details_map['benefits'],
-            'conditionsDetail': details_map['conditions'],
-            'productInfoDetail': details_map['product'],
-            'feeDetail': details_map['fees'],
+            'benefitsDetail': benefits_clean,
+            'conditionsDetail': conditions_clean,
+            'productInfoDetail': product_clean,
+            'feeDetail': fees_clean,
             'updatedAt': firestore.SERVER_TIMESTAMP
         }
-        
-        if not card_doc['benefitsDetail']: 
-            card_doc['benefitsDetail'] = [{'title': 'Lợi ích', 'content': card_doc['cashbackHighlight']}]
+        card_doc.update(cashback_rates)
         
         db.collection("cards").document(card_id).set(card_doc, merge=True)
         print(f"  [OK] Đã nạp: {card_id}")

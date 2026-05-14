@@ -185,6 +185,10 @@ def process_fecredit():
         if any(x in name_lower for x in ['platinum', 'gold', 'plus']):
             card_tier = "Gold" if "gold" in name_lower else "Platinum"
 
+        b_detail = clean_garbage_data(sample_benefits)
+        full_text = card['summary'] + " " + " ".join([b.get('content', '') for b in b_detail])
+        cashback_rates = extract_cashback_rates(full_text)
+
         card_doc = {
             'id': f"fecredit_{slug}",
             'name': card['name'],
@@ -195,9 +199,10 @@ def process_fecredit():
             'applyUrl': card['url'],
             'cardType': card_type,
             'cardTier': card_tier,
-            'benefitsDetail': sample_benefits,
+            'benefitsDetail': b_detail,
             'updatedAt': firestore.SERVER_TIMESTAMP
         }
+        card_doc.update(cashback_rates)
         
         db.collection("cards").document(card_doc['id']).set(card_doc, merge=True)
         print(f"  [OK] Đã lưu: {card_doc['id']}")
@@ -205,4 +210,6 @@ def process_fecredit():
     print("\n✨ HOÀN THÀNH FE CREDIT!")
 
 if __name__ == "__main__":
+    process_fecredit()
+__":
     process_fecredit()

@@ -13,6 +13,15 @@ import tempfile
 import re
 import unicodedata
 import requests
+import sys
+
+# Import các hàm làm sạch dùng chung
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from clean_firestore_data import clean_garbage_data, extract_cashback_rates
+except ImportError:
+    def clean_garbage_data(data): return data
+    def extract_cashback_rates(text): return {}
 
 def slugify(text):
     text = unicodedata.normalize('NFD', text)
@@ -76,39 +85,92 @@ def clean_extracted_text(html_content):
 
 def scrape_shb():
     db, bucket = setup_firebase()
-    print("--- QUÉT DANH SÁCH THẺ SHB ---")
-    with open('scripts/scraping/shb_source.html', 'r', encoding='utf-8') as f:
-        soup = BeautifulSoup(f.read(), 'html.parser')
+    print("--- QUÉT DANH SÁCH THẺ SHB TỪ WEB ---")
     
-    card_items = soup.find_all('div', class_='col-md-4 child')
+    driver = setup_driver()
+    url = "https://www.shb.com.vn/category/khach-hang-ca-nhan/the/san-pham-the-tin-dung-quoc-te/"
+    
+    try:
+        driver.get(url)
+        time.sleep(5)
+    except Exception as e:
+        print(f"  [!] Lỗi khi tải trang chủ SHB: {e}")
+        
+    for _ in range(3):
+        try:
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(2)
+        except:
+            break
+            
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    
+    # Tìm các thẻ tín dụng dựa trên class tương tự (shb website typically uses cols or specific card blocks)
+    card_items = soup.find_all('div', class_=re.compile(r'col-|item|card|child'))
     raw_cards = []
+    
     for item in card_items:
-        name_div = item.find('div', style=lambda x: x and 'font-weight:bold' in x)
-        if not name_div: continue
-        name_tag = name_div.find('a')
-        name = name_tag.get_text().strip()
+        # Tiêu đề thẻ thường có chứa thẻ a để link tới chi tiết
+        title_tag = item.find(['h3', 'h4', 'a'], class_=re.compile(r'title|name|font-weight:bold'))
+        if not title_tag:
+            # Thử tìm theo cấu trúc đặc thù của div chứa font-weight:bold
+            title_div = item.find('div', style=lambda x: x and 'font-weight:bold' in x)
+            if title_div:
+                title_tag = title_div.find('a') or title_div
+                
+        if not title_tag:
+            # Nếu item chính là thẻ a chứa title
+            if item.name == 'a' and item.find('img'):
+                title_tag = item
+            else:
+                title_tag = item.find('a', href=re.compile(r'the-tin-dung.*'))
+        
+        if not title_tag: continue
+        
+        name = title_tag.get_text().strip()
+        if not name or ("the" not in name.lower() and "thẻ" not in name.lower() and "shb" not in name.lower()): continue
+        if len(name) < 5: continue
+        
+        link_tag = item.find('a', href=True) if title_tag.name != 'a' else title_tag
+        if not link_tag: continue
+        
+        detail_url = link_tag['href']
+        if not detail_url.startswith('http'): continue # SHB URLs are mostly absolute or starts with /
         
         # BỘ LỌC
-        if "mastercard world" in name.lower() or "dừng phát hành" in name.lower():
+        if "mastercard world" in name.lower() or "dừng phát hành" in name.lower() or "sản phẩm thẻ" in name.lower():
             continue
             
-        url = name_tag['href']
         img_tag = item.find('img')
-        img_url = img_tag['src'] if img_tag else ""
+        img_url = img_tag.get('src') if img_tag else ""
+        if img_url and not img_url.startswith('http'):
+            img_url = "https://www.shb.com.vn" + img_url if img_url.startswith('/') else img_url
+            
         des_div = item.find('div', style=lambda x: x and 'font-size:12px' in x)
+        if not des_div:
+            # Fallback to general desc finding
+            des_div = item.find('div', class_=re.compile(r'desc|summary'))
+            
         summary = des_div.get_text().strip() if des_div else ""
         
         raw_cards.append({
             'name': name,
-            'url': url,
+            'url': detail_url,
             'img_url': img_url,
             'summary': summary
         })
 
-    selected_cards = raw_cards[:4]
+    # Filter unique based on URL
+    unique_cards = {c['url']: c for c in raw_cards}.values()
+    selected_cards = list(unique_cards)[:10]
+    
+    if not selected_cards:
+        print("  [!] Không tìm thấy thẻ SHB nào. Có thể giao diện đã thay đổi.")
+        driver.quit()
+        return
+
     print(f"Sẽ nạp {len(selected_cards)} thẻ: {[c['name'] for c in selected_cards]}")
 
-    driver = setup_driver()
     for card in selected_cards:
         print(f"\n🚀 Đang lấy dữ liệu: {card['name']}")
         driver.get(card['url'])
@@ -140,6 +202,12 @@ def scrape_shb():
         slug = slugify(card['name'])
         image_path = download_and_upload_image(card['img_url'], slug, bucket)
         card_id = f"shb_{slug}"
+        
+        # Làm sạch và trích xuất hoàn tiền
+        benefits_detail = clean_garbage_data(benefits_detail)
+        conditions_detail = clean_garbage_data(conditions_detail)
+        full_text = f"• {card['summary']} " + " ".join([d['content'] for d in benefits_detail])
+        cashback_rates = extract_cashback_rates(full_text)
 
         card_doc = {
             'id': card_id,
@@ -158,6 +226,7 @@ def scrape_shb():
             'updatedAt': firestore.SERVER_TIMESTAMP
         }
         
+        card_doc.update(cashback_rates)
         db.collection("cards").document(card_id).set(card_doc, merge=True)
         print(f"  [OK] Đã nạp thành công: {card_id}")
 

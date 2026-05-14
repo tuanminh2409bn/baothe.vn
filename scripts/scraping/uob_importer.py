@@ -13,6 +13,13 @@ import tempfile
 import re
 import unicodedata
 import requests
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from clean_firestore_data import clean_garbage_data, extract_cashback_rates
+except ImportError:
+    def clean_garbage_data(data): return data
+    def extract_cashback_rates(text): return {}
 
 def slugify(text):
     text = unicodedata.normalize('NFD', text)
@@ -81,37 +88,69 @@ def get_clean_text(element):
 def scrape_uob():
     db, bucket = setup_firebase()
     
-    print("--- PHÂN TÍCH DANH SÁCH THẺ UOB ---")
-    with open('scripts/scraping/uob_source.html', 'r', encoding='utf-8') as f:
-        soup = BeautifulSoup(f.read(), 'html.parser')
+    print("--- PHÂN TÍCH DANH SÁCH THẺ UOB TỪ WEB ---")
+    driver = setup_driver()
+    url = "https://www.uob.com.vn/personal/cards/index.page"
     
-    items = soup.find_all('div', class_='category-item')
+    try:
+        driver.get(url)
+        time.sleep(5)
+    except Exception as e:
+        print(f"  [!] Lỗi khi tải trang chủ UOB: {e}")
+        
+    for _ in range(3):
+        try:
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(2)
+        except: break
+
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    
+    # Tìm các block card UOB
+    items = soup.find_all('div', class_=re.compile(r'card shadow|card mb-4'))
+    if not items:
+        # Dự phòng thẻ a
+        items = soup.find_all('a', href=re.compile(r'/personal/cards/credit-card/.*\.page'))
+        
     print(f"Tìm thấy {len(items)} thẻ UOB tiềm năng.")
 
     cards_list = []
     for item in items:
-        name_tag = item.find('h4', class_='card-title')
+        # Nếu item là thẻ a, lấy parent
+        if item.name == 'a':
+            parent = item.find_parent('div')
+            if parent: item = parent
+            
+        name_tag = item.find(['h4', 'h3'], class_=re.compile(r'card-title|uob-h4'))
         if not name_tag: continue
         name = name_tag.get_text().strip()
+        
+        if "thẻ" not in name.lower() and "the" not in name.lower(): continue
         
         # Subtitle usually tells category (Rewards, Cashback, etc.)
         sub_tag = item.find('h6', class_='card-subtitle')
         subtitle = sub_tag.get_text().strip() if sub_tag else ""
         
         link_tag = item.find('a', href=True)
+        if not link_tag: continue
         url = link_tag['href']
         if url and not url.startswith('http'): url = 'https://www.uob.com.vn' + url
         
-        img_tag = item.find('img', class_='card-img-top')
+        img_tag = item.find('img', class_=re.compile(r'card-img|card-img-top|large-image'))
+        if not img_tag: img_tag = item.find('img')
         img_url = img_tag['src'] if img_tag else ""
+        if img_url and not img_url.startswith('http'): img_url = 'https://www.uob.com.vn' + img_url
         
         # Simple highlight from card body
-        body = item.find('div', class_='card-body')
+        body = item.find('div', class_='card-body') or item
         highlights = []
         if body:
             lis = body.find_all('li')
             for li in lis:
                 highlights.append(li.get_text().strip())
+                
+        if not highlights:
+            highlights.append(f"Mở thẻ {name} với nhiều ưu đãi hấp dẫn từ UOB.")
         
         cards_list.append({
             'name': name,
@@ -121,12 +160,18 @@ def scrape_uob():
             'highlights': highlights
         })
 
-    if not cards_list:
-        print("❌ Không thu thập được danh sách thẻ. Vui lòng kiểm tra lại file HTML.")
+    # Xóa trùng lặp
+    unique_cards = {c['url']: c for c in cards_list}.values()
+    filtered_cards = [c for c in unique_cards if "tín dụng" in c['name'].lower() or "credit" in c['url'].lower()]
+    
+    if not filtered_cards:
+        print("❌ Không thu thập được danh sách thẻ từ web UOB.")
+        driver.quit()
         return
 
-    driver = setup_driver()
-    for card in cards_list:
+    print(f"Sẽ nạp {len(filtered_cards)} thẻ: {[c['name'] for c in filtered_cards]}")
+
+    for card in filtered_cards:
         print(f"\n🚀 Đang xử lý: {card['name']}")
         
         # Skip cards with no URL
@@ -225,6 +270,20 @@ def scrape_uob():
         # Fallback for benefits
         if not card_doc['benefitsDetail']:
             card_doc['benefitsDetail'] = [{'title': 'Lợi ích nổi bật', 'content': card_doc['cashbackHighlight']}]
+
+        card_doc['benefitsDetail'] = clean_garbage_data(card_doc.get('benefitsDetail', []))
+        card_doc['conditionsDetail'] = clean_garbage_data(card_doc.get('conditionsDetail', []))
+        card_doc['feeDetail'] = clean_garbage_data(card_doc.get('feeDetail', []))
+        card_doc['productInfoDetail'] = clean_garbage_data(card_doc.get('productInfoDetail', []))
+        
+        full_text = card_doc.get('cashbackHighlight', '') + "\n"
+        for b in card_doc.get('benefitsDetail', []):
+            full_text += b.get('title', '') + "\n" + b.get('content', '') + "\n"
+        for p in card_doc.get('productInfoDetail', []):
+            full_text += p.get('title', '') + "\n" + p.get('content', '') + "\n"
+            
+        cashback_rates = extract_cashback_rates(full_text)
+        card_doc.update(cashback_rates)
 
         db.collection("cards").document(card_id).set(card_doc, merge=True)
         print(f"  [OK] Đã nạp Firestore: {card_id}")

@@ -1,4 +1,13 @@
 import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from clean_firestore_data import clean_garbage_data, extract_cashback_rates
+except ImportError:
+    def clean_garbage_data(data): return data
+    def extract_cashback_rates(text): return {}
+
 import firebase_admin
 from firebase_admin import credentials, storage, firestore
 from selenium import webdriver
@@ -136,6 +145,16 @@ def process_kienlongbank():
             if any(x in name.lower() for x in ['platinum', 'elite', 'ultimate', 'infinite']):
                 card_tier = "Platinum"
 
+            benefits_detail = [
+                {
+                    'title': 'Đặc quyền & Ưu đãi',
+                    'content': "\n".join([f"• {b}" for b in benefits])
+                }
+            ]
+            benefits_detail = clean_garbage_data(benefits_detail)
+            full_text = " ".join(benefits) + " " + " ".join([b.get('content', '') for b in benefits_detail])
+            cashback_rates = extract_cashback_rates(full_text)
+
             card_doc = {
                 'id': card_id,
                 'name': name,
@@ -146,14 +165,10 @@ def process_kienlongbank():
                 'applyUrl': url,
                 'cardType': card_type,
                 'cardTier': card_tier,
-                'benefitsDetail': [
-                    {
-                        'title': 'Đặc quyền & Ưu đãi',
-                        'content': "\n".join([f"• {b}" for b in benefits])
-                    }
-                ],
+                'benefitsDetail': benefits_detail,
                 'updatedAt': firestore.SERVER_TIMESTAMP
             }
+            card_doc.update(cashback_rates)
 
             db.collection("cards").document(card_id).set(card_doc, merge=True)
             print(f"  [OK] Đã lưu vào Firestore: {card_id}")

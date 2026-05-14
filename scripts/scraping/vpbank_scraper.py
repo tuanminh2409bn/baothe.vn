@@ -156,6 +156,21 @@ class VPBankScraper(BaseScraper):
                 # Tải ảnh từ trang ngoài (đã bắt được ở bước trên)
                 online_url = self.download_image_via_browser(pre['img_card'], card_id)
 
+                highlight_text = pre['highlights'][0] if pre['highlights'] else "Ưu đãi thẻ VPBank"
+                
+                b_raw = detail['benefitsDetail'] if detail else []
+                c_raw = detail['conditionsDetail'] if detail else []
+                p_raw = detail['productInfoDetail'] if detail else []
+                f_raw = detail['feeDetail'] if detail else []
+                
+                b_clean = self.clean_garbage_data(b_raw)
+                c_clean = self.clean_garbage_data(c_raw)
+                p_clean = self.clean_garbage_data(p_raw)
+                f_clean = self.clean_garbage_data(f_raw)
+                
+                full_text = highlight_text + "\n" + "\n".join([item.get('content', '') for item in b_clean + p_clean])
+                cashback_rates = self.extract_cashback_rates(full_text)
+
                 card_obj = {
                     "id": card_id,
                     "name": name,
@@ -164,13 +179,15 @@ class VPBankScraper(BaseScraper):
                     "applyUrl": url,
                     "cardType": "Visa/Mastercard/JCB",
                     "cardTier": "Premium" if any(kw in name.upper() for kw in ["SIGNATURE", "INFINITE", "PLATINUM", "DIAMOND", "WORLD", "STEP UP"]) else "Standard",
-                    "cashbackHighlight": pre['highlights'][0] if pre['highlights'] else "Ưu đãi thẻ VPBank",
+                    "cashbackHighlight": highlight_text,
                     "details": pre['highlights'] if pre['highlights'] else ["Đặc quyền chủ thẻ VPBank"],
-                    "benefitsDetail": detail['benefitsDetail'] if detail else [],
-                    "conditionsDetail": detail['conditionsDetail'] if detail else [],
-                    "productInfoDetail": detail['productInfoDetail'] if detail else [],
-                    "feeDetail": detail['feeDetail'] if detail else []
+                    "benefitsDetail": b_clean,
+                    "conditionsDetail": c_clean,
+                    "productInfoDetail": p_clean,
+                    "feeDetail": f_clean
                 }
+                card_obj.update(cashback_rates)
+                
                 cards_data.append(card_obj)
             except Exception as e:
                 print(f"  ! Lỗi xử lý {pre['name']}: {e}")

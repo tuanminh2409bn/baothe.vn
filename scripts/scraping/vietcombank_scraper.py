@@ -113,13 +113,23 @@ class VietcombankScraper(BaseScraper):
                 detail = self.scrape_card_detail(link)
                 if not detail or not detail['name'] or len(detail['name']) < 5: continue
                 
+                # Làm sạch dữ liệu
+                detail['benefitsDetail'] = self.clean_garbage_data(detail.get('benefitsDetail', []))
+                detail['conditionsDetail'] = self.clean_garbage_data(detail.get('conditionsDetail', []))
+                detail['productInfoDetail'] = self.clean_garbage_data(detail.get('productInfoDetail', []))
+                detail['feeDetail'] = self.clean_garbage_data(detail.get('feeDetail', []))
+                
                 name = detail['name']
                 print(f"  [OK] Đã lấy: {name}")
 
                 img_id = name.lower().replace(" ", "_").replace("-", "_").replace(".", "").replace("/", "_")
                 online_url = self.download_image_via_browser(detail['img'], f"vcb_{img_id}")
+                
+                # Trích xuất hoàn tiền
+                full_text = " ".join(detail.get('highlights', [])) + " " + " ".join([d['content'] for d in detail['benefitsDetail'] + detail['productInfoDetail']])
+                cashback_rates = self.extract_cashback_rates(full_text)
 
-                cards_data.append({
+                card_data = {
                     "id": f"vcb-{img_id}",
                     "name": name,
                     "bankName": "Vietcombank",
@@ -133,7 +143,11 @@ class VietcombankScraper(BaseScraper):
                     "conditionsDetail": detail['conditionsDetail'],
                     "productInfoDetail": detail['productInfoDetail'],
                     "feeDetail": detail['feeDetail']
-                })
+                }
+                
+                card_data.update(cashback_rates)
+                cards_data.append(card_data)
+                
             except Exception as e:
                 print(f"  ! Lỗi link {link}: {e}")
 

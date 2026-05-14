@@ -167,7 +167,15 @@ class HSBCScraper(BaseScraper):
                 img_id = self.normalize_name(name)
                 online_url = self.download_image_via_browser(img_to_download, f"hsbc_{img_id}")
 
-                cards_data.append({
+                detail['benefitsDetail'] = self.clean_garbage_data(detail['benefitsDetail'])
+                detail['conditionsDetail'] = self.clean_garbage_data(detail['conditionsDetail'])
+                detail['productInfoDetail'] = self.clean_garbage_data(detail['productInfoDetail'])
+                detail['feeDetail'] = self.clean_garbage_data(detail['feeDetail'])
+
+                full_text = " ".join(detail['highlights']) + " " + " ".join([b.get('content', '') for b in detail['benefitsDetail']])
+                cashback_rates = self.extract_cashback_rates(full_text)
+
+                card_doc = {
                     "id": f"hsbc-{img_id}",
                     "name": name,
                     "bankName": "HSBC",
@@ -181,7 +189,9 @@ class HSBCScraper(BaseScraper):
                     "conditionsDetail": detail['conditionsDetail'],
                     "productInfoDetail": detail['productInfoDetail'],
                     "feeDetail": detail['feeDetail']
-                })
+                }
+                card_doc.update(cashback_rates)
+                cards_data.append(card_doc)
             except Exception as e:
                 print(f"  ! Lỗi link {link}: {e}")
 

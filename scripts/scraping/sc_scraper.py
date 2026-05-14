@@ -178,7 +178,16 @@ class SCScraper(BaseScraper):
                 img_id = self.normalize_name(name)
                 online_url = self.download_image_via_browser(detail['img'], f"sc_{img_id}")
 
-                cards_data.append({
+                benefits = self.clean_garbage_data(detail['benefitsDetail'])
+                conditions = self.clean_garbage_data(detail['conditionsDetail'])
+                product_info = self.clean_garbage_data(detail['productInfoDetail'])
+                fees = self.clean_garbage_data(detail['feeDetail'])
+                
+                summary = detail['description'] or (detail['highlights'][0] if detail['highlights'] else "Ưu đãi đặc quyền xứng tầm")
+                full_text = summary + " " + " ".join([b.get('content', '') for b in benefits]) + " " + " ".join([p.get('content', '') for p in product_info])
+                cashback_rates = self.extract_cashback_rates(full_text)
+
+                card_data = {
                     "id": f"sc-{img_id}",
                     "name": name,
                     "bankName": "Standard Chartered",
@@ -186,13 +195,15 @@ class SCScraper(BaseScraper):
                     "applyUrl": link,
                     "cardType": "Visa/Mastercard",
                     "cardTier": "Premium" if any(kw in name.upper() for kw in ["PRIORITY", "PLATINUM", "JOURNEY", "WORLDMILES"]) else "Standard",
-                    "cashbackHighlight": detail['description'] or (detail['highlights'][0] if detail['highlights'] else "Ưu đãi đặc quyền xứng tầm"),
+                    "cashbackHighlight": summary,
                     "details": detail['highlights'] if detail['highlights'] else ["Đặc quyền chủ thẻ Standard Chartered"],
-                    "benefitsDetail": detail['benefitsDetail'],
-                    "conditionsDetail": detail['conditionsDetail'],
-                    "productInfoDetail": detail['productInfoDetail'],
-                    "feeDetail": detail['feeDetail']
-                })
+                    "benefitsDetail": benefits,
+                    "conditionsDetail": conditions,
+                    "productInfoDetail": product_info,
+                    "feeDetail": fees
+                }
+                card_data.update(cashback_rates)
+                cards_data.append(card_data)
             except Exception as e:
                 print(f"  ! Lỗi link {link}: {e}")
 

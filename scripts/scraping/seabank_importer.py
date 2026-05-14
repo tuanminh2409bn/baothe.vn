@@ -12,6 +12,15 @@ import re
 import unicodedata
 import requests
 import tempfile
+import sys
+
+# Import các hàm làm sạch dùng chung
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from clean_firestore_data import clean_garbage_data, extract_cashback_rates
+except ImportError:
+    def clean_garbage_data(data): return data
+    def extract_cashback_rates(text): return {}
 
 def slugify(text):
     text = unicodedata.normalize('NFD', text)
@@ -162,6 +171,20 @@ def process_seabank():
                 
                 if not card_doc.get('benefitsDetail'):
                     card_doc['benefitsDetail'] = benefits_sections[:3]
+
+        card_doc['benefitsDetail'] = clean_garbage_data(card_doc.get('benefitsDetail', []))
+        card_doc['conditionsDetail'] = clean_garbage_data(card_doc.get('conditionsDetail', []))
+        card_doc['feeDetail'] = clean_garbage_data(card_doc.get('feeDetail', []))
+        card_doc['productInfoDetail'] = clean_garbage_data(card_doc.get('productInfoDetail', []))
+        
+        full_text = card_doc.get('cashbackHighlight', '') + "\n"
+        for b in card_doc.get('benefitsDetail', []):
+            full_text += b.get('title', '') + "\n" + b.get('content', '') + "\n"
+        for p in card_doc.get('productInfoDetail', []):
+            full_text += p.get('title', '') + "\n" + p.get('content', '') + "\n"
+        
+        cashback_rates = extract_cashback_rates(full_text)
+        card_doc.update(cashback_rates)
 
         db.collection("cards").document(card_id).set(card_doc, merge=True)
         print(f"  [OK] Đã lưu: {card_id} (Có {len(card_doc.get('benefitsDetail', []))} phần chi tiết)")

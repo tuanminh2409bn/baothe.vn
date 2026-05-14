@@ -1,4 +1,13 @@
 import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from clean_firestore_data import clean_garbage_data, extract_cashback_rates
+except ImportError:
+    def clean_garbage_data(data): return data
+    def extract_cashback_rates(text): return {}
+
 import json
 import firebase_admin
 from firebase_admin import credentials, storage, firestore
@@ -178,6 +187,12 @@ def process_eximbank():
             
             image_path = download_and_upload_image(card['list_image'], slug, bucket)
             
+            b_detail = [{'title': 'Đặc quyền & Ưu đãi', 'content': "\n".join([f"• {b}" for b in benefits])}]
+            b_detail = clean_garbage_data(b_detail)
+            
+            full_text = "\n".join(benefits)
+            cashback_rates = extract_cashback_rates(full_text)
+            
             card_doc = {
                 'id': f"eximbank_{slug}",
                 'name': card['name'],
@@ -188,9 +203,10 @@ def process_eximbank():
                 'applyUrl': card['url'],
                 'cardType': "JCB" if "jcb" in name_lower else ("Mastercard" if "master" in name_lower else "Visa"),
                 'cardTier': card_tier,
-                'benefitsDetail': [{'title': 'Đặc quyền & Ưu đãi', 'content': "\n".join([f"• {b}" for b in benefits])}],
+                'benefitsDetail': b_detail,
                 'updatedAt': firestore.SERVER_TIMESTAMP
             }
+            card_doc.update(cashback_rates)
             db.collection("cards").document(card_doc['id']).set(card_doc, merge=True)
             print(f"  [OK] Đã lưu: {card_doc['id']}")
 

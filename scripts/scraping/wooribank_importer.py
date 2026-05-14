@@ -1,5 +1,13 @@
 import os
+import sys
 import json
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from clean_firestore_data import clean_garbage_data, extract_cashback_rates
+except ImportError:
+    def clean_garbage_data(data): return data
+    def extract_cashback_rates(text): return {}
 import firebase_admin
 from firebase_admin import credentials, storage, firestore
 from selenium import webdriver
@@ -72,37 +80,67 @@ def clean_text(text):
 
 def process_wooribank():
     db, bucket = setup_firebase()
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    print("--- PHÂN TÍCH DANH SÁCH THẺ WOORI BANK TỪ WEB ---")
     
-    source_path = os.path.join(current_dir, "wooribank_source.html")
-    if not os.path.exists(source_path):
-        print(f"❌ Không tìm thấy file {source_path}")
-        return
-
-    with open(source_path, 'r', encoding='utf-8') as f:
-        soup_list = BeautifulSoup(f.read(), 'html.parser')
+    driver = setup_driver()
+    url = "https://woori.com.vn/the-ca-nhan/the-tin-dung/"
+    try:
+        driver.get(url)
+        time.sleep(5)
+    except Exception as e:
+        print(f"  [!] Lỗi khi tải trang chủ Woori Bank: {e}")
+        
+    for _ in range(3):
+        try:
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(2)
+        except:
+            break
+            
+    soup_list = BeautifulSoup(driver.page_source, 'html.parser')
 
     # Tìm danh sách thẻ tín dụng
     card_elements = soup_list.select('.list-all--item')
+    if not card_elements:
+        card_elements = soup_list.find_all('div', class_=re.compile(r'item|card'))
+        
     print(f"✅ Tìm thấy {len(card_elements)} thẻ Woori Bank tiềm năng.")
 
     cards_to_process = []
     for el in card_elements:
-        name_el = el.find('h3')
-        link_el = el.find('a', class_='list-all--item__link')
+        name_el = el.find(['h3', 'h4'])
+        
+        # Tìm link chi tiết (bỏ qua link đăng ký)
+        links = el.find_all('a', href=True)
+        link_el = None
+        for a in links:
+            if "dang-ky-mo-the" not in a['href']:
+                link_el = a
+                break
+                
         img_el = el.find('img', attrs={'data-src': True})
+        if not img_el: img_el = el.find('img')
         
         if name_el and link_el:
             name = clean_text(name_el.get_text())
+            
+            if "thẻ" not in name.lower() and "the" not in name.lower(): continue
+            # Bỏ lọc "tín dụng" vì một số thẻ không ghi chữ tín dụng trong tên
+            
             url = link_el['href']
-            img_url = img_el['data-src'] if img_el else ""
+            if not url.startswith('http'): url = 'https://woori.com.vn' + url
+            
+            img_url = img_el.get('data-src') or img_el.get('src') if img_el else ""
+            if img_url and not img_url.startswith('http'): img_url = 'https://woori.com.vn' + img_url
             
             highlights = []
-            excerpt_el = el.find('div', class_='list-all--item__excerpt')
+            excerpt_el = el.find('div', class_=re.compile(r'excerpt|desc|summary'))
             if excerpt_el:
                 for li in excerpt_el.find_all('li'):
                     txt = clean_text(li.get_text())
                     if txt: highlights.append(txt)
+            if not highlights and excerpt_el:
+                highlights.append(clean_text(excerpt_el.get_text()))
             
             cards_to_process.append({
                 'name': name,
@@ -111,8 +149,15 @@ def process_wooribank():
                 'highlights': highlights
             })
 
+    unique_cards = {c['url']: c for c in cards_to_process}.values()
+    cards_to_process = list(unique_cards)
+    
+    if not cards_to_process:
+        print("❌ Không thu thập được danh sách thẻ Woori Bank.")
+        driver.quit()
+        return
+
     if cards_to_process:
-        driver = setup_driver()
         for card in cards_to_process:
             print(f"\n🔍 Đang xử lý: {card['name']}")
             try:
@@ -146,20 +191,28 @@ def process_wooribank():
                 card_id = f"wooribank_{slug}"
                 image_path = download_and_upload_image(card['img_url'], slug, bucket)
 
+                benefits_clean = clean_garbage_data(benefits_detail)
+                conditions_clean = clean_garbage_data(conditions_detail)
+                
+                highlight_text = card['highlights'][0] if card['highlights'] else "Ưu đãi thẻ Woori Bank"
+                full_text = highlight_text + "\n" + "\n".join([item.get('content', '') for item in benefits_clean])
+                cashback_rates = extract_cashback_rates(full_text)
+
                 card_doc = {
                     'id': card_id,
                     'name': card['name'],
                     'bankName': 'Woori Bank', # Tên chuẩn theo app Flutter
                     'imagePath': image_path,
-                    'cashbackHighlight': card['highlights'][0] if card['highlights'] else "Ưu đãi thẻ Woori Bank",
+                    'cashbackHighlight': highlight_text,
                     'details': card['highlights'],
                     'applyUrl': card['url'],
                     'cardType': "Visa" if "visa" in card['name'].lower() else "Napas",
                     'cardTier': "Platinum" if any(x in card['name'].lower() for x in ['platinum', 'premium', 'gold']) else "Classic",
-                    'benefitsDetail': benefits_detail,
-                    'conditionsDetail': conditions_detail,
+                    'benefitsDetail': benefits_clean,
+                    'conditionsDetail': conditions_clean,
                     'updatedAt': firestore.SERVER_TIMESTAMP
                 }
+                card_doc.update(cashback_rates)
 
                 db.collection("cards").document(card_id).set(card_doc, merge=True)
                 print(f"  [OK] Đã lưu: {card_id} với tên bank 'Woori Bank'")

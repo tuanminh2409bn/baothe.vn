@@ -42,7 +42,13 @@ class ACBScraper(BaseScraper):
             detail_data = self.driver.execute_script('''
                 function getDeepText(el) {
                     if (!el) return "";
-                    return el.innerText.replace(/\\n+/g, '\\n').trim();
+                    // Loại bỏ các nút bấm (button, thẻ a kiểu nút)
+                    let clone = el.cloneNode(true);
+                    let removeSelectors = ['button', 'a.btn', '.button', '.btn-register', 'a[href^="tel:"]'];
+                    removeSelectors.forEach(sel => {
+                        clone.querySelectorAll(sel).forEach(e => e.remove());
+                    });
+                    return clone.innerText.replace(/\\n+/g, '\\n').trim();
                 }
 
                 let res = { 
@@ -72,7 +78,7 @@ class ACBScraper(BaseScraper):
                     let item = { title: title, content: content };
                     let t = title.toLowerCase();
 
-                    if (t.includes('quyền lợi') || t.includes('ưu đãi') || t.includes('đặc quyền')) {
+                    if (t.includes('quyền lợi') || t.includes('ưu đãi') || t.includes('đặc quyền') || t.includes('hoàn tiền')) {
                         res.benefitsDetail.push(item);
                     } else if (t.includes('yêu cầu') || t.includes('điều kiện') || t.includes('đối tượng')) {
                         res.conditionsDetail.push(item);
@@ -84,6 +90,13 @@ class ACBScraper(BaseScraper):
                 });
                 return res;
             ''')
+            
+            # Làm sạch dữ liệu rác
+            detail_data['benefitsDetail'] = self.clean_garbage_data(detail_data['benefitsDetail'])
+            detail_data['conditionsDetail'] = self.clean_garbage_data(detail_data['conditionsDetail'])
+            detail_data['productInfoDetail'] = self.clean_garbage_data(detail_data['productInfoDetail'])
+            detail_data['feeDetail'] = self.clean_garbage_data(detail_data['feeDetail'])
+            
             detail_data['name'] = outer_name
             detail_data['img'] = outer_img
             return detail_data
@@ -158,22 +171,33 @@ class ACBScraper(BaseScraper):
                     # Tải ảnh qua browser và đẩy lên Firebase
                     online_url = self.download_image_via_browser(detail['img'], f"acb_{img_id}")
 
-                    all_cards.append({
+                    # Trích xuất hoàn tiền từ toàn bộ text
+                    full_text = f"{detail['description']} " + " ".join([d['content'] for d in detail['benefitsDetail'] + detail['productInfoDetail']])
+                    cashback_rates = self.extract_cashback_rates(full_text)
+
+                    card_data = {
                         "id": f"acb-{img_id}",
                         "name": detail['name'],
                         "bankName": "ACB",
                         "imagePath": online_url or "https://via.placeholder.com/400x250?text=ACB",
                         "applyUrl": item['link'],
                         "cardType": "Visa/JCB/Mastercard",
-                        "cardTier": "Premium" if any(kw in detail['name'].upper() for kw in ["SIGNATURE", "PLATINUM", "INFINITE"]) else "Standard",
+                        "cardTier": "Premium" if any(kw in detail['name'].upper() for kw in ["SIGNATURE", "PLATINUM", "INFINITE", "PRIVILEGE"]) else "Standard",
                         "cashbackHighlight": detail['description'],
                         "details": [d['title'] for d in detail['benefitsDetail'][:3]] if detail['benefitsDetail'] else ["Ưu đãi đặc quyền"],
                         "benefitsDetail": detail['benefitsDetail'],
                         "conditionsDetail": detail['conditionsDetail'],
                         "productInfoDetail": detail['productInfoDetail'],
                         "feeDetail": detail['feeDetail']
-                    })
+                    }
+                    
+                    # Update cashback rates into card_data
+                    card_data.update(cashback_rates)
+
+                    all_cards.append(card_data)
                     print(f"  [OK] Đã hoàn thành: {detail['name']}")
+                    if cashback_rates:
+                        print(f"       + Hoàn tiền tìm thấy: {cashback_rates}")
 
                 # Quay lại trang danh sách để tiếp tục
                 self.driver.get(self.url)

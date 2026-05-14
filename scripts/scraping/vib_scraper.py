@@ -140,6 +140,20 @@ class VIBScraper(BaseScraper):
                         "productInfoDetail": detail['productInfoDetail']
                     })
                 
+                card_obj['benefitsDetail'] = self.clean_garbage_data(card_obj.get('benefitsDetail', []))
+                card_obj['conditionsDetail'] = self.clean_garbage_data(card_obj.get('conditionsDetail', []))
+                card_obj['feeDetail'] = self.clean_garbage_data(card_obj.get('feeDetail', []))
+                card_obj['productInfoDetail'] = self.clean_garbage_data(card_obj.get('productInfoDetail', []))
+                
+                full_text = card_obj.get('cashbackHighlight', '') + "\n"
+                for b in card_obj.get('benefitsDetail', []):
+                    full_text += b.get('title', '') + "\n" + b.get('content', '') + "\n"
+                for p in card_obj.get('productInfoDetail', []):
+                    full_text += p.get('title', '') + "\n" + p.get('content', '') + "\n"
+                
+                cashback_rates = self.extract_cashback_rates(full_text)
+                card_obj.update(cashback_rates)
+                
                 cards_data.append(card_obj)
             except Exception as e:
                 print(f"  ! Lỗi xử lý {name}: {e}")

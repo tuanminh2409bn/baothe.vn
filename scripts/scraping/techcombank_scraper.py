@@ -139,6 +139,12 @@ class TechcombankScraper(BaseScraper):
                 # Đi sâu vào trang chi tiết
                 detail = self.scrape_card_detail(pre['detail_url'])
                 
+                # Làm sạch dữ liệu
+                b_detail = self.clean_garbage_data(detail['benefitsDetail']) if detail else []
+                c_detail = self.clean_garbage_data(detail['conditionsDetail']) if detail else []
+                p_detail = self.clean_garbage_data(detail['productInfoDetail']) if detail else []
+                f_detail = self.clean_garbage_data(detail['feeDetail']) if detail else []
+                
                 name = pre['name']
                 print(f"  [OK] Đã lấy: {name}")
 
@@ -149,6 +155,10 @@ class TechcombankScraper(BaseScraper):
                 img_id = name.lower().replace(" ", "_").replace("-", "_").replace(".", "").replace("/", "_")
                 img_id = re.sub(r'[^a-z0-9_]', '', img_id)
                 online_url = self.download_image_via_browser(final_img_url, f"tcb_{img_id}")
+                
+                # Trích xuất hoàn tiền
+                full_text = " ".join(pre.get('highlights', [])) + " " + " ".join([d['content'] for d in b_detail + p_detail])
+                cashback_rates = self.extract_cashback_rates(full_text)
 
                 card_obj = {
                     "id": f"tcb-{img_id}",
@@ -160,12 +170,13 @@ class TechcombankScraper(BaseScraper):
                     "cardTier": "Premium" if any(kw in name.upper() for kw in ["SIGNATURE", "INFINITE", "PLATINUM", "PRIORITY"]) else "Standard",
                     "cashbackHighlight": pre['highlights'][0] if pre['highlights'] else "Đặc quyền chủ thẻ Techcombank",
                     "details": pre['highlights'] if pre['highlights'] else ["Ưu đãi thẻ Techcombank"],
-                    "benefitsDetail": detail['benefitsDetail'] if detail else [],
-                    "conditionsDetail": detail['conditionsDetail'] if detail else [],
-                    "productInfoDetail": detail['productInfoDetail'] if detail else [],
-                    "feeDetail": detail['feeDetail'] if detail else []
+                    "benefitsDetail": b_detail,
+                    "conditionsDetail": c_detail,
+                    "productInfoDetail": p_detail,
+                    "feeDetail": f_detail
                 }
                 
+                card_obj.update(cashback_rates)
                 cards_data.append(card_obj)
             except Exception as e:
                 print(f"  ! Lỗi xử lý {pre['name']}: {e}")

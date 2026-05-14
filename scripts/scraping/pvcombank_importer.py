@@ -1,5 +1,14 @@
 import os
 import json
+import sys
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from clean_firestore_data import clean_garbage_data, extract_cashback_rates
+except ImportError:
+    def clean_garbage_data(data): return data
+    def extract_cashback_rates(text): return {}
+
 import firebase_admin
 from firebase_admin import credentials, storage, firestore
 from selenium import webdriver
@@ -58,27 +67,44 @@ def is_duplicate(text, seen_set):
 
 def process_pvcombank():
     db, bucket = setup_firebase()
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    print("--- PHÂN TÍCH DANH SÁCH THẺ PVCOMBANK TỪ WEB ---")
     
-    source_path = os.path.join(current_dir, "pvcombank_source.html")
-    with open(source_path, 'r', encoding='utf-8') as f:
-        soup_list = BeautifulSoup(f.read(), 'html.parser')
+    driver = setup_driver()
+    url = "https://www.pvcombank.com.vn/san-pham/ca-nhan/dich-vu-the"
+    try:
+        driver.get(url)
+        time.sleep(5)
+    except Exception as e:
+        print(f"  [!] Lỗi tải trang PVcomBank: {e}")
+        
+    for _ in range(5):
+        try:
+            btn = driver.find_element(By.CSS_SELECTOR, '.btn-load-more')
+            if btn.is_displayed():
+                driver.execute_script("arguments[0].click();", btn)
+                time.sleep(3)
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(2)
+        except: break
+
+    soup_list = BeautifulSoup(driver.page_source, 'html.parser')
 
     seen_urls = set()
     urls_to_process = []
-    all_links = soup_list.find_all('a', href=re.compile(r'/san-pham/ca-nhan/dich-vu-the/'))
+    all_links = soup_list.find_all('a', href=re.compile(r'san-pham/ca-nhan/dich-vu-the/.*'))
     for link in all_links:
         href = link['href'].split('#')[0].split('?')[0]
-        if not href.startswith('http'): href = "https://www.pvcombank.com.vn" + href
+        if not href.startswith('http'): href = "https://www.pvcombank.com.vn/" + href.lstrip('/')
         if "/the-tin-dung" in href or any(x in href.lower() for x in ['shopping', 'cashback', 'travel']):
             if href not in seen_urls:
                 seen_urls.add(href)
                 urls_to_process.append(href)
 
     print(f"✅ Tìm thấy {len(urls_to_process)} thẻ PVcomBank.")
-    if not urls_to_process: return
+    if not urls_to_process:
+        driver.quit()
+        return
 
-    driver = setup_driver()
     for url in urls_to_process:
         print(f"\n🔍 Đang xử lý: {url}")
         try:
@@ -178,20 +204,30 @@ def process_pvcombank():
                         os.remove(local_path)
                 except Exception as e: print(f"    ! Lỗi ảnh: {e}")
 
+            benefits_detail = [{'title': 'Đặc điểm & Ưu đãi', 'content': "\n".join([f"• {f}" for f in features])}]
+            
+            benefits_detail = clean_garbage_data(benefits_detail)
+            conditions_detail = clean_garbage_data(conditions_sections)
+            
+            summary_text = features[0] if features else (highlights[1] if len(highlights)>1 else "Ưu đãi thẻ PVcomBank")
+            full_text = summary_text + " " + " ".join([b.get('content', '') for b in benefits_detail])
+            cashback_rates = extract_cashback_rates(full_text)
+
             card_doc = {
                 'id': card_id,
                 'name': name,
                 'bankName': 'PVcomBank',
                 'imagePath': image_path,
-                'cashbackHighlight': features[0] if features else (highlights[1] if len(highlights)>1 else "Ưu đãi thẻ PVcomBank"),
+                'cashbackHighlight': summary_text,
                 'details': highlights,
                 'applyUrl': url,
                 'cardType': "Mastercard" if "master" in name.lower() else "Visa",
                 'cardTier': "Platinum" if any(x in name.lower() for x in ['platinum', 'world', 'premier', 'infinite']) else "Classic",
-                'benefitsDetail': [{'title': 'Đặc điểm & Ưu đãi', 'content': "\n".join([f"• {f}" for f in features])}],
-                'conditionsDetail': conditions_sections,
+                'benefitsDetail': benefits_detail,
+                'conditionsDetail': conditions_detail,
                 'updatedAt': firestore.SERVER_TIMESTAMP
             }
+            card_doc.update(cashback_rates)
 
             db.collection("cards").document(card_id).set(card_doc, merge=True)
             print(f"  [OK] Đã lưu: {card_id} (Dữ liệu đã lọc trùng)")

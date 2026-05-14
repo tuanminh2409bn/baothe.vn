@@ -11,7 +11,16 @@ import time
 import tempfile
 import re
 import unicodedata
-import base64
+import requests
+import sys
+
+# Import các hàm làm sạch dùng chung
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from clean_firestore_data import clean_garbage_data, extract_cashback_rates
+except ImportError:
+    def clean_garbage_data(data): return data
+    def extract_cashback_rates(text): return {}
 
 def slugify(text):
     text = unicodedata.normalize('NFD', text)
@@ -20,8 +29,7 @@ def slugify(text):
     text = text.lower()
     text = re.sub(r'[^\w\s-]', '', text)
     text = re.sub(r'[\s_-]+', '_', text)
-    text = text.strip('_')
-    return text
+    return text.strip('_')
 
 def setup_firebase():
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -35,131 +43,190 @@ def setup_firebase():
 
 def setup_driver():
     chrome_options = Options()
-    chrome_options.add_argument("--window-size=1200,800")
+    chrome_options.add_argument("--window-size=1440,1000")
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    driver.set_page_load_timeout(60) # Thêm timeout 60s
     return driver
 
-def download_image_via_selenium(driver, url, filename, bucket):
+def download_image(url, card_id, bucket):
     if not url: return ""
-    print(f"  [+] Tải ảnh qua Chrome: {url}")
+    print(f"    + Đang nạp ảnh: {card_id}")
     try:
-        driver.get(url)
-        time.sleep(2)
-        js_script = """
-        var url = arguments[0];
-        var callback = arguments[1];
-        fetch(url).then(response => response.blob()).then(blob => {
-            var reader = new FileReader();
-            reader.onloadend = function() { callback(reader.result); };
-            reader.readAsDataURL(blob);
-        }).catch(err => callback("error"));
-        """
-        base64_data = driver.execute_async_script(js_script, url)
-        if base64_data == "error" or not base64_data: return ""
-        header, encoded = base64_data.split(",", 1)
-        data = base64.b64decode(encoded)
-        local_path = os.path.join(tempfile.gettempdir(), filename)
-        with open(local_path, "wb") as f:
-            f.write(data)
-        blob = bucket.blob(f"card_images/{filename}")
-        blob.upload_from_filename(local_path)
-        blob.make_public()
-        os.remove(local_path)
-        return blob.public_url
+        response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}, stream=True, timeout=20)
+        if response.status_code == 200:
+            ext = ".png" if ".png" in url.lower() else ".jpg"
+            filename = f"bidv_{card_id}{ext}"
+            local_path = os.path.join(tempfile.gettempdir(), filename)
+            with open(local_path, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
+            blob = bucket.blob(f"card_images/{filename}")
+            blob.upload_from_filename(local_path)
+            blob.make_public()
+            os.remove(local_path)
+            return blob.public_url
     except Exception as e:
-        print(f"  [!] Lỗi tải ảnh: {e}")
-        return ""
+        print(f"    ! Lỗi ảnh: {e}")
+    return ""
 
 def process_bidv():
-    print("--- BẮT ĐẦU XỬ LÝ BIDV ---")
+    print("--- BẮT ĐẦU XỬ LÝ BIDV TỪ WEB ---")
     db, bucket = setup_firebase()
-    
-    # 1. Parse Danh sách từ file HTML
-    with open('scripts/scraping/bidv_source.html', 'r', encoding='utf-8') as f:
-        soup = BeautifulSoup(f.read(), 'html.parser')
-    
-    # 2. Parse Chi tiết (lấy mẫu)
-    with open('scripts/scraping/bidv_detail_source.html', 'r', encoding='utf-8') as f:
-        d_soup = BeautifulSoup(f.read(), 'html.parser')
-        
-    def get_tab_content(keyword):
-        tag = d_soup.find(string=re.compile(keyword))
-        if tag:
-            parent = tag.find_parent('div')
-            if parent:
-                ul = parent.find_next('ul')
-                if ul:
-                    lines = [l.strip() for l in ul.get_text(separator="\n").split('\n') if l.strip()]
-                    return "\n".join([f"• {l}" if not l.startswith('•') else l for l in lines])
-        return ""
-
-    default_cond = get_tab_content("Điều kiện phát hành")
-    default_fees = get_tab_content("Biểu phí")
-
-    card_items = soup.find_all('div', class_='nwp-block-cards')
     driver = setup_driver()
     
-    count = 0
-    for item in card_items:
-        if count >= 9: break
-        title_tag = item.find('h4')
-        if not title_tag: continue
+    url = "https://bidv.com.vn/vn/ca-nhan/san-pham-dich-vu/dich-vu-the/the-tin-dung-quoc-te"
+    try:
+        driver.get(url)
+        time.sleep(5)
+    except Exception as e:
+        print(f"  [!] Lỗi khi tải trang chủ BIDV (có thể do timeout mạng): {e}")
+        # Vẫn tiếp tục xử lý với những gì đã load được
         
-        name = title_tag.get_text().strip()
-        slug = slugify(name)
-        card_id = f"bidv_{slug}"
-        print(f"\n🚀 Đang xử lý: {name}")
-
-        link_tag = item.find('a', href=True)
-        url = link_tag['href'] if link_tag else ""
-        if url and not url.startswith('http'): url = 'https://bidv.com.vn' + url
+    # Cuộn trang để tải thêm thẻ
+    for i in range(5):
+        try:
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(2)
+        except:
+            break
         
-        img_tag = item.find('img')
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    
+    # Tìm tất cả các thẻ a chứa class card hoặc wrapper
+    card_links = soup.find_all('a', href=re.compile(r'/the-tin-dung-quoc-te/.*'))
+    
+    valid_cards = []
+    for link in card_links:
+        detail_url = link['href']
+        if not detail_url.startswith('http'):
+            detail_url = 'https://bidv.com.vn' + detail_url
+            
+        # Tìm tiêu đề thẻ (thường nằm trong thẻ h3, h4 hoặc strong bên trong a)
+        title_tag = link.find(['h3', 'h4', 'strong', 'span'])
+        if not title_tag:
+            # Có thể thẻ a chính là tên thẻ
+            name = link.get_text().strip()
+        else:
+            name = title_tag.get_text().strip()
+            
+        # Lọc tên
+        if not name or "the" not in name.lower() and "thẻ" not in name.lower(): continue
+        
+        # Tìm ảnh (thường nằm trong a hoặc block cha của a)
+        parent = link.find_parent()
+        img_tag = None
+        if parent: img_tag = parent.find('img')
+        if not img_tag: img_tag = link.find('img')
+        
         img_url = img_tag.get('src') if img_tag else ""
-        if img_url and not img_url.startswith('http'): img_url = 'https://bidv.com.vn' + img_url
-
-        # Tải ảnh
-        ext = ".png" if ".png" in img_url.lower() else ".jpg"
-        image_path = download_image_via_selenium(driver, img_url, f"{card_id}{ext}", bucket)
-
-        # Lợi ích
-        highlights = []
-        card_list = item.find('div', class_='card-list')
-        if card_list:
-            highlights = [li.get_text().strip() for li in card_list.find_all('li') if li.get_text().strip()]
-        cashback_highlight = "\n".join([f"• {h}" for h in highlights])
-
-        # Phân loại
-        card_type = "Visa"
-        if "mastercard" in name.lower(): card_type = "Mastercard"
-        elif "jcb" in name.lower(): card_type = "JCB"
-        
-        card_tier = "Classic"
-        if "infinite" in name.lower(): card_tier = "Signature"
-        elif "ultimate" in name.lower(): card_tier = "Ultimate"
-        elif "world" in name.lower(): card_tier = "World"
-        elif "sao vang" in name.lower() or "platinum" in name.lower(): card_tier = "Platinum"
-
-        card_doc = {
-            'id': card_id,
+        if img_url and not img_url.startswith('http'):
+            img_url = 'https://bidv.com.vn' + img_url
+            
+        summary = ""
+        # Thử tìm mô tả
+        if parent:
+            desc_tag = parent.find('div', class_=re.compile(r'desc|summary|text'))
+            if desc_tag: summary = desc_tag.get_text().strip()
+            
+        valid_cards.append({
             'name': name,
-            'bankName': 'BIDV',
-            'imagePath': image_path,
-            'cashbackHighlight': cashback_highlight,
-            'details': highlights,
-            'applyUrl': url,
-            'cardType': card_type,
-            'cardTier': card_tier,
-            'benefitsDetail': [{'title': 'Lợi ích nổi bật', 'content': cashback_highlight}],
-            'conditionsDetail': [{'title': 'Điều kiện phát hành', 'content': default_cond or "• Theo quy định của BIDV"}],
-            'feeDetail': [{'title': 'Hạn mức & Biểu phí', 'content': default_fees or "• Theo biểu phí hiện hành của BIDV"}],
-            'updatedAt': firestore.SERVER_TIMESTAMP
-        }
+            'url': detail_url,
+            'img_url': img_url,
+            'summary': summary
+        })
         
-        db.collection("cards").document(card_id).set(card_doc, merge=True)
-        print(f"  [OK] Đã nạp Firestore: {card_id}")
-        count += 1
+    # Xóa trùng lặp
+    unique_cards = {c['name']: c for c in valid_cards}.values()
+    # Nếu danh sách quá dài, lấy giới hạn
+    filtered_cards = [c for c in unique_cards if "tín dụng" in c['name'].lower() or "credit" in c['name'].lower()][:15]
+    if not filtered_cards:
+        filtered_cards = list(unique_cards)[:10]
+
+    print(f"Phát hiện {len(filtered_cards)} thẻ BIDV. Bắt đầu xử lý...")
+
+    for card in filtered_cards:
+        print(f"\n🚀 Đang xử lý: {card['name']}")
+        try:
+            driver.get(card['url'])
+            time.sleep(4)
+            d_soup = BeautifulSoup(driver.page_source, 'html.parser')
+            
+            benefits_detail = []
+            conditions_detail = []
+            fee_detail = []
+            
+            # Cố gắng bóc tách các đoạn text dựa trên thẻ h2, h3
+            content_blocks = d_soup.find_all(['h2', 'h3'])
+            for block in content_blocks:
+                title = block.get_text().strip()
+                next_node = block.find_next_sibling()
+                content = ""
+                while next_node and next_node.name not in ['h2', 'h3']:
+                    if next_node.get_text().strip():
+                        content += next_node.get_text(separator=' ', strip=True) + " "
+                    next_node = next_node.find_next_sibling()
+                
+                if not content: continue
+                item_data = {'title': title, 'content': content.strip()}
+                
+                t_lower = title.lower()
+                if any(k in t_lower for k in ['ưu đãi', 'tiện ích', 'đặc quyền', 'lợi ích']):
+                    benefits_detail.append(item_data)
+                elif any(k in t_lower for k in ['điều kiện', 'hồ sơ', 'đối tượng']):
+                    conditions_detail.append(item_data)
+                elif any(k in t_lower for k in ['phí', 'lãi suất', 'hạn mức']):
+                    fee_detail.append(item_data)
+                    
+            if not benefits_detail and card['summary']:
+                benefits_detail.append({'title': 'Đặc điểm nổi bật', 'content': card['summary']})
+                
+            # Chuẩn bị dữ liệu
+            slug = slugify(card['name'])
+            card_id = f"bidv_{slug}"
+            image_path = download_image(card['img_url'], slug, bucket)
+            
+            # Làm sạch dữ liệu
+            benefits_detail = clean_garbage_data(benefits_detail)
+            conditions_detail = clean_garbage_data(conditions_detail)
+            fee_detail = clean_garbage_data(fee_detail)
+            
+            full_text = f"{card['summary']} " + " ".join([d['content'] for d in benefits_detail])
+            cashback_rates = extract_cashback_rates(full_text)
+            
+            card_type = "Visa"
+            if "mastercard" in card['name'].lower(): card_type = "Mastercard"
+            elif "jcb" in card['name'].lower(): card_type = "JCB"
+            
+            card_tier = "Classic"
+            if "infinite" in card['name'].lower(): card_tier = "Signature"
+            elif "ultimate" in card['name'].lower(): card_tier = "Ultimate"
+            elif "world" in card['name'].lower(): card_tier = "World"
+            elif "platinum" in card['name'].lower(): card_tier = "Platinum"
+
+            card_doc = {
+                'id': card_id,
+                'name': card['name'],
+                'bankName': 'BIDV',
+                'imagePath': image_path,
+                'cashbackHighlight': card['summary'] if card['summary'] else "Ưu đãi thẻ tín dụng BIDV",
+                'details': [card['summary']] if card['summary'] else [],
+                'applyUrl': card['url'],
+                'cardType': card_type,
+                'cardTier': card_tier,
+                'benefitsDetail': benefits_detail,
+                'conditionsDetail': conditions_detail,
+                'productInfoDetail': [],
+                'feeDetail': fee_detail,
+                'updatedAt': firestore.SERVER_TIMESTAMP
+            }
+            card_doc.update(cashback_rates)
+            
+            db.collection("cards").document(card_id).set(card_doc, merge=True)
+            print(f"  [OK] Đã nạp Firestore: {card_id}")
+            
+        except Exception as e:
+            print(f"  [!] Lỗi khi cào chi tiết thẻ {card['name']}: {e}")
 
     driver.quit()
     print("\n✅ HOÀN THÀNH BIDV!")

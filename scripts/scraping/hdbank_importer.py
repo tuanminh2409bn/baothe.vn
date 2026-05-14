@@ -15,6 +15,14 @@ import tempfile
 import re
 import unicodedata
 import requests
+import sys
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from clean_firestore_data import clean_garbage_data, extract_cashback_rates
+except ImportError:
+    def clean_garbage_data(data): return data
+    def extract_cashback_rates(text): return {}
 
 def slugify(text):
     text = unicodedata.normalize('NFD', text)

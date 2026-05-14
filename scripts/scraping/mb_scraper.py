@@ -149,10 +149,20 @@ class MBBankScraper(BaseScraper):
                 
                 print(f"  [OK] Đã cào: {detail['name']}")
 
+                # Làm sạch dữ liệu
+                b_detail = self.clean_garbage_data(detail.get('benefitsDetail', []))
+                c_detail = self.clean_garbage_data(detail.get('conditionsDetail', []))
+                p_detail = self.clean_garbage_data(detail.get('productInfoDetail', []))
+                f_detail = self.clean_garbage_data(detail.get('feeDetail', []))
+
                 img_id = self.normalize_name(detail['name'])
                 online_url = self.download_image_via_browser(detail['img'], f"mb_{img_id}")
 
-                cards_data.append({
+                # Trích xuất hoàn tiền
+                full_text = f"{detail.get('description', '')} " + " ".join([d['content'] for d in b_detail + p_detail])
+                cashback_rates = self.extract_cashback_rates(full_text)
+
+                card_obj = {
                     "id": f"mb-{img_id}",
                     "name": detail['name'],
                     "bankName": "MB", # ĐỔI THÀNH "MB" ĐỂ KHỚP VỚI FRONTEND
@@ -161,12 +171,14 @@ class MBBankScraper(BaseScraper):
                     "cardType": "Visa/JCB/Mastercard",
                     "cardTier": "Premium" if any(kw in detail['name'].upper() for kw in ["PRIORITY", "PLATINUM", "INFINITE", "SIGNATURE", "WORLD ELITE"]) else "Standard",
                     "cashbackHighlight": detail['description'] or "Ưu đãi thẻ tín dụng MB",
-                    "details": [d['title'] for d in detail['benefitsDetail'][:3]] if detail['benefitsDetail'] else ["Đặc quyền chủ thẻ MB"],
-                    "benefitsDetail": detail['benefitsDetail'],
-                    "conditionsDetail": detail['conditionsDetail'],
-                    "productInfoDetail": detail['productInfoDetail'],
-                    "feeDetail": detail['feeDetail']
-                })
+                    "details": [d['title'] for d in b_detail[:3]] if b_detail else ["Đặc quyền chủ thẻ MB"],
+                    "benefitsDetail": b_detail,
+                    "conditionsDetail": c_detail,
+                    "productInfoDetail": p_detail,
+                    "feeDetail": f_detail
+                }
+                card_obj.update(cashback_rates)
+                cards_data.append(card_obj)
             except Exception as e:
                 print(f"  ! Lỗi thẻ {item['name']}: {e}")
 

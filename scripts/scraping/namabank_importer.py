@@ -1,7 +1,21 @@
 import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from clean_firestore_data import clean_garbage_data, extract_cashback_rates
+except ImportError:
+    def clean_garbage_data(data): return data
+    def extract_cashback_rates(text): return {}
+
 import firebase_admin
 from firebase_admin import credentials, storage, firestore
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
+import time
 import re
 import unicodedata
 import requests
@@ -30,6 +44,18 @@ def setup_firebase():
             'storageBucket': 'baothevn-790c6.firebasestorage.app'
         })
     return firestore.client(), storage.bucket()
+
+def setup_driver():
+    chrome_options = Options()
+    chrome_options.add_argument("--window-size=1440,1000")
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+    driver.set_page_load_timeout(60)
+    return driver
 
 def download_and_upload_image(url, card_id, bucket):
     if not url: return ""
@@ -83,28 +109,32 @@ def parse_namabank_detail(soup):
 def process_namabank():
     db, bucket = setup_firebase()
     
-    source_path = os.path.join(os.path.dirname(__file__), "namabank_source.html")
-    detail_path = os.path.join(os.path.dirname(__file__), "namabank_detail_source.html")
+    print("--- PHÂN TÍCH DANH SÁCH THẺ NAM A BANK TỪ WEB ---")
+    driver = setup_driver()
+    url = "https://www.namabank.com.vn/the-tin-dung"
     
-    with open(source_path, 'r', encoding='utf-8') as f:
-        soup = BeautifulSoup(f.read(), 'html.parser')
-    
-    with open(detail_path, 'r', encoding='utf-8') as f:
-        detail_soup = BeautifulSoup(f.read(), 'html.parser')
-        
-    sample_benefits = parse_namabank_detail(detail_soup)
-    print(f"🔍 Tìm thấy {len(sample_benefits)} đặc quyền mẫu từ file chi tiết.")
+    try:
+        driver.get(url)
+        time.sleep(5)
+        for _ in range(3):
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(2)
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+    except Exception as e:
+        print(f"  [!] Lỗi tải trang Nam A Bank: {e}")
+        driver.quit()
+        return
 
     all_cards = []
     # Nam A Bank dùng div.item cho mỗi thẻ
-    card_items = soup.select('div.col-md-6.item')
+    card_items = soup.find_all('div', class_='item')
     
     for item in card_items:
         title_el = item.find('h5')
         if not title_el: continue
         name = clean_text(title_el.get_text())
         
-        # Chỉ lấy thẻ tín dụng (thường là in hoa, chứa từ khóa "THẺ TÍN DỤNG")
+        # Chỉ lấy thẻ tín dụng (thường là in hoa, chứa từ khóa "THẺ TÍN DỤNG" hoặc "HAPPY")
         if "THẺ TÍN DỤNG" not in name.upper() and "HAPPY" not in name.upper(): continue
         
         link_el = item.find('a', href=True)
@@ -113,6 +143,7 @@ def process_namabank():
         
         img_el = item.find('img')
         img_url = img_el.get('data-src') or img_el.get('src') if img_el else ""
+        if img_url and not img_url.startswith('http'): img_url = "https://www.namabank.com.vn" + img_url
         
         # Lấy thông tin tóm tắt từ figcaption
         highlights = []
@@ -140,6 +171,16 @@ def process_namabank():
         slug = slugify(card['name'])
         image_path = download_and_upload_image(card['img_url'], slug, bucket)
         
+        print(f"\n🔍 Đang xử lý chi tiết: {card['name']}")
+        try:
+            driver.get(card['url'])
+            time.sleep(3)
+            detail_soup = BeautifulSoup(driver.page_source, 'html.parser')
+            card_benefits = parse_namabank_detail(detail_soup)
+        except Exception as e:
+            print(f"  [!] Lỗi lấy chi tiết thẻ {card['name']}: {e}")
+            card_benefits = []
+        
         name_lower = card['name'].lower()
         card_type = "Visa"
         if "jcb" in name_lower: card_type = "JCB"
@@ -149,8 +190,13 @@ def process_namabank():
         if any(x in name_lower for x in ['platinum', 'infinite', 'signature', 'gold']):
             card_tier = "Platinum" if "platinum" in name_lower or "signature" in name_lower else "Gold"
 
-        # Gán đặc quyền (Signature/Platinum thì lấy đầy đủ)
-        card_benefits = sample_benefits if card_tier == "Platinum" else sample_benefits[:3]
+        # Nếu không có chi tiết, tự tạo một mục từ tóm tắt
+        if not card_benefits:
+            card_benefits = [{'title': 'Tiện ích thẻ', 'content': "\n".join([f"• {h}" for h in card['highlights']])}]
+
+        card_benefits = clean_garbage_data(card_benefits)
+        full_text = card['summary'] + " " + " ".join([b.get('content', '') for b in card_benefits])
+        cashback_rates = extract_cashback_rates(full_text)
 
         card_doc = {
             'id': f"namabank_{slug}",
@@ -158,13 +204,14 @@ def process_namabank():
             'bankName': 'Nam A Bank',
             'imagePath': image_path,
             'cashbackHighlight': card['summary'],
-            'details': card['highlights'] if card['highlights'] else [b['content'] for b in card_benefits[:3]],
+            'details': card['highlights'] if card['highlights'] else [b.get('content', '') for b in card_benefits[:3]],
             'applyUrl': card['url'],
             'cardType': card_type,
             'cardTier': card_tier,
             'benefitsDetail': card_benefits,
             'updatedAt': firestore.SERVER_TIMESTAMP
         }
+        card_doc.update(cashback_rates)
         
         db.collection("cards").document(card_doc['id']).set(card_doc, merge=True)
         print(f"  [OK] Đã lưu: {card_doc['id']}")

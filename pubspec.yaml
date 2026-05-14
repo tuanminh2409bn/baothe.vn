@@ -1,8 +1,8 @@
 name: baothe_vn
-description: "Công cụ quản lý thẻ tín dụng và chi tiêu cá nhân thông minh, tích hợp AI để phân tích và dự đoán chi tiêu, giúp người dùng kiểm soát tài chính hiệu quả."
+description: "Công cụ quản lý thẻ tín dụng và chi tiêu cá nhân thông minh"
 publish_to: 'none'
 
-version: 1.0.0+4
+version: 1.0.0+5
 
 environment:
   sdk: ^3.8.0

@@ -1,4 +1,13 @@
 import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from clean_firestore_data import clean_garbage_data, extract_cashback_rates
+except ImportError:
+    def clean_garbage_data(data): return data
+    def extract_cashback_rates(text): return {}
+
 import firebase_admin
 from firebase_admin import credentials, storage, firestore
 from selenium import webdriver
@@ -150,19 +159,24 @@ def process_bvbank():
             if any(x in name_lower for x in ['platinum', 'signature', 'infinite', 'ultimate']):
                 card_tier = "Platinum"
 
+            benefits = clean_garbage_data(benefits)
+            full_text = (highlight if highlight else "") + " " + " ".join([b.get('content', '') for b in benefits])
+            cashback_rates = extract_cashback_rates(full_text)
+
             card_doc = {
                 'id': card_id,
                 'name': card['name'],
                 'bankName': 'BVBank',
                 'imagePath': image_path,
                 'cashbackHighlight': highlight if highlight else f"Ưu đãi {card['name']}",
-                'details': [b['title'] for b in benefits[:5]],
+                'details': [b.get('title', '') for b in benefits[:5]],
                 'applyUrl': card['url'],
                 'cardType': card_type,
                 'cardTier': card_tier,
                 'benefitsDetail': benefits,
                 'updatedAt': firestore.SERVER_TIMESTAMP
             }
+            card_doc.update(cashback_rates)
 
             db.collection("cards").document(card_id).set(card_doc, merge=True)
             print(f"  [OK] Đã lưu vào Firestore: {card_id}")
